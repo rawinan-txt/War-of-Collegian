@@ -160,8 +160,8 @@ Next Reward
 ```text
 MU FACULTY LEAGUE
 
-🥇 Engineering     2.8M
-🥈 ICT             2.6M
+🥇 ICT             3.2M
+🥈 Engineering     2.6M
 🥉 Science         2.4M
 4. Medicine        2.1M
 5. Pharmacy        1.9M
