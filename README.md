@@ -6,6 +6,8 @@
 
 ผู้เล่นจะเลือก **Faculty** ที่ต้องการสังกัด ซึ่งทำหน้าที่เสมือน Guild/Faction ของผู้เล่น จากนั้นสะสมตัวละครจากคณะต่าง ๆ มาจัดทีมและต่อสู้ในด่านต่าง ๆ
 
+https://rawinan-txt.github.io/War-of-Collegian/(https://rawinan-txt.github.io/War-of-Collegian/)
+
 ---
 
 # 🎮 Core Concept
