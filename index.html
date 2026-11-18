@@ -71,9 +71,22 @@ function fxRing(x,y,color,r){if(!battle)return;const n=fxLevel==='reduced'?8:16;
 function fxBeam(x1,y1,x2,y2,color){if(!battle)return;const len=Math.hypot(x2-x1,y2-y1),step=fxLevel==='reduced'?12:6;for(let d=0;d<=len;d+=step){const t=d/len;fxSpawn(x1+(x2-x1)*t,y1+(y2-y1)*t,0,0,.25,color,4,0)}}
 function fxShake(p){if(battle&&fxLevel==='full')battle.shake=Math.max(battle.shake,p)}
 function heroColor(id){const h=heroes.find(x=>x.id===id),f=h&&faculties.find(x=>x[0]===h.f);return f?f[3]:'#9fe3ff'}
-const SKILL_FX={bug:u=>{const y=u.y-30;fxBeam(u.x+22,y,u.x+282,y,'#7fe3ff');fxBurst(u.x+24,y,'#bff3ff',10,3);fxShake(2)}};
+const SKILL_FX={
+bug:{kind:'code-beam',run:u=>{const y=u.y-30;fxBeam(u.x+22,y,u.x+282,y,'#7fe3ff');fxBurst(u.x+24,y,'#bff3ff',10,3);fxShake(2)}},
+mecha:{kind:'gear-barrier',run:u=>{fxRing(u.x,u.y-20,'#ffae44',12);fxRing(u.x,u.y-20,'#ffd08a',20);fxBurst(u.x,u.y-20,'#c97a1e',8,3);fxShake(1)}},
+lab:{kind:'flask-burst',run:u=>{fxBurst(u.x+30,u.y-35,'#b995ff',12,4);fxBurst(u.x+30,u.y-35,'#6ee0a5',10,3);fxRing(u.x+30,u.y-35,'#e9eefc',10);fxShake(2)}},
+night:{kind:'medical-pulse',run:u=>{fxRing(u.x,u.y-20,'#9dffcb',16);fxRing(u.x,u.y-20,'#5bd6a2',26);for(const[dx,dy]of[[0,-52],[0,-46],[0,-40],[-6,-46],[6,-46]])fxSpawn(u.x+dx,u.y+dy,0,-24,.7,'#9dffcb',3,0)}},
+chem:{kind:'poison-cloud',run:u=>{fxBurst(u.x+34,u.y-20,'#9be86a',14,5);fxBurst(u.x+34,u.y-20,'#4fa83a',8,4);fxRing(u.x+34,u.y-20,'#ec85bc',8)}},
+animal:{kind:'paw-stampede',run:u=>{for(let i=0;i<6;i++){const x=u.x+30+i*34;fxSpawn(x,u.y+20,0,0,.55,'#8de7ac',3,0);fxSpawn(x-3,u.y+17,0,0,.55,'#8de7ac',2,0);fxSpawn(x+4,u.y+17,0,0,.55,'#8de7ac',2,0)}fxBurst(u.x+10,u.y,'#c98a4a',8,3)}},
+dental:{kind:'drill-spiral',run:u=>{for(let k=0;k<16;k++){const a=k*0.9,r=4+k*1.6;fxSpawn(u.x+46+Math.cos(a)*r,u.y-10+Math.sin(a)*r*.6,0,0,.35,k%2?'#fff':'#73ddff',3,0)}fxBeam(u.x+22,u.y-10,u.x+70,u.y-10,'#c8d1ee');fxShake(1)}},
+music:{kind:'sound-waves',run:u=>{for(let k=0;k<3;k++)fxRing(u.x+22+k*16,u.y-22,k%2?'#ffd1ff':'#ed7aff',8+k*6);fxBurst(u.x+30,u.y-40,'#ffd1ff',8,3);fxShake(2)}},
+runner:{kind:'speed-trails',run:u=>{for(let k=0;k<5;k++)fxBeam(u.x-8-k*3,u.y-48+k*11,u.x-70-(k%3)*14,u.y-48+k*11,k%2?'#fff':'#ffd2a8');fxBurst(u.x+10,u.y+16,'#ff9c52',8,3)}},
+global:{kind:'orbit-rings',run:u=>{fxRing(u.x,u.y-24,'#69aaff',22);fxRing(u.x,u.y-24,'#ffd45a',12);fxBurst(u.x,u.y-24,'#fff',6,2)}},
+public:{kind:'shield-dome',run:u=>{for(let a=Math.PI;a<=Math.PI*2+.01;a+=.22)fxSpawn(u.x+Math.cos(a)*34,u.y+14+Math.sin(a)*34,0,0,.7,'#5acbb9',3,0);fxRing(u.x,u.y-10,'#c8f5ee',16);fxBurst(u.x,u.y-20,'#fff',6,2);fxShake(1)}},
+nurse:{kind:'blessing-hearts',run:u=>{fxBurst(u.x,u.y-30,'#ff6b9a',10,4);fxBurst(u.x,u.y-30,'#ffd1e0',8,3);fxRing(u.x,u.y-24,'#ffd1e0',18)}}
+};
 function fxDefaultSkill(u){fxRing(u.x,u.y-20,heroColor(u.id),12);fxBurst(u.x,u.y-20,heroColor(u.id),10,3)}
-function runSkillFx(u){(SKILL_FX[u.id]||fxDefaultSkill)(u)}
+function runSkillFx(u){const e=SKILL_FX[u.id];(e?e.run:fxDefaultSkill)(u)}
 const IMPACT_DELAY=.25,HEAL_DELAY=.43,SUMMON_DELAY=.43,PROJECTILE_SPEED=600,RANGED_MIN=80;
 function snapAttacker(u){return{type:u.type,ally:u.ally,id:u.id,src:srcOf(u)}}
 function startAttack(u,target,val){u.atkCount=(u.atkCount||0)+1;if(SKILL_MODE[u.id]==='every3'&&u.atkCount%3===0)triggerSkill(u);u.atkT=.5;u.cast=.27;u.fx=.38;u.pend.push({t:IMPACT_DELAY,kind:'attack',target,val,a:snapAttacker(u)})}

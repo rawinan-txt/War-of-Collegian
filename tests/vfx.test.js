@@ -127,3 +127,45 @@ test('draw() works with particles, shake and projectiles on screen', () => {
   tick(g, 0.7);
   g.run('draw();updateHud()');
 });
+
+// ---- Task 6: per-hero skill VFX ----
+const HEROES = ['bug', 'mecha', 'lab', 'night', 'chem', 'animal', 'dental', 'music', 'runner', 'global', 'public', 'nurse'];
+
+test('every hero has its own skill VFX with a unique kind', () => {
+  const g = loadGame();
+  const kinds = new Set();
+  for (const id of HEROES) {
+    assert.equal(g.run(`typeof SKILL_FX['${id}'].run`), 'function', id);
+    const kind = g.run(`SKILL_FX['${id}'].kind`);
+    assert.ok(kind && typeof kind === 'string', id);
+    kinds.add(kind);
+  }
+  assert.equal(kinds.size, 12);
+});
+
+test('each hero skill VFX spawns pixels within the pool cap, fewer in reduced mode, and never touches HP or stats', () => {
+  for (const id of HEROES) {
+    const g = setup();
+    g.run("deploy('bug');deploy('mecha')");
+    dummyEnemy(g, 200, 5000);
+    const snap = () => g.run('JSON.stringify([battle.units.map(u=>u.hp),battle.enemies.map(u=>u.hp),CombatStats.getAllCharacterStats(),CombatStats.laserDamage,CombatStats.ultDamage,battle.enemyHp,battle.baseHp])');
+    const before = snap();
+    g.run('battle.particles.length=0');
+    g.run(`runSkillFx({id:'${id}',x:300,y:320,ally:true})`);
+    const full = g.run('battle.particles.length');
+    assert.ok(full > 0, `${id} spawned nothing`);
+    assert.ok(full <= g.run('FX_MAX'), id);
+    assert.equal(snap(), before, `${id} changed game state`);
+    g.run("setFxLevel('reduced');battle.particles.length=0");
+    g.run(`runSkillFx({id:'${id}',x:300,y:320,ally:true})`);
+    assert.ok(g.run('battle.particles.length') <= full, `${id} reduced is not lighter`);
+  }
+});
+
+test('skill VFX also run through the real pipeline (pending skillfx event)', () => {
+  const g = setup();
+  g.run("deploy('mecha')"); // onDeploy -> triggers the skill, fx at SKILL_IMPACT
+  g.run('battle.particles.length=0');
+  tick(g, 0.6);
+  assert.ok(g.run('battle.particles.length') > 0);
+});
