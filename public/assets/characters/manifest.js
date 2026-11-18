@@ -23,7 +23,31 @@
           "repeat": -1,
           "feetRow": 89,
           "scale": 1
+        },
+        "attack": {
+          "sheet": "public/assets/characters/bug/attack.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12.5,
+          "repeat": 0,
+          "feetRow": 89,
+          "scale": 1
+        },
+        "skill": {
+          "sheet": "public/assets/characters/bug/skill.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 12,
+          "frameRate": 17,
+          "repeat": 0,
+          "feetRow": 89,
+          "scale": 1
         }
+      },
+      "impact": {
+        "attack": 3,
+        "skill": 7
       }
     }
   };
@@ -31,6 +55,6 @@
   if (typeof CHARACTER_ANIMS === 'undefined') return;
   for (var id in EXTERNAL_SPRITES) {
     var old = CHARACTER_ANIMS[id] || {};
-    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, external: true });
+    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), external: true });
   }
 })();

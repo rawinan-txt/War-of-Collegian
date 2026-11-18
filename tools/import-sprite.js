@@ -1,5 +1,5 @@
 // Import externally drawn character sprite PNGs (Aseprite / Piskel / etc.) without touching combat code.
-//   node tools/import-sprite.js add <heroId> <file.png> --anim idle --frames 4 [--frame 64x64] [--rate 6] [--repeat loop|once] [--feet auto|<row>] [--scale 2]
+//   node tools/import-sprite.js add <heroId> <file.png> --anim idle --frames 4 [--frame 64x64] [--rate 6] [--repeat loop|once] [--feet auto|<row>] [--scale 2] [--impact <frame>]
 //   node tools/import-sprite.js remove <heroId> [--anim idle]     node tools/import-sprite.js list|build|check
 // Optional: --root <dir> (default public/assets/characters).
 const fs = require('node:fs');
@@ -50,7 +50,7 @@ function build(root) {
   saveCfg(root, cfg);
   const ext = {};
   for (const [id, c] of Object.entries(cfg.characters)) {
-    ext[id] = { anims: {} };
+    ext[id] = { anims: {}, impact: c.impact || {} };
     for (const [a, d] of Object.entries(c.anims)) {
       ext[id].anims[a] = { sheet: `${WEB_BASE}/${d.file}`, frameWidth: d.frameWidth, frameHeight: d.frameHeight, frameCount: d.frameCount, frameRate: d.frameRate, repeat: d.repeat, feetRow: d.feetRow, scale: c.scale || 2 };
     }
@@ -63,7 +63,7 @@ function build(root) {
   if (typeof CHARACTER_ANIMS === 'undefined') return;
   for (var id in EXTERNAL_SPRITES) {
     var old = CHARACTER_ANIMS[id] || {};
-    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, external: true });
+    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), external: true });
   }
 })();
 `;
@@ -88,6 +88,7 @@ function add(root, id, file, o) {
   const rel = `${id}/${anim}.png`;
   fs.mkdirSync(path.join(root, id), { recursive: true });
   fs.copyFileSync(file, path.join(root, rel));
+  if (o.impact !== undefined) ch.impact = { ...(ch.impact || {}), [anim]: +o.impact };
   const [rate, rep] = DEFAULTS[anim];
   ch.anims[anim] = { file: rel, ...def, frameRate: +(o.rate || rate), repeat: (o.repeat || rep) === 'loop' ? -1 : 0, feetRow };
   saveCfg(root, cfg);

@@ -42,7 +42,7 @@ function fillSeam(cv, rect, dx, dy, bob) {
 }
 
 function makeRenderer(at) {
-  return function render({ bob = 0, legSwing = 0, legLift = 0, legPhase = 0, laptopDx = 0, laptopDy = 0, tuftDx = 0, walking = false, overlays = [], laptopSrc = at }) {
+  return function render({ bob = 0, bodyDx = 0, legSwing = 0, legLift = 0, legPhase = 0, laptopDx = 0, laptopDy = 0, tuftDx = 0, walking = false, overlays = [], laptopSrc = at }) {
     const cv = blank();
     // legs: rigid thigh / shin / foot blocks; foot moves the full stride, shin and thigh follow partially
     if (walking) {
@@ -59,15 +59,15 @@ function makeRenderer(at) {
       for (let y = 72; y <= FEET; y++) for (let x = 0; x < N; x++) put(cv, x, y, at(x, y));
     }
     // upper body (laptop+hand and tuft are separate parts)
-    for (let y = 0; y <= UPPER_MAX; y++) for (let x = 0; x < N; x++) if (!inRect(LAPTOP, x, y) && !inRect(TUFT, x, y)) put(cv, x, y + bob, at(x, y));
+    for (let y = 0; y <= UPPER_MAX; y++) for (let x = 0; x < N; x++) if (!inRect(LAPTOP, x, y) && !inRect(TUFT, x, y)) put(cv, x + bodyDx, y + bob, at(x, y));
     // tuft sways more toward the tip
     for (let y = TUFT.y0; y <= TUFT.y1; y++) {
       const dx = Math.round(tuftDx * (1 - (y - TUFT.y0) / (TUFT.y1 - TUFT.y0 + 1)));
-      for (let x = TUFT.x0; x <= TUFT.x1; x++) put(cv, x + dx, y + bob, at(x, y));
+      for (let x = TUFT.x0; x <= TUFT.x1; x++) put(cv, x + dx + bodyDx, y + bob, at(x, y));
     }
     // laptop + hand
-    for (let y = LAPTOP.y0; y <= LAPTOP.y1; y++) for (let x = LAPTOP.x0; x <= LAPTOP.x1; x++) put(cv, x + laptopDx, y + laptopDy + bob, laptopSrc(x, y));
-    fillSeam(cv, LAPTOP, laptopDx, laptopDy, bob);
+    for (let y = LAPTOP.y0; y <= LAPTOP.y1; y++) for (let x = LAPTOP.x0; x <= LAPTOP.x1; x++) put(cv, x + laptopDx + bodyDx, y + laptopDy + bob, laptopSrc(x, y));
+    fillSeam(cv, { x0: LAPTOP.x0 + bodyDx, x1: LAPTOP.x1 + bodyDx, y0: LAPTOP.y0, y1: LAPTOP.y1 }, laptopDx, laptopDy, bob);
     // overlays: [{x, y, rows: ['..AB', ...], colours: {A: [r,g,b,a]}}] or [{x, y, pixels: [[x,y,[r,g,b,a]], ...]}]
     for (const o of overlays) for (const [px, py, c] of o.pixels) put(cv, o.x + px, o.y + py + bob, c);
     return cv;
@@ -111,4 +111,4 @@ if (require.main === module) {
   strip(walk, path.join(OUTDIR, 'walk.png'));
   console.log('wrote idle.png (4 frames) and walk.png (6 frames) to', OUTDIR);
 }
-module.exports = { build, makeRenderer, loadSource };
+module.exports = { build, makeRenderer, loadSource, N, put };

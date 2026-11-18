@@ -21,7 +21,29 @@
           "frameRate": 12,
           "repeat": -1,
           "feetRow": 89
+        },
+        "attack": {
+          "file": "bug/attack.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12.5,
+          "repeat": 0,
+          "feetRow": 89
+        },
+        "skill": {
+          "file": "bug/skill.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 12,
+          "frameRate": 17,
+          "repeat": 0,
+          "feetRow": 89
         }
+      },
+      "impact": {
+        "attack": 3,
+        "skill": 7
       }
     }
   }
