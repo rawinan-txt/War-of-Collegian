@@ -214,7 +214,7 @@ test('timing in a real battle: every Bug Hunter projectile launches on attack fr
   g.run(`team=['bug','mecha','night','lab','animal','music'];startBattle();battle.at=1000;battle.income=0;deploy('bug');
     globalThis.__rec={atk:[],skill:[]};
     const _lp=launchProjectile; launchProjectile=function(u,p){ if(u.id==='bug'&&u.animName==='attack')__rec.atk.push([frameIndex(SPRITES.bug.anims.attack.def,u.animT),u.animT]); return _lp(u,p)};
-    const _fx=SKILL_FX.bug.run; SKILL_FX.bug.run=function(u){ if(u.animName==='skill')__rec.skill.push(frameIndex(SPRITES.bug.anims.skill.def,u.animT)); return _fx(u)};`);
+    const _fx=SKILL_FX.bug.run; SKILL_FX.bug.run=function(u,o){ if(u.animName==='skill')__rec.skill.push(frameIndex(SPRITES.bug.anims.skill.def,u.animT)); return _fx(u,o)};`);
   tick(g, 20, 1 / 60);
   g.run(`triggerSkill(battle.units.find(u=>u.id==='bug'))`);
   tick(g, 2, 1 / 60);

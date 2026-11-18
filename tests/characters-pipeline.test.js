@@ -65,7 +65,7 @@ test('fps "fit" reproduces the values Bug Hunter ships with, and fixed fps is va
 });
 
 test('game constants are read from index.html (single source), and equal what Bug Hunter was tuned for', () => {
-  assert.deepEqual(C, { attackDuration: 0.5, impactDelay: 0.25, skillDuration: 0.72, skillImpact: 0.43, hurtDuration: 0.25, corpseLife: 0.7, muzzle: [18, -14] });
+  assert.deepEqual(C, { attackDuration: 0.5, impactDelay: 0.25, skillDuration: 0.72, skillImpact: 0.43, hurtDuration: 0.25, corpseLife: 0.7, muzzle: [18, -14], skillAnchor: [22, -30] });
 });
 
 // ---------------------------------------------------------------- equivalence
@@ -109,7 +109,8 @@ test('consistency: duplicated data (name, faculty, skill mode, fx kind and ops, 
   assert.match(with_((d) => { d.signature.fx.kind = 'laser'; }), /fx.kind "laser" differs/);
   assert.match(with_((d) => { d.signature.fx.ops[0].to = [300, -30]; }), /do not reproduce the game's SKILL_FX/);
   assert.match(with_((d) => { d.signature.fx.ops.pop(); }), /do not reproduce the game's SKILL_FX/);
-  assert.match(with_((d) => { d.anchors.muzzle = [20, -14]; }), /anchors.muzzle .* differs/);
+  assert.equal(with_((d) => { d.anchors.muzzle = [20, -14]; }), '', 'the muzzle anchor is read by the runtime now, so a different value is legitimate');
+  assert.match(with_((d) => { d.anchors.skill = [30, -30]; }), /do not reproduce the game's SKILL_FX/, 'moving the skill anchor moves the effect, so the described ops must change with it');
   assert.match(with_((d) => { d.timing.attackDuration = 0.6; }), /timing.attackDuration = 0.6 differs/);
   assert.match(with_((d) => { d.id = 'bugz'; }), /does not match the folder name/);
 });

@@ -144,6 +144,8 @@ function resolve(root, id, desc, C) {
     if (a.impact !== undefined && (state === 'attack' || state === 'skill')) (out.impact ||= {})[state] = a.impact;
     if (a.impact !== undefined && state !== 'attack' && state !== 'skill') problems.push(`${state}: impact is only used by attack and skill`);
   }
+  if (desc.anchors && Object.keys(desc.anchors).length) out.anchors = desc.anchors;
+  if (desc.fallback && Object.keys(desc.fallback).length) out.fallback = desc.fallback;
   return { out, sheets, feetRow, problems };
 }
 
@@ -197,8 +199,14 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
   if (only && !ids.length) { res.errors.push(`${only}: no character.json in ${path.join(root, only)}`); return res; }
   const C = probe.readConstants();
   const schema = SCHEMA(root);
-  let heroes = null;
-  if (game) heroes = probe.heroes();
+  let heroes = null, gm = null;
+  if (game) {
+    const gen = generate(root);
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'char-probe-'));
+    fs.writeFileSync(path.join(dir, 'manifest.js'), gen.problems.length ? 'void 0;\n' : gen.manifest);
+    gm = probe.makeGame(path.join(dir, 'manifest.js'));
+    heroes = probe.heroes(gm);
+  }
 
   const resolved = {};
   for (const id of ids) {
@@ -210,7 +218,6 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
     // --- consistency with the game (duplicated data must agree)
     const T = timingFor(desc, C);
     for (const k of Object.keys(desc.timing || {})) if (Math.abs(desc.timing[k] - C[k]) > 1e-9) E(id, `timing.${k} = ${desc.timing[k]} differs from the game's ${C[k]}; the runtime does not read per-character timing yet (Phase 2)`);
-    if (desc.anchors && desc.anchors.muzzle && (desc.anchors.muzzle[0] !== C.muzzle[0] || desc.anchors.muzzle[1] !== C.muzzle[1])) E(id, `anchors.muzzle ${JSON.stringify(desc.anchors.muzzle)} differs from the game's projectile origin ${JSON.stringify(C.muzzle)}; the runtime does not read anchors yet (Phase 2)`);
     if (game) {
       const hero = heroes.find((h) => h.id === id);
       if (!hero) E(id, 'no hero with this id in the game (hero data is not data-driven yet; add the gameplay entry first)');
@@ -218,9 +225,9 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
         if (hero.name !== desc.name) E(id, `name "${desc.name}" differs from the game's "${hero.name}"`);
         if (desc.faculty && hero.f !== desc.faculty) E(id, `faculty "${desc.faculty}" differs from the game's "${hero.f}"`);
         const sig = desc.signature || {};
-        const gm = probe.skillMode(id);
-        if (sig.skillMode && gm !== sig.skillMode) E(id, `signature.skillMode "${sig.skillMode}" differs from SKILL_MODE "${gm}" in the game`);
-        const gfx = probe.skillFx(id);
+        const gmode = probe.skillMode(gm, id);
+        if (sig.skillMode && gmode !== sig.skillMode) E(id, `signature.skillMode "${sig.skillMode}" differs from SKILL_MODE "${gmode}" in the game`);
+        const gfx = probe.skillFx(gm, id);
         if (sig.fx) {
           if (!gfx) W(id, 'signature.fx is defined but the game has no SKILL_FX entry; it is not used until Phase 4');
           else {
@@ -311,7 +318,8 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
     const grade = missing.length === 0 ? 'Gold' : desc.anims.walk && desc.anims.attack ? 'Silver' : 'Bronze';
     for (const s of missing) {
       const chain = (desc.fallback || {})[s];
-      I(id, `${s}: no sheet; ${chain ? `falls back along ${chain.join(' > ')}` : 'falls back to idle (no explicit chain)'}`);
+      if (chain) I(id, `${s}: no sheet; falls back along ${chain.join(' > ')}`);
+      else W(id, `${s}: no sheet and no explicit fallback; the game will silently fall back to idle - add fallback.${s} to character.json`);
     }
     res.characters[id] = { ...(res.characters[id] || {}), grade, states: Object.keys(desc.anims).length, colours: allColours.size };
   }
@@ -329,11 +337,7 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
   // --- smoke: the game draws every state of every checked character and the impact frame is what the config says
   if (smoke && game && !res.errors.length) {
     try {
-      const g = generate(root);
-      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'char-smoke-'));
-      fs.writeFileSync(path.join(dir, 'manifest.js'), g.manifest);
-      const { loadGame } = require(path.join(probe.ROOT, 'tests', 'harness'));
-      const gm = loadGame(1, { manifest: path.join(dir, 'manifest.js') });
+      gm.run(`ensureSprites(${JSON.stringify(ids)})`);
       for (const id of ids) {
         const { desc } = resolved[id];
         if (!gm.run(`spriteReady(${JSON.stringify(id)})`)) { E(id, 'smoke: the game does not consider the sprite ready'); continue; }

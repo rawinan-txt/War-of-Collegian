@@ -39,15 +39,16 @@ function seededMath(seed) {
   return m;
 }
 
-function makeImage(failSheets) {
+// holdImages: images stay "loading" until Image.flush() (to test that a battle never waits for assets)
+function makeImage(failSheets, hold) {
   const bad = failSheets ? new RegExp(failSheets) : null;
+  const pending = [];
+  const fire = (img) => { if (bad && bad.test(img._s)) { if (img.onerror) img.onerror(); } else if (img.onload) img.onload(); };
   return class Image {
     constructor() { Image.count = (Image.count || 0) + 1; }
-    set src(v) {
-      this._s = v;
-      if (bad && bad.test(v)) { if (this.onerror) this.onerror(); } else if (this.onload) this.onload();
-    }
+    set src(v) { this._s = v; Image.requested = (Image.requested || []).concat(v); if (hold) pending.push(this); else fire(this); }
     get src() { return this._s; }
+    static flush() { while (pending.length) fire(pending.shift()); }
   };
 }
 
@@ -60,7 +61,7 @@ function loadGame(seed, opts = {}) {
     document: { getElementById: (id) => (els[id] ||= stubEl()) },
     requestAnimationFrame: () => 0,
     performance: { now: () => 0 },
-    Image: makeImage(opts.failSheets),
+    Image: makeImage(opts.failSheets, opts.holdImages),
     console,
     Math: seed === undefined ? Math : seededMath(seed),
   };
@@ -71,6 +72,8 @@ function loadGame(seed, opts = {}) {
   const extFile = opts.manifest;
   if (extFile && fs.existsSync(extFile)) vm.runInContext(fs.readFileSync(extFile, 'utf8'), ctx);
   vm.runInContext(m[1], ctx);
+  // the game loads sprites lazily (ensureSprites); most tests want every configured sprite ready, lazy tests pass { lazy: true }
+  if (!opts.lazy) vm.runInContext("ensureSprites(Object.keys(typeof CHARACTER_ANIMS === \"undefined\" ? {} : CHARACTER_ANIMS))", ctx);
   return { ctx, run: (code) => vm.runInContext(code, ctx) };
 }
 

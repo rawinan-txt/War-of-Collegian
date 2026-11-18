@@ -110,6 +110,16 @@
       "impact": {
         "attack": 3,
         "skill": 7
+      },
+      "anchors": {
+        "muzzle": [
+          18,
+          -14
+        ],
+        "skill": [
+          22,
+          -30
+        ]
       }
     }
   };
@@ -117,6 +127,6 @@
   if (typeof CHARACTER_ANIMS === 'undefined') return;
   for (var id in EXTERNAL_SPRITES) {
     var old = CHARACTER_ANIMS[id] || {};
-    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), external: true });
+    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), anchors: EXTERNAL_SPRITES[id].anchors || old.anchors, fallback: EXTERNAL_SPRITES[id].fallback || old.fallback, external: true });
   }
 })();

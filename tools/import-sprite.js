@@ -49,7 +49,7 @@ function saveCfg(root, cfg) {
 function manifestText(cfg) {
   const ext = {};
   for (const [id, c] of Object.entries(cfg.characters)) {
-    ext[id] = { anims: {}, impact: c.impact || {} };
+    ext[id] = { anims: {}, impact: c.impact || {}, ...(c.anchors ? { anchors: c.anchors } : {}), ...(c.fallback ? { fallback: c.fallback } : {}) };
     for (const [a, d] of Object.entries(c.anims)) {
       ext[id].anims[a] = { sheet: `${WEB_BASE}/${d.file}`, frameWidth: d.frameWidth, frameHeight: d.frameHeight, frameCount: d.frameCount, frameRate: d.frameRate, repeat: d.repeat, feetRow: d.feetRow, scale: c.scale || 2, ...(d.shadow ? { shadow: d.shadow } : {}) };
     }
@@ -62,7 +62,7 @@ function manifestText(cfg) {
   if (typeof CHARACTER_ANIMS === 'undefined') return;
   for (var id in EXTERNAL_SPRITES) {
     var old = CHARACTER_ANIMS[id] || {};
-    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), external: true });
+    CHARACTER_ANIMS[id] = Object.assign({}, old, { anims: EXTERNAL_SPRITES[id].anims, impact: Object.assign({}, old.impact, EXTERNAL_SPRITES[id].impact), anchors: EXTERNAL_SPRITES[id].anchors || old.anchors, fallback: EXTERNAL_SPRITES[id].fallback || old.fallback, external: true });
   }
 })();
 `;

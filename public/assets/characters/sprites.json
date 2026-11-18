@@ -103,6 +103,16 @@
       "impact": {
         "attack": 3,
         "skill": 7
+      },
+      "anchors": {
+        "muzzle": [
+          18,
+          -14
+        ],
+        "skill": [
+          22,
+          -30
+        ]
       }
     }
   }
