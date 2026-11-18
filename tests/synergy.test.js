@@ -62,7 +62,7 @@ function firstHit(heroId, team) {
   g.run(`deploy('${heroId}')`);
   g.run("spawnEnemy('basic');const e=battle.enemies[0];e.hp=e.maxHp=100000;e.x=battle.units[0].x+100");
   tick(g, 0.3);
-  return g.run(`battle.damageDone['${heroId}']`);
+  return g.run(`CombatStats.getCharacterStats('${heroId}').totalDamage`);
 }
 
 test('Tech Alliance: ICT hero +10% damage, other heroes unchanged', () => {
