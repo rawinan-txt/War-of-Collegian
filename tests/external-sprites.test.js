@@ -21,10 +21,17 @@ function sheet(file, n, w, h, feet) {
   fs.writeFileSync(file, encodePng(n * w, h, rgba));
 }
 
-test('placeholder state: shipped manifest changes nothing', () => {
-  const g = loadGame(1);
-  assert.equal(g.run('CHARACTER_ANIMS.bug.external === undefined'), true);
-  assert.equal(g.run('spriteReady("bug")'), true);
+const SHIPPED = path.join(__dirname, '..', 'public', 'assets', 'characters', 'manifest.js');
+
+test('shipped manifest: only listed heroes are external, all others keep built-in sprites', () => {
+  const g = loadGame(1, { manifest: SHIPPED });
+  const ext = JSON.parse(g.run('JSON.stringify(Object.keys(EXTERNAL_SPRITES))'));
+  const all = JSON.parse(g.run('JSON.stringify(heroes.map(h=>h.id))'));
+  for (const id of all) {
+    assert.equal(g.run('spriteReady(' + JSON.stringify(id) + ')'), true, id + ' renders');
+    assert.equal(g.run('!!CHARACTER_ANIMS.' + id + '.external'), ext.includes(id), id + ' external flag');
+  }
+  assert.deepEqual(imp.check(path.dirname(SHIPPED)), []);
 });
 
 test('importer validates size, transparency and format', () => {

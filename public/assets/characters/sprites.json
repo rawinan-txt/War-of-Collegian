@@ -1,4 +1,19 @@
 {
   "version": 1,
-  "characters": {}
+  "characters": {
+    "bug": {
+      "scale": 1,
+      "anims": {
+        "idle": {
+          "file": "bug/idle.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 1,
+          "frameRate": 6,
+          "repeat": -1,
+          "feetRow": 89
+        }
+      }
+    }
+  }
 }

@@ -67,8 +67,9 @@ function loadGame(seed, opts = {}) {
   const ctx = vm.createContext(sandbox);
   const animsFile = path.join(__dirname, '..', 'assets', 'characters', 'animations.js');
   if (fs.existsSync(animsFile)) vm.runInContext(fs.readFileSync(animsFile, 'utf8'), ctx);
-  const extFile = opts.manifest || path.join(__dirname, '..', 'public', 'assets', 'characters', 'manifest.js');
-  if (fs.existsSync(extFile)) vm.runInContext(fs.readFileSync(extFile, 'utf8'), ctx);
+  // built-in sprite tests are hermetic: the shipped external manifest is only loaded when asked for (opts.manifest)
+  const extFile = opts.manifest;
+  if (extFile && fs.existsSync(extFile)) vm.runInContext(fs.readFileSync(extFile, 'utf8'), ctx);
   vm.runInContext(m[1], ctx);
   return { ctx, run: (code) => vm.runInContext(code, ctx) };
 }
