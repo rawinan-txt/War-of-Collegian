@@ -8,8 +8,18 @@
           "sheet": "public/assets/characters/bug/idle.png",
           "frameWidth": 96,
           "frameHeight": 96,
-          "frameCount": 1,
+          "frameCount": 4,
           "frameRate": 6,
+          "repeat": -1,
+          "feetRow": 89,
+          "scale": 1
+        },
+        "walk": {
+          "sheet": "public/assets/characters/bug/walk.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12,
           "repeat": -1,
           "feetRow": 89,
           "scale": 1

@@ -8,8 +8,17 @@
           "file": "bug/idle.png",
           "frameWidth": 96,
           "frameHeight": 96,
-          "frameCount": 1,
+          "frameCount": 4,
           "frameRate": 6,
+          "repeat": -1,
+          "feetRow": 89
+        },
+        "walk": {
+          "file": "bug/walk.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12,
           "repeat": -1,
           "feetRow": 89
         }
