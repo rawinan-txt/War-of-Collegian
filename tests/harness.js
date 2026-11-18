@@ -42,6 +42,7 @@ function seededMath(seed) {
 function makeImage(failSheets) {
   const bad = failSheets ? new RegExp(failSheets) : null;
   return class Image {
+    constructor() { Image.count = (Image.count || 0) + 1; }
     set src(v) {
       this._s = v;
       if (bad && bad.test(v)) { if (this.onerror) this.onerror(); } else if (this.onload) this.onload();
