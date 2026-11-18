@@ -19,17 +19,17 @@ test('meter starts at 0 and useUltimate with empty meter does nothing', () => {
   assert.equal(g.run('battle.enemies[0].stun'), 0);
 });
 
-test('meter gain: damage/20 to enemies, +8 per kill, damage/30 taken by allies, cap 100', () => {
+test('meter gain: damage/80 to enemies, +3 per kill, damage/60 taken by allies, cap 100', () => {
   const g = setup();
   addEnemy(g, 500, 1000);
   g.run("damage(battle.enemies[0],400,'bug')");
-  assert.equal(g.run('battle.ult'), 20);
+  assert.equal(g.run('battle.ult'), 5);
   addEnemy(g, 500, 100);
   g.run("battle.ult=0;damage(battle.enemies[1],100,'bug')");
-  assert.equal(g.run('battle.ult'), 5 + 8);
+  assert.equal(g.run('battle.ult'), 100 / 80 + 3);
   g.run("battle.ult=0;battle.at=1000;deploy('bug');damage(battle.units[0],300,'x')");
-  assert.equal(g.run('battle.ult'), 10);
-  g.run("battle.ult=95;damage(battle.enemies[0],400,'bug')");
+  assert.equal(g.run('battle.ult'), 5);
+  g.run("battle.ult=98;damage(battle.enemies[0],400,'bug')");
   assert.equal(g.run('battle.ult'), 100);
 });
 
@@ -93,4 +93,24 @@ test('restarting battle clears ultimate state', () => {
   assert.equal(g.run('battle.shuttle'), null);
   assert.equal(g.run('battle.rain'), 0);
   assert.equal(g.run('battle.ult'), 0);
+});
+
+test('Base Skill does not charge the ultimate meter', () => {
+  const g = setup();
+  addEnemy(g, 500, 1000);
+  g.run('baseSkill()');
+  assert.equal(g.run('battle.ult'), 0);
+});
+
+function allyHitsTaken(rain) {
+  const g = setup(rain ? 'rain' : 'wifi');
+  g.run("{const d=makeUnit(heroes.find(h=>h.id==='bug'),true,500);d.spd=0;d.atk=0;d.hp=d.maxHp=100000;battle.units.push(d)}");
+  addEnemy(g, 520);
+  if (rain) g.run('battle.ult=100;useUltimate()');
+  tick(g, 6);
+  return 100000 - g.run('battle.units[0].hp');
+}
+
+test('Salaya Rain also slows enemy attack speed', () => {
+  assert.ok(allyHitsTaken(true) < allyHitsTaken(false));
 });

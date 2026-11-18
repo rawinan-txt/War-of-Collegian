@@ -27,6 +27,7 @@ function simulate(teamIds, ult, seed = 1) {
     win: g.run('battle.enemyHp<=0'),
     time: g.run('battle.t'),
     baseHp: g.run('Math.max(0,battle.baseHp)'),
+    fires: g.run('battle.ultFires||0'),
   };
 }
 
