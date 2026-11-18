@@ -235,3 +235,38 @@ The architecture was approved with these requirements (they override anything ab
 6. **Hero data:** hero and skill data may leave `index.html` in the future, not now.
 7. **Unique skills:** every character needs a signature skill that is unique as a gameplay mechanic. The silhouette check only *warns* about similar animation; the 90% figure must not be used to decide automatically that skills are duplicates.
 8. **Priority:** start with Phase 1 only (schema, build and check pipeline).
+
+## 7. Phase 1 as built
+
+Files:
+
+| File | Purpose |
+|---|---|
+| `public/assets/characters/character.schema.json` | JSON Schema (draft-07) for `character.json`; editors pick it up through `"$schema"` |
+| `public/assets/characters/<id>/character.json` | the configuration of one character (Bug Hunter is the pilot) |
+| `tools/characters.js` | `build`, `check`, `list` |
+| `tools/lib/jsonschema.js` | small dependency-free JSON Schema validator used by the tool (the schema file is authoritative) |
+| `tools/lib/game-probe.js` | reads timing constants, the muzzle offset, hero table, `SKILL_MODE` and `SKILL_FX` from `index.html` so duplicated data can be cross-checked |
+| `tests/characters-pipeline.test.js` | schema, fit, equivalence, consistency, art checks, stale detection, add-by-config |
+
+Commands (run from the repository root):
+
+```
+node tools/characters.js check            # everything: schema, art, timing, consistency with the game, stale files, in-game smoke test
+node tools/characters.js check bug        # one character
+node tools/characters.js build            # validate, then write sprites.json + manifest.js
+node tools/characters.js list
+```
+
+How it fits the rest:
+
+- `sprites.json` and `manifest.js` are now **generated** for every character that has a `character.json`; the manifest text still comes from the single generator in `tools/import-sprite.js`. For Bug Hunter the generated files are byte-identical to the ones that were shipped before (checked by a test).
+- `check` fails when the generated files are older than the configuration, so they cannot drift.
+- `import-sprite.js add/remove` refuse to touch a character that has a `character.json` (one source of truth). Characters without one keep working with the old importer.
+- The game and the placeholder heroes are untouched: `index.html`, `assets/characters/**`, stats, skills and balance are not changed in this phase.
+
+Fields the runtime does not read yet (Phase 2 and later) are cross-checked against the game instead of being trusted: `anchors.muzzle` must equal the game's projectile origin, `timing` must equal the global constants, `signature.skillMode` must equal `SKILL_MODE`, `signature.fx.kind` must equal the `SKILL_FX` kind and `signature.fx.ops` must reproduce exactly the particle calls the game's `SKILL_FX` makes, and `name`/`faculty` must equal the hero table. Until the runtime reads them, a different value is an error rather than a silent no-op.
+
+Adding a character by configuration only (visuals): put the PNG strips and a `character.json` in `public/assets/characters/<id>/`, run `node tools/characters.js check <id>` then `build`. The hero itself must already exist in the game's hero table (hero data is not externalised yet). A test adds a synthetic character this way and checks that the unchanged game draws it with the right frame, scale and feet row.
+
+Warnings, not errors: palette budget, on-screen height versus the roster median (+-15%), identity drift (colours that do not appear in idle), one-pixel holes in idle/walk/hurt/stun, an undissolved last death frame, and animation similarity (what skill and attack add to the resting figure being almost the same). The similarity figure is a hint for reviewers and never decides anything.
