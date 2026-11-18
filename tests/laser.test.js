@@ -84,3 +84,59 @@ test('VFX config is cosmetic-only and unknown faculties get a default', () => {
   assert.match(v.color, /^#/);
   assert.equal(g.run("laserVfx('ICT').particleStyle"), 'digital');
 });
+
+// ---- Task 7: pixel laser VFX + reduced-effects toggle ----
+const ctxOf = (g) => g.run("document.getElementById('game').getContext('2d')");
+
+test('the laser renders for every faculty in both FX levels without throwing', () => {
+  for (const level of ['full', 'reduced']) {
+    for (const id of ids) {
+      const g = loadGame();
+      g.run(`setFxLevel('${level}');faculty='${id}';startBattle();screen='battle';spawnEnemy('basic');baseSkill()`);
+      tick(g, 0.2);
+      g.run('draw()');
+    }
+  }
+});
+
+test('the laser beam is drawn as hard-edged integer pixel blocks (no glow, no anti-aliasing)', () => {
+  const g = loadGame();
+  g.run("faculty='ICT';startBattle();spawnEnemy('basic');baseSkill();screen='battle'");
+  tick(g, 0.1);
+  const ctx = ctxOf(g);
+  ctx.__calls.length = 0;
+  ctx.shadowBlur = 0;
+  g.run('drawLaser(battle)');
+  const rects = ctx.__calls.filter((c) => c.k === 'fillRect');
+  assert.ok(rects.length >= 100, `only ${rects.length} blocks`);
+  for (const r of rects) for (const v of r.args) assert.ok(Number.isInteger(v), `non-integer rect arg ${v}`);
+  assert.ok(!ctx.shadowBlur, 'laser must not use shadow glow');
+  assert.ok(ctx.__calls.every((c) => c.k !== 'arc' && c.k !== 'ellipse'), 'no smooth shapes');
+});
+
+test('laser fire shakes the screen in full mode only; gameplay numbers are unchanged', () => {
+  const full = loadGame();
+  full.run("startBattle();spawnEnemy('basic');battle.enemies[0].hp=battle.enemies[0].maxHp=1000;baseSkill()");
+  assert.ok(full.run('battle.shake') > 0);
+  assert.equal(full.run('battle.enemies[0].hp'), 500);
+  const red = loadGame();
+  red.run("setFxLevel('reduced');startBattle();spawnEnemy('basic');battle.enemies[0].hp=battle.enemies[0].maxHp=1000;baseSkill()");
+  assert.equal(red.run('battle.shake'), 0);
+  assert.equal(red.run('battle.enemies[0].hp'), 500);
+  assert.equal(red.run('battle.baseCd'), 45);
+});
+
+test('the FX toggle flips full/reduced, updates its label and never touches battle state', () => {
+  const g = loadGame();
+  g.run("startBattle();deploy('bug')");
+  const snap = () => g.run('JSON.stringify([battle.t,battle.at,battle.units.length,battle.paused,battle.speed,battle.baseCd,battle.ult])');
+  const before = snap();
+  assert.equal(g.run('fxLevel'), 'full');
+  g.run('toggleFx()');
+  assert.equal(g.run('fxLevel'), 'reduced');
+  assert.match(g.run("document.getElementById('fxBtn').textContent"), /ลด/);
+  g.run('toggleFx()');
+  assert.equal(g.run('fxLevel'), 'full');
+  assert.match(g.run("document.getElementById('fxBtn').textContent"), /เต็ม/);
+  assert.equal(snap(), before);
+});
