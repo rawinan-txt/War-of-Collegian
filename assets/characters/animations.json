@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "frame": 64,
+  "characters": {
+    "bug": {
+      "name": "Bug Hunter",
+      "faculty": "ICT",
+      "folder": "ict/bug_hunter",
+      "skillMode": "onStack",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/ict/bug_hunter/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/ict/bug_hunter/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/ict/bug_hunter/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/ict/bug_hunter/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/ict/bug_hunter/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/ict/bug_hunter/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    }
+  }
+}
