@@ -52,7 +52,7 @@ function makeImage(failSheets) {
 }
 
 function loadGame(seed, opts = {}) {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = fs.readFileSync(opts.html || process.env.TEST_HTML || path.join(__dirname, '..', 'index.html'), 'utf8');
   const m = html.match(/<script>([\s\S]*)<\/script>/);
   if (!m) throw new Error('no inline script found');
   const els = {};

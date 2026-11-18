@@ -66,8 +66,9 @@ test('shipped manifest: bug has idle (4) and walk (6) with correct config; other
   assert.equal(cfg.anims.idle.frameCount, 4);
   assert.equal(cfg.anims.walk.frameCount, 6);
   assert.equal(cfg.anims.walk.feetRow, 89);
-  assert.equal(cfg.anims.hurt, undefined, 'hurt/death not created yet (fall back to idle)');
-  assert.equal(cfg.anims.death, undefined);
+  assert.equal(cfg.anims.hurt.frameCount, 3);
+  assert.equal(cfg.anims.death.frameCount, 6);
+  assert.equal(cfg.anims.death.frameWidth, 224);
 });
 
 // ---- artifact checks (round 2) ----
@@ -233,4 +234,77 @@ test('external attack/skill art does not change combat: damage, DMG/DEF/HEAL sta
     return g.run(`JSON.stringify({kills:battle.kills,base:Math.round(battle.baseHp),enemy:Math.round(battle.enemyHp),ult:Math.round(battle.ult),stats:CombatStats.getAllCharacterStats(),units:battle.units.map(u=>[u.id,Math.round(u.hp),u.alive])})`);
   };
   assert.equal(run({ manifest: SHIPPED }), run({}));
+});
+
+// ---- Hurt (3 frames) and Death (6 frames), round 4 ----
+const HW = 224;
+const hurtImg = () => dec('public/assets/characters/bug/hurt.png');
+const deathImg = () => dec('public/assets/characters/bug/death.png');
+const opaqueW = (img, fw, f, x, y) => x >= 0 && y >= 0 && x < fw && y < N && img.rgba[(y * img.w + f * fw + x) * 4 + 3] > 0;
+const countW = (img, fw, f) => { let n = 0; for (let y = 0; y < N; y++) for (let x = 0; x < fw; x++) if (opaqueW(img, fw, f, x, y)) n++; return n; };
+const boundsW = (img, fw, f) => { let x0 = fw, x1 = -1, y0 = N, y1 = -1; for (let y = 0; y < N; y++) for (let x = 0; x < fw; x++) if (opaqueW(img, fw, f, x, y)) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } return { x0, x1, y0, y1 }; };
+
+test('hurt sheet: 3 frames of 96x96, hard alpha, distinct, glasses and laptop stay, no new body holes', () => {
+  const img = hurtImg();
+  assert.equal(img.w, N * 3); assert.equal(img.h, N);
+  for (let i = 3; i < img.rgba.length; i += 4) assert.ok(img.rgba[i] === 0 || img.rgba[i] === 255);
+  assert.equal(new Set([0, 1, 2].map((f) => frame(img, f).join('|'))).size, 3);
+  const src = (x, y) => (v3.rgba[(y * N + x) * 4 + 3] ? v3.rgba.slice((y * N + x) * 4, (y * N + x) * 4 + 3).join() : '-');
+  const base = holesIn(v3, 0, 0, 60);
+  for (let f = 0; f < 3; f++) {
+    // glasses frame rows (36 and 43) are a rigid copy of v3, whatever the recoil
+    let best = 0;
+    for (let dx = -4; dx <= 4; dx++) for (let dy = -2; dy <= 2; dy++) {
+      let same = 0, total = 0;
+      for (const y of [36, 43]) for (let x = 43; x <= 48; x++) { total++; const k = ((y + dy) * img.w + f * N + x + dx) * 4; if (src(x, y) === (img.rgba[k + 3] ? img.rgba.slice(k, k + 3).join() : '-')) same++; }
+      best = Math.max(best, same / total);
+    }
+    assert.equal(best, 1, `hurt frame ${f} glasses`);
+    assert.ok(holesIn(img, f, 0, 60) <= base + 1, `hurt frame ${f} body holes ${holesIn(img, f, 0, 60)} vs ${base}`);
+    let laptop = 0;
+    for (let y = 40; y < 70; y++) for (let x = 56; x < 84; x++) if (opaque(img, f, x, y)) laptop++;
+    assert.ok(laptop > 120, `hurt frame ${f}: laptop still in the picture (${laptop})`);
+  }
+  assert.ok(diff(frame(img, 0), frame(img, 2)) > 150, 'a visible recoil');
+});
+
+test('death sheet: 6 frames of 224x96, hard alpha, falls backwards to lying, dissolves, never touches the frame edge', () => {
+  const img = deathImg();
+  assert.equal(img.w, HW * 6); assert.equal(img.h, N);
+  for (let i = 3; i < img.rgba.length; i += 4) assert.ok(img.rgba[i] === 0 || img.rgba[i] === 255);
+  const frames = [0, 1, 2, 3, 4, 5].map((f) => Array.from({ length: N * HW }, (_, i) => { const k = (Math.floor(i / HW) * img.w + f * HW + (i % HW)) * 4; return img.rgba.slice(k, k + 4).join(); }));
+  assert.equal(new Set(frames.map((f) => f.join('|'))).size, 6);
+  const b = [0, 1, 2, 3, 4, 5].map((f) => boundsW(img, HW, f));
+  for (let f = 0; f < 6; f++) {
+    for (let y = 0; y < N; y++) assert.ok(!opaqueW(img, HW, f, 0, y) && !opaqueW(img, HW, f, HW - 1, y), `frame ${f} touches a side edge`);
+    for (let x = 0; x < HW; x++) assert.ok(!opaqueW(img, HW, f, x, 0) && !opaqueW(img, HW, f, x, N - 1), `frame ${f} touches top/bottom`);
+  }
+  const h = (f) => b[f].y1 - b[f].y0 + 1, w = (f) => b[f].x1 - b[f].x0 + 1;
+  assert.ok(h(0) > 70 && h(0) > w(0), 'frame 0 still standing');
+  assert.ok(w(3) > h(3) * 1.4, `frame 3 is lying down (${w(3)}x${h(3)})`);
+  assert.ok(h(1) < h(0) && h(2) < h(1) + 10 && w(2) > w(0), 'it tilts progressively');
+  assert.ok(b[3].y1 >= 86 && b[3].y1 <= 89, 'lying figure rests on the ground line');
+  const n = [0, 1, 2, 3, 4, 5].map((f) => countW(img, HW, f));
+  assert.ok(n[4] < n[3] * 0.8 && n[5] < n[3] * 0.25, `dissolve ${n}`);
+  assert.ok(n[5] > 0, 'last frame is not blank (the corpse is removed by the game, not by an empty frame)');
+});
+
+test('death timing: 6 frames fit the corpse lifetime (0.7 s) and the last frame is shown at the end', () => {
+  const g = loadGame(5, { manifest: SHIPPED });
+  const idx = (t) => g.run(`frameIndex(SPRITES.bug.anims.death.def, ${t})`);
+  assert.equal(idx(0), 0); assert.equal(idx(0.69), 5); assert.equal(idx(0.35), 2);
+  assert.equal(g.run('SPRITES.bug.anims.hurt.def.frameCount'), 3);
+  assert.equal(g.run('frameIndex(SPRITES.bug.anims.hurt.def, .249)'), 2, 'hurt lasts HURT_DUR 0.25 s over its 3 frames');
+});
+
+test('a Bug Hunter that dies leaves the death corpse (not an idle image) and it disappears after 0.7 s', () => {
+  const g = loadGame(5, { manifest: SHIPPED });
+  g.run(`team=['bug'];startBattle();battle.at=1000;deploy('bug')`);
+  g.run('const B=battle.units[0];B.hp=1;damage(B,50,"x")');
+  assert.equal(g.run('battle.corpses.length'), 1);
+  g.run('ctx.__calls.length=0;drawSpriteFrame("bug","death",0.4,300,200,true)');
+  const call = g.run('ctx.__calls').find((c) => c.k === 'drawImage').args; // img, sx, sy, sw, sh, dx, dy, dw, dh
+  assert.deepEqual([call[1], call[3], call[4], call[7], call[8]], [3 * HW * 0 + 3 * HW, HW, 96, 224, 96].map((v, i) => (i === 0 ? 3 * HW : v)), 'frame 3 of the death sheet at 0.4 s');
+  for (let i = 0; i < 80; i++) g.run('update(0.01)');
+  assert.equal(g.run('battle.corpses.length'), 0, 'corpse removed after 0.7 s');
 });

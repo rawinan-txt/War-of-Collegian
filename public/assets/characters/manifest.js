@@ -43,6 +43,68 @@
           "repeat": 0,
           "feetRow": 89,
           "scale": 1
+        },
+        "hurt": {
+          "sheet": "public/assets/characters/bug/hurt.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0,
+          "feetRow": 89,
+          "scale": 1
+        },
+        "death": {
+          "sheet": "public/assets/characters/bug/death.png",
+          "frameWidth": 224,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 8.5,
+          "repeat": 0,
+          "feetRow": 89,
+          "scale": 1,
+          "shadow": [
+            [
+              0,
+              19,
+              1
+            ],
+            [
+              -7,
+              14,
+              1
+            ],
+            [
+              -14,
+              14,
+              1
+            ],
+            [
+              -50,
+              43,
+              1
+            ],
+            [
+              -50,
+              42,
+              0.68
+            ],
+            [
+              -50,
+              41,
+              0.15
+            ]
+          ]
+        },
+        "stun": {
+          "sheet": "public/assets/characters/bug/stun.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 4,
+          "frameRate": 8,
+          "repeat": -1,
+          "feetRow": 89,
+          "scale": 1
         }
       },
       "impact": {

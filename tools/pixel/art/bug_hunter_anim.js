@@ -42,7 +42,7 @@ function fillSeam(cv, rect, dx, dy, bob) {
 }
 
 function makeRenderer(at) {
-  return function render({ bob = 0, bodyDx = 0, legSwing = 0, legLift = 0, legPhase = 0, laptopDx = 0, laptopDy = 0, tuftDx = 0, walking = false, overlays = [], laptopSrc = at }) {
+  return function render({ bob = 0, bodyDx = 0, legSwing = 0, legLift = 0, legPhase = 0, laptopDx = 0, laptopDy = 0, tuftDx = 0, walking = false, overlays = [], waistShear = false, laptopSrc = at }) {
     const cv = blank();
     // legs: rigid thigh / shin / foot blocks; foot moves the full stride, shin and thigh follow partially
     if (walking) {
@@ -58,8 +58,9 @@ function makeRenderer(at) {
     } else {
       for (let y = 72; y <= FEET; y++) for (let x = 0; x < N; x++) put(cv, x, y, at(x, y));
     }
-    // upper body (laptop+hand and tuft are separate parts)
-    for (let y = 0; y <= UPPER_MAX; y++) for (let x = 0; x < N; x++) if (!inRect(LAPTOP, x, y) && !inRect(TUFT, x, y)) put(cv, x + bodyDx, y + bob, at(x, y));
+    // upper body (laptop+hand and tuft are separate parts); waistShear bends the lower torso so a big lean does not double the hips
+    const rowDx = (y) => (waistShear && y > 66 ? Math.round(bodyDx * (UPPER_MAX - y) / (UPPER_MAX - 66)) : bodyDx);
+    for (let y = 0; y <= UPPER_MAX; y++) for (let x = 0; x < N; x++) if (!inRect(LAPTOP, x, y) && !inRect(TUFT, x, y)) put(cv, x + rowDx(y), y + bob, at(x, y));
     // tuft sways more toward the tip
     for (let y = TUFT.y0; y <= TUFT.y1; y++) {
       const dx = Math.round(tuftDx * (1 - (y - TUFT.y0) / (TUFT.y1 - TUFT.y0 + 1)));
@@ -69,7 +70,7 @@ function makeRenderer(at) {
     for (let y = LAPTOP.y0; y <= LAPTOP.y1; y++) for (let x = LAPTOP.x0; x <= LAPTOP.x1; x++) put(cv, x + laptopDx + bodyDx, y + laptopDy + bob, laptopSrc(x, y));
     fillSeam(cv, { x0: LAPTOP.x0 + bodyDx, x1: LAPTOP.x1 + bodyDx, y0: LAPTOP.y0, y1: LAPTOP.y1 }, laptopDx, laptopDy, bob);
     // overlays: [{x, y, rows: ['..AB', ...], colours: {A: [r,g,b,a]}}] or [{x, y, pixels: [[x,y,[r,g,b,a]], ...]}]
-    for (const o of overlays) for (const [px, py, c] of o.pixels) put(cv, o.x + px, o.y + py + bob, c);
+    for (const o of overlays) for (const [px, py, c] of o.pixels) put(cv, o.x + px + bodyDx, o.y + py + bob, c);
     return cv;
   };
 }

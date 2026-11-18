@@ -25,18 +25,18 @@ function lzw(indices, minCode) {
   return out;
 }
 
-function writeGif({ frames, size, delayCs, palette }) {
+function writeGif({ frames, size, height = size, delayCs, palette }) {
   let minCode = 2; while ((1 << minCode) < palette.length) minCode++;
   const tableSize = 1 << minCode;
   const b = [];
   const w16 = (v) => b.push(v & 255, v >> 8);
   b.push(...Buffer.from('GIF89a'));
-  w16(size); w16(size); b.push(0x80 | 0x70 | (minCode - 1), 0, 0);
+  w16(size); w16(height); b.push(0x80 | 0x70 | (minCode - 1), 0, 0);
   for (let i = 0; i < tableSize; i++) b.push(...(palette[i] || [0, 0, 0]));
   b.push(0x21, 0xff, 11, ...Buffer.from('NETSCAPE2.0'), 3, 1, 0, 0, 0);
   for (const f of frames) {
     b.push(0x21, 0xf9, 4, 0, delayCs & 255, delayCs >> 8, 0, 0);
-    b.push(0x2c); w16(0); w16(0); w16(size); w16(size); b.push(0);
+    b.push(0x2c); w16(0); w16(0); w16(size); w16(height); b.push(0);
     b.push(minCode);
     const data = lzw(f, minCode);
     for (let i = 0; i < data.length; i += 255) { const c = data.slice(i, i + 255); b.push(c.length, ...c); }
@@ -49,21 +49,21 @@ function writeGif({ frames, size, delayCs, palette }) {
 if (require.main === module) {
   const [, , file, fw, scale, fps, out, bgHex = '566080'] = process.argv;
   const img = decodePng(fs.readFileSync(file));
-  const FW = +fw, S = +scale, n = img.w / FW, size = FW * S;
+  const FW = +fw, S = +scale, n = img.w / FW, size = FW * S, height = img.h * S;
   const bg = [0, 2, 4].map((i) => parseInt(bgHex.slice(i, i + 2), 16));
   const palette = [bg], index = new Map([[bg.join(), 0]]);
   const idx = (c) => { const k = c.join(); if (!index.has(k)) { index.set(k, palette.length); palette.push(c); } return index.get(k); };
   const frames = [];
   for (let f = 0; f < n; f++) {
-    const px = new Uint8Array(size * size);
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const px = new Uint8Array(size * height);
+    for (let y = 0; y < height; y++) for (let x = 0; x < size; x++) {
       const k = ((((y / S) | 0) * img.w) + f * FW + ((x / S) | 0)) * 4;
       px[y * size + x] = img.rgba[k + 3] ? idx([img.rgba[k], img.rgba[k + 1], img.rgba[k + 2]]) : 0;
     }
     frames.push(px);
   }
   if (palette.length > 256) throw new Error('more than 256 colours');
-  fs.writeFileSync(out, writeGif({ frames, size, delayCs: Math.round(100 / +fps), palette }));
-  console.log(`wrote ${out}: ${n} frames, ${size}x${size}, ${palette.length} colours`);
+  fs.writeFileSync(out, writeGif({ frames, size, height, delayCs: Math.round(100 / +fps), palette }));
+  console.log(`wrote ${out}: ${n} frames, ${size}x${height}, ${palette.length} colours`);
 }
 module.exports = { writeGif };
