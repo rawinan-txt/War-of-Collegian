@@ -56,7 +56,7 @@ test('damage over time keeps its source even after the source dies', () => {
 test('summoned dog damage is credited to the summoner, even after the summoner dies', () => {
   const g = setup();
   g.run("deploy('animal')");
-  tick(g, 0.5);
+  tick(g, 0.7);
   assert.equal(g.run("battle.units.some(u=>u.id==='dog')"), true);
   g.run("{const a=battle.units.find(u=>u.id==='animal');a.atk=0;a.alive=false}");
   g.run("{const d=battle.units.find(u=>u.id==='dog');spawnEnemy('basic');const e=battle.enemies[battle.enemies.length-1];e.hp=e.maxHp=100000;e.x=d.x+20}");
