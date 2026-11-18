@@ -103,7 +103,7 @@ test('corpses do not count toward the 35-unit cap, and startBattle clears them',
 
 test('without a sheet the old canvas drawing is used and draw() does not throw', () => {
   const g = loadGame(undefined, { failSheets: 'bug_hunter' });
-  g.run("startBattle();battle.at=5000;deploy('bug');deploy('mecha');screen='battle'");
+  g.run("startBattle();battle.at=5000;deploy('bug');screen='battle'");
   tick(g, 0.2);
   g.run('draw()');
   const calls = g.run("document.getElementById('game').getContext('2d').__calls");

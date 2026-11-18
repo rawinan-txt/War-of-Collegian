@@ -14,8 +14,8 @@ function generateCharacter(def) {
   for (const anim of Object.keys(COUNTS)) {
     anims[anim] = [];
     for (let f = 0; f < COUNTS[anim]; f++) {
-      const buf = renderFrame(def, { ...poseFor(def, anim, f), f, anim });
-      if (anim === 'skill' && def.skill.fx) def.skill.fx(buf, f);
+      const buf = def.custom ? def.custom(anim, f) : renderFrame(def, { ...poseFor(def, anim, f), f, anim });
+      if (anim === 'skill' && def.skill && def.skill.fx) def.skill.fx(buf, f);
       if (anim === 'attack' && def.attackFx) def.attackFx(buf, f);
       if (anim === 'death' && f === 5) sparkles(buf);
       anims[anim].push(buf);

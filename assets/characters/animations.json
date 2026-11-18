@@ -61,6 +61,726 @@
           "repeat": 0
         }
       }
+    },
+    "mecha": {
+      "name": "Mecha Freshy",
+      "faculty": "EG",
+      "folder": "engineering/mecha_freshy",
+      "skillMode": "onDeploy",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/engineering/mecha_freshy/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/engineering/mecha_freshy/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/engineering/mecha_freshy/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/engineering/mecha_freshy/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/engineering/mecha_freshy/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/engineering/mecha_freshy/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "lab": {
+      "name": "Lab Maniac",
+      "faculty": "SC",
+      "folder": "science/lab_maniac",
+      "skillMode": "every3",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/science/lab_maniac/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/science/lab_maniac/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/science/lab_maniac/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/science/lab_maniac/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/science/lab_maniac/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/science/lab_maniac/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "night": {
+      "name": "Night Shifter",
+      "faculty": "SI",
+      "folder": "medicine/night_shifter",
+      "skillMode": "onPulse",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/medicine/night_shifter/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/medicine/night_shifter/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/medicine/night_shifter/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/medicine/night_shifter/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/medicine/night_shifter/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/medicine/night_shifter/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "chem": {
+      "name": "Chemist Pro",
+      "faculty": "PY",
+      "folder": "pharmacy/chemist_pro",
+      "skillMode": "every3",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/pharmacy/chemist_pro/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "animal": {
+      "name": "Animal Keeper",
+      "faculty": "VS",
+      "folder": "veterinary/animal_keeper",
+      "skillMode": "onPulse",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/veterinary/animal_keeper/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/veterinary/animal_keeper/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/veterinary/animal_keeper/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/veterinary/animal_keeper/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/veterinary/animal_keeper/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/veterinary/animal_keeper/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "dental": {
+      "name": "Dental Blitz",
+      "faculty": "DT",
+      "folder": "dentistry/dental_blitz",
+      "skillMode": "every3",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/dentistry/dental_blitz/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/dentistry/dental_blitz/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/dentistry/dental_blitz/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/dentistry/dental_blitz/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/dentistry/dental_blitz/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/dentistry/dental_blitz/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "music": {
+      "name": "Sound Wave",
+      "faculty": "MUSIC",
+      "folder": "music/sound_wave",
+      "skillMode": "every3",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/music/sound_wave/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/music/sound_wave/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/music/sound_wave/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/music/sound_wave/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/music/sound_wave/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/music/sound_wave/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "runner": {
+      "name": "Ace Runner",
+      "faculty": "SC2",
+      "folder": "sports/ace_runner",
+      "skillMode": "onDeploy",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/sports/ace_runner/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/sports/ace_runner/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/sports/ace_runner/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/sports/ace_runner/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/sports/ace_runner/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/sports/ace_runner/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "global": {
+      "name": "Global Exchange",
+      "faculty": "MUIC",
+      "folder": "muic/global_exchange",
+      "skillMode": "onDeploy",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/muic/global_exchange/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/muic/global_exchange/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/muic/global_exchange/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/muic/global_exchange/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/muic/global_exchange/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/muic/global_exchange/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "public": {
+      "name": "Health Guardian",
+      "faculty": "PH",
+      "folder": "public_health/health_guardian",
+      "skillMode": "onPulse",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/public_health/health_guardian/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/public_health/health_guardian/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/public_health/health_guardian/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/public_health/health_guardian/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/public_health/health_guardian/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/public_health/health_guardian/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "nurse": {
+      "name": "Angel of Care",
+      "faculty": "NS",
+      "folder": "nursing/angel_of_care",
+      "skillMode": "onPulse",
+      "impact": {
+        "attack": 3,
+        "skill": 6
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/nursing/angel_of_care/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/nursing/angel_of_care/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/nursing/angel_of_care/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/nursing/angel_of_care/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/nursing/angel_of_care/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/nursing/angel_of_care/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
+    },
+    "dog": {
+      "name": "Companion Dog",
+      "faculty": "VS",
+      "folder": "veterinary/dog",
+      "skillMode": "none",
+      "impact": {
+        "attack": 3,
+        "skill": 5
+      },
+      "anims": {
+        "idle": {
+          "sheet": "assets/characters/veterinary/dog/idle.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1
+        },
+        "walk": {
+          "sheet": "assets/characters/veterinary/dog/walk.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "attack": {
+          "sheet": "assets/characters/veterinary/dog/attack.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "skill": {
+          "sheet": "assets/characters/veterinary/dog/skill.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 10,
+          "frameRate": 14,
+          "repeat": 0
+        },
+        "hurt": {
+          "sheet": "assets/characters/veterinary/dog/hurt.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0
+        },
+        "death": {
+          "sheet": "assets/characters/veterinary/dog/death.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frameCount": 6,
+          "frameRate": 10,
+          "repeat": 0
+        }
+      }
     }
   }
 }

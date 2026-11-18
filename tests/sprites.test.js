@@ -133,3 +133,76 @@ test('Bug Hunter config carries combat metadata', () => {
   assert.equal(cfg.bug.impact.attack, 3);
   assert.equal(typeof cfg.bug.impact.skill, 'number');
 });
+
+// ---- Task 5: full roster ----
+const HERO_IDS = ['bug', 'mecha', 'lab', 'night', 'chem', 'animal', 'dental', 'music', 'runner', 'global', 'public', 'nurse'];
+const FOLDERS = {
+  bug: 'ict/bug_hunter', mecha: 'engineering/mecha_freshy', lab: 'science/lab_maniac', night: 'medicine/night_shifter', chem: 'pharmacy/chemist_pro',
+  animal: 'veterinary/animal_keeper', dental: 'dentistry/dental_blitz', music: 'music/sound_wave', runner: 'sports/ace_runner', global: 'muic/global_exchange',
+  public: 'public_health/health_guardian', nurse: 'nursing/angel_of_care', dog: 'veterinary/dog',
+};
+
+test('colour parser accepts #rgb shorthand', () => {
+  const { rgb } = require('../tools/pixel/buf');
+  assert.deepEqual(rgb('#fff'), [255, 255, 255]);
+  assert.deepEqual(rgb('#1a2'), [17, 170, 34]);
+  assert.deepEqual(rgb('#102030'), [16, 32, 48]);
+});
+
+test('all 12 heroes and the dog have sprite sheets in the agreed folders', () => {
+  for (const id of [...HERO_IDS, 'dog']) {
+    assert.ok(cfg[id], `${id} missing from config`);
+    assert.equal(cfg[id].folder, FOLDERS[id], id);
+  }
+  assert.equal(Object.keys(cfg).length, 13);
+});
+
+test('config matches the game roster: every hero id has a sprite config and the same skillMode', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const ids = [...src.matchAll(/\{id:'(\w+)',name:'[^']+',f:'/g)].map((m) => m[1]);
+  assert.deepEqual(ids.sort(), [...HERO_IDS].sort());
+  for (const id of ids) {
+    const m = src.match(new RegExp(`${id}:'(onDeploy|onPulse|onStack|every3)'`));
+    assert.ok(m, `SKILL_MODE for ${id}`);
+    assert.equal(cfg[id].skillMode, m[1], id);
+  }
+});
+
+function silhouette(png, i) {
+  const f = frameOf(png, i), bits = [];
+  for (let k = 3; k < f.length; k += 4) bits.push(f[k] ? 1 : 0);
+  return bits;
+}
+
+test('every hero has a distinct silhouette (idle) and a distinct skill sheet', () => {
+  const sil = {}, skills = {};
+  for (const id of HERO_IDS) {
+    sil[id] = silhouette(sheet(cfg[id], 'idle'), 0);
+    skills[id] = fs.readFileSync(path.join(ROOT, cfg[id].anims.skill.sheet)).toString('base64');
+  }
+  for (let a = 0; a < HERO_IDS.length; a++) for (let b = a + 1; b < HERO_IDS.length; b++) {
+    const A = HERO_IDS[a], B = HERO_IDS[b];
+    let diff = 0;
+    for (let k = 0; k < sil[A].length; k++) if (sil[A][k] !== sil[B][k]) diff++;
+    assert.ok(diff >= 60, `${A} vs ${B} silhouettes differ by only ${diff} px`);
+    assert.notEqual(skills[A], skills[B], `${A} and ${B} share a skill sheet`);
+  }
+});
+
+test('regenerating every character reproduces the committed sheets (assets are up to date)', () => {
+  for (const id of Object.keys(cfg)) {
+    const fresh = generateCharacter(CHARACTERS[id]);
+    for (const anim of ANIMS) {
+      const png = decodePng(fs.readFileSync(path.join(ROOT, cfg[id].anims[anim].sheet)));
+      for (let i = 0; i < COUNTS[anim]; i++) assert.ok(Buffer.from(frameOf(png, i)).equals(Buffer.from(fresh.anims[anim][i].data)), `${id}.${anim}[${i}] stale`);
+    }
+  }
+});
+
+test('hero skill animations differ from their own attack animations', () => {
+  for (const id of HERO_IDS) {
+    const a = fs.readFileSync(path.join(ROOT, cfg[id].anims.attack.sheet)).toString('base64');
+    const s = fs.readFileSync(path.join(ROOT, cfg[id].anims.skill.sheet)).toString('base64');
+    assert.notEqual(a, s, id);
+  }
+});

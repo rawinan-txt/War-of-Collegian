@@ -2,8 +2,7 @@
 const { CX } = require('./rig');
 const { glyph } = require('./buf');
 
-const h = (x, y) => [CX + x, y];
-const STUDENT = { skin: '#ffd7b5', skinShade: '#eab08a', shirt: '#f4f7ff', shirtShade: '#c5cfe6', eye: '#1a2342' };
+const { h, STUDENT, bmp, HEART, NOTE, CROSS, TOOTH, cog, dome, seq } = require('./helpers');
 
 const bug = {
   id: 'bug', name: 'bug_hunter', title: 'Bug Hunter', faculty: 'ICT', folder: 'ict/bug_hunter',
@@ -76,6 +75,6 @@ const bug = {
   },
 };
 
-const CHARACTERS = { bug };
+const CHARACTERS = { bug, ...require('./roster') };
 
 module.exports = { CHARACTERS, STUDENT };

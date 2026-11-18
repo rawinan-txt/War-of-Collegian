@@ -4,7 +4,10 @@ const cache = {};
 
 function rgb(c) {
   if (typeof c !== 'string') return c;
-  if (!cache[c]) cache[c] = [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+  if (!cache[c]) {
+    const hex = c.length === 4 ? '#' + [...c.slice(1)].map((d) => d + d).join('') : c; // accept #rgb shorthand
+    cache[c] = [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  }
   return cache[c];
 }
 
@@ -88,6 +91,12 @@ class PixBuf {
   }
   blit(src) {
     for (let i = 0; i < this.data.length; i += 4) if (src.data[i + 3]) {
+      this.data[i] = src.data[i]; this.data[i + 1] = src.data[i + 1]; this.data[i + 2] = src.data[i + 2]; this.data[i + 3] = 255;
+    }
+  }
+  // draw src only where this buffer is still transparent (afterimages behind the sprite)
+  under(src) {
+    for (let i = 0; i < this.data.length; i += 4) if (src.data[i + 3] && !this.data[i + 3]) {
       this.data[i] = src.data[i]; this.data[i + 1] = src.data[i + 1]; this.data[i + 2] = src.data[i + 2]; this.data[i + 3] = 255;
     }
   }
