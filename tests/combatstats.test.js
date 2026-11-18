@@ -100,3 +100,89 @@ test('getAllCharacterStats lists every team hero with name and faculty', () => {
   assert.equal(all[0].characterName, 'Bug Hunter');
   assert.equal(all[0].facultyId, 'ICT');
 });
+
+// ---- Task 2: DEF (shield absorption) and effective HEAL ----
+const allyAt = (g, id, x, extra = '') =>
+  g.run(`{const d=makeUnit(heroes.find(h=>h.id==='${id}'),true,${x});d.spd=0;${extra};battle.units.push(d)}`);
+const TEAM_SH = ['mecha', 'public', 'bug', 'night', 'nurse', 'animal'];
+
+test('shield absorption is DEF for the provider; only the overflow is HP damage', () => {
+  const g = setup(TEAM_SH);
+  allyAt(g, 'bug', 300, "d.shield=200;d.shieldSrc={mecha:200}");
+  const hp0 = g.run('battle.units[0].hp');
+  g.run('damage(battle.units[0],300,null)');
+  assert.equal(stat(g, 'mecha', 'totalDefense'), 200);
+  assert.equal(g.run('battle.units[0].hp'), hp0 - 100);
+  assert.equal(g.run('battle.units[0].shield'), 0);
+});
+
+test("a tank's own Emergency Barrier credits itself", () => {
+  const g = setup(TEAM_SH);
+  g.run("deploy('mecha')");
+  g.run('damage(battle.units[0],500,null)');
+  assert.equal(stat(g, 'mecha', 'totalDefense'), 160);
+});
+
+test("Health Guardian's zone shield on an ally credits Health Guardian", () => {
+  const g = setup(TEAM_SH);
+  g.run("deploy('public');deploy('bug')");
+  tick(g, 3);
+  const shield = g.run("battle.units.find(u=>u.id==='bug').shield");
+  assert.ok(shield > 10, `shield ${shield}`);
+  g.run("damage(battle.units.find(u=>u.id==='bug'),10,null)");
+  near(stat(g, 'public', 'totalDefense'), 10, 1e-9);
+  assert.equal(stat(g, 'bug', 'totalDefense'), 0);
+  assert.equal(stat(g, 'mecha', 'totalDefense'), 0);
+});
+
+test('two providers: DEF split by what each absorbed, total equals shield lost', () => {
+  const g = setup(TEAM_SH);
+  allyAt(g, 'bug', 300, "d.shield=100;d.shieldSrc={mecha:60,public:40}");
+  g.run('damage(battle.units[0],80,null)');
+  near(stat(g, 'mecha', 'totalDefense'), 60, 1e-9);
+  near(stat(g, 'public', 'totalDefense'), 20, 1e-9);
+  near(g.run('battle.units[0].shield'), 20, 1e-9);
+});
+
+test('a shield that is never hit gives no DEF; zero damage records nothing', () => {
+  const g = setup(TEAM_SH);
+  g.run("deploy('mecha')");
+  tick(g, 2);
+  g.run('damage(battle.units[0],0,null)');
+  assert.equal(stat(g, 'mecha', 'totalDefense'), 0);
+});
+
+test('healing at full HP records nothing', () => {
+  const g = setup(TEAM_SH);
+  g.run("deploy('night')");
+  tick(g, 2);
+  assert.equal(stat(g, 'night', 'totalHealing'), 0);
+});
+
+test('overheal is excluded: 185 heal on 100 missing HP records 100', () => {
+  const g = setup(TEAM_SH);
+  g.run("deploy('night')");
+  allyAt(g, 'mecha', g.run('battle.units[0].x+10'), 'd.hp=d.maxHp-100');
+  tick(g, 0.3);
+  assert.equal(stat(g, 'night', 'totalHealing'), 100);
+  assert.equal(g.run('battle.units[1].hp'), g.run('battle.units[1].maxHp'));
+});
+
+test('mass heal credits each target its effective amount', () => {
+  const g = setup(['nurse', 'bug', 'lab', 'mecha', 'animal', 'music']); // no Healthcare Network
+  g.run("deploy('nurse')");
+  const x = g.run('battle.units[0].x');
+  allyAt(g, 'mecha', x + 10, 'd.hp=d.maxHp-50');
+  allyAt(g, 'mecha', x + 20, 'd.hp=d.maxHp-150');
+  allyAt(g, 'mecha', x + 30, 'd.hp=d.maxHp-400');
+  tick(g, 0.3);
+  assert.equal(stat(g, 'nurse', 'totalHealing'), 50 + 150 + 150);
+});
+
+test('Healthcare Network multiplier applies before the overheal cap', () => {
+  const g = setup(['night', 'chem', 'nurse', 'public', 'bug', 'lab']);
+  g.run("deploy('night')");
+  allyAt(g, 'mecha', g.run('battle.units[0].x+10'), 'd.hp=d.maxHp-300');
+  tick(g, 0.3);
+  near(stat(g, 'night', 'totalHealing'), 185 * 1.12, 1e-9);
+});
