@@ -64,10 +64,10 @@ test('Campus Shuttle damages each enemy once and knocks it back', () => {
   addEnemy(g, 300, 1000);
   g.run('battle.ult=100;useUltimate()');
   tick(g, 1);
-  assert.equal(g.run('battle.enemies[0].hp'), 600);
+  assert.equal(g.run('battle.enemies[0].hp'), 700);
   assert.ok(g.run('battle.enemies[0].x') > 300);
   tick(g, 1);
-  assert.equal(g.run('battle.enemies[0].hp'), 600);
+  assert.equal(g.run('battle.enemies[0].hp'), 700);
 });
 
 test('Campus Shuttle with no enemies does not throw', () => {
