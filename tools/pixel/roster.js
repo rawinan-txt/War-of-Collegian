@@ -9,16 +9,19 @@ const base = (o) => ({ ...o, impact: { attack: 3, skill: 6 } });
 // ---------- Mecha Freshy (Engineering): hard hat + wrench, gear barrier ----------
 const mecha = base({
   id: 'mecha', name: 'mecha_freshy', title: 'Mecha Freshy', faculty: 'EG', folder: 'engineering/mecha_freshy', skillMode: 'onDeploy', attackStyle: 'swing',
-  look: { ...STUDENT, hair: '#4a3426', hairStyle: 'short', bottom: '#5a4a3a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#ffae44' },
+  look: { ...STUDENT, hair: '#6a4a30', hairHi: '#a67c52', hairShade: '#4a3220', hairStyle: 'short', iris: '#6a3f22', irisHi: '#b07a48', bottom: '#4a4a5a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#ffae44' },
   acc: {
-    body(buf, p, { tx, ty }) { buf.rect(CX - 7 + tx, 41 + ty, 4, 4, '#c97a1e'); buf.rect(CX - 6 + tx, 42 + ty, 2, 1, '#ffae44'); },
+    back(buf, p, { tx, ty }) { buf.rect(CX - 12 + tx, 39 + ty, 7, 10, '#8a5a30'); buf.rect(CX - 11 + tx, 35 + ty, 2, 5, '#c8d1ee'); buf.rect(CX - 8 + tx, 36 + ty, 2, 4, '#c8d1ee'); },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 6 + tx, 45 + ty, 12, 1, '#8a5a30'); buf.rect(CX - 6 + tx, 46 + ty, 3, 3, '#d99a1c'); },
     head(buf, p, { x0, y0 }) {
-      buf.shape(x0, y0 - 4, [[4, 10], [2, 14], [1, 16]], '#ffae44');
-      buf.rect(x0 - 1, y0 - 1, 20, 2, '#c97a1e'); buf.rect(x0 + 8, y0 - 4, 2, 3, '#c97a1e'); buf.set(x0 + 5, y0 - 3, '#ffd08a');
+      const hat = '#ffd23a', dark = '#d99a1c';
+      buf.shape(x0, y0 - 5, [[4, 14], [2, 18], [1, 20], [0, 22], [0, 22]], hat);
+      buf.rect(x0 - 2, y0, 26, 2, dark); buf.rect(x0 + 10, y0 - 5, 2, 5, dark); buf.set(x0 + 5, y0 - 3, '#fff0a0'); buf.set(x0 + 6, y0 - 4, '#fff0a0');
+      buf.rect(x0 + 1, y0 - 2, 20, 2, '#3a3f5a'); buf.disc(x0 + 6, y0 - 1, 2, '#8fd6ff'); buf.disc(x0 + 16, y0 - 1, 2, '#8fd6ff'); buf.set(x0 + 5, y0 - 2, '#fff'); buf.set(x0 + 15, y0 - 2, '#fff');
     },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
-      if (p.item !== 'use') { buf.rect(fx - 1, fy, 2, 10, '#8a93b8'); buf.rect(fx - 2, fy + 9, 4, 3, '#c8d1ee'); }
+      if (p.item !== 'use') { buf.rect(fx - 1, fy - 1, 2, 6, '#8a93b8'); buf.rect(fx - 2, fy + 4, 4, 3, '#c8d1ee'); }
       else { buf.rect(fx - 1, fy - 11, 2, 12, '#8a93b8'); buf.rect(fx - 3, fy - 14, 6, 4, '#c8d1ee'); buf.rect(fx - 1, fy - 14, 2, 2, '#8a93b8'); }
     },
   },
@@ -38,13 +41,17 @@ const mecha = base({
 // ---------- Lab Maniac (Science): lab coat, goggles, flask ----------
 const lab = base({
   id: 'lab', name: 'lab_maniac', title: 'Lab Maniac', faculty: 'SC', folder: 'science/lab_maniac', skillMode: 'every3', attackStyle: 'throw',
-  look: { ...STUDENT, hair: '#7a4fc4', hairStyle: 'long', bottom: '#3d3568', bottomType: 'trousers', shoes: '#2d2a45', accent: '#b995ff' },
+  look: { ...STUDENT, hair: '#d6d0f2', hairHi: '#ffffff', hairShade: '#b8b0e0', hairStyle: 'long', hairLen: 31, hairFlare: 3, iris: '#7a5ae0', irisHi: '#d8c8ff', bottom: '#3d3568', bottomType: 'trousers', shoes: '#2d2a45', accent: '#b995ff' },
   acc: {
     body(buf, p, { tx, ty }) {
-      buf.rect(CX - 8 + tx, 32 + ty, 3, 17, '#e9eefc'); buf.rect(CX + 5 + tx, 32 + ty, 3, 17, '#e9eefc'); buf.rect(CX - 8 + tx, 44 + ty, 16, 5, '#e9eefc');
-      buf.rect(CX + 6 + tx, 34 + ty, 2, 13, '#c5cfe6'); buf.rect(CX - 6 + tx, 38 + ty, 3, 3, '#b995ff');
+      buf.rect(CX - 8 + tx, 40 + ty, 4, 12, '#e9eefc'); buf.rect(CX + 4 + tx, 40 + ty, 4, 12, '#e9eefc');
+      buf.rect(CX + 6 + tx, 41 + ty, 2, 11, '#c5cfe6'); buf.rect(CX - 7 + tx, 45 + ty, 3, 3, '#b995ff');
     },
-    head(buf, p, { x0, y0 }) { buf.rect(x0 + 2, y0 + 3, 6, 3, '#3d3568'); buf.rect(x0 + 10, y0 + 3, 6, 3, '#3d3568'); buf.rect(x0 + 3, y0 + 4, 4, 1, '#bfe9ff'); buf.rect(x0 + 11, y0 + 4, 4, 1, '#bfe9ff'); },
+    head(buf, p, { x0, y0 }) {
+      buf.rect(x0 + 1, y0 + 4, 20, 2, '#5a3fa0');
+      buf.rect(x0 + 3, y0 + 1, 7, 5, '#7a5ae0'); buf.rect(x0 + 4, y0 + 2, 5, 3, '#bfe9ff'); buf.set(x0 + 4, y0 + 2, '#fff');
+      buf.rect(x0 + 12, y0 + 1, 7, 5, '#7a5ae0'); buf.rect(x0 + 13, y0 + 2, 5, 3, '#bfe9ff'); buf.set(x0 + 13, y0 + 2, '#fff');
+    },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       const liquid = (p.f || 0) % 2 ? '#6ee0a5' : '#b995ff';
@@ -68,16 +75,13 @@ const lab = base({
 // ---------- Night Shifter (Medicine/Siriraj): scrubs, stethoscope, medical bag ----------
 const night = base({
   id: 'night', name: 'night_shifter', title: 'Night Shifter', faculty: 'SI', folder: 'medicine/night_shifter', skillMode: 'onPulse', attackStyle: 'cast',
-  look: { ...STUDENT, shirt: '#8fe3bf', shirtShade: '#5bd6a2', hair: '#1e2a3a', hairStyle: 'short', bottom: '#3a7d6a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#5bd6a2' },
+  look: { ...STUDENT, shirt: '#8fe3bf', shirtShade: '#5bd6a2', hair: '#7a5238', hairHi: '#b8885c', hairShade: '#5a3a24', hairStyle: 'sideponytail', iris: '#3a7fc0', irisHi: '#9fd0ff', bottom: '#3a7d6a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#5bd6a2' },
   acc: {
     body(buf, p, { tx, ty }) {
-      buf.line(CX - 3 + tx, 32 + ty, CX - 4 + tx, 38 + ty, '#2a2f45', 1); buf.line(CX + 3 + tx, 32 + ty, CX + 3 + tx, 38 + ty, '#2a2f45', 1);
-      buf.line(CX - 4 + tx, 38 + ty, CX + tx, 41 + ty, '#2a2f45', 1); buf.line(CX + 3 + tx, 38 + ty, CX + tx, 41 + ty, '#2a2f45', 1); buf.rect(CX - 1 + tx, 41 + ty, 3, 2, '#c5cfe6');
+      buf.line(CX - 3 + tx, 39 + ty, CX - 4 + tx, 43 + ty, '#2a2f45', 1); buf.line(CX + 3 + tx, 39 + ty, CX + 3 + tx, 43 + ty, '#2a2f45', 1);
+      buf.line(CX - 4 + tx, 43 + ty, CX + tx, 46 + ty, '#2a2f45', 1); buf.line(CX + 3 + tx, 43 + ty, CX + tx, 46 + ty, '#2a2f45', 1); buf.rect(CX - 1 + tx, 46 + ty, 3, 2, '#c5cfe6');
     },
-    head(buf, p, { x0, y0 }) {
-      // scrub cap with a knot at the back
-      buf.shape(x0, y0 - 3, [[3, 12], [1, 16], [0, 18], [0, 18], [0, 18]], '#5bd6a2'); buf.rect(x0, y0 + 2, 18, 1, '#3a7d6a'); buf.disc(x0 + 19, y0 + 2, 2, '#5bd6a2');
-    },
+    head(buf, p, { x0, y0 }) { buf.rect(x0 + 19, y0 + 6, 6, 3, '#6ec6ff'); buf.rect(x0 + 21, y0 + 5, 2, 5, '#3a8fe0'); buf.set(x0 + 20, y0 + 6, '#fff'); },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       const y = p.item === 'use' ? fy - 9 : fy - 1;
@@ -101,21 +105,17 @@ const night = base({
 // ---------- Chemist Pro (Pharmacy): safety glasses, potion bottles ----------
 const chem = base({
   id: 'chem', name: 'chemist_pro', title: 'Chemist Pro', faculty: 'PY', folder: 'pharmacy/chemist_pro', skillMode: 'every3', attackStyle: 'throw',
-  look: { ...STUDENT, hair: '#e87aa8', hairStyle: 'ponytail', bottom: '#7a3f66', bottomType: 'skirt', shoes: '#2d2a45', accent: '#ec85bc' },
+  look: { ...STUDENT, hair: '#6b4a32', hairHi: '#a77a52', hairShade: '#4f3524', hairStyle: 'long', hairLen: 25, iris: '#6a3f2a', irisHi: '#c08a5a', bottom: '#2f3a6a', bottomType: 'skirt', shoes: '#2d2a45', accent: '#3a8fff' },
   acc: {
-    body(buf, p, { tx, ty }) {
-      buf.rect(CX - 11 + tx, 40 + ty, 4, 5, '#ec85bc'); buf.rect(CX - 10 + tx, 38 + ty, 2, 2, '#e0a24a');
-      buf.rect(CX - 7 + tx, 41 + ty, 3, 4, '#6ee0a5');
-    },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 10 + tx, 44 + ty, 4, 5, '#ff9fc8'); buf.rect(CX - 9 + tx, 42 + ty, 2, 2, '#e0a24a'); buf.rect(CX - 6 + tx, 45 + ty, 3, 4, '#6ee0a5'); },
     head(buf, p, { x0, y0 }) {
-      buf.rect(x0 + 2, y0 + 6, 6, 5, '#ec85bc'); buf.rect(x0 + 10, y0 + 6, 6, 5, '#ec85bc');
-      buf.rect(x0 + 3, y0 + 7, 4, 3, '#dff6ff'); buf.rect(x0 + 11, y0 + 7, 4, 3, '#dff6ff');
-      buf.set(x0 + 4, y0 + 7, '#fff'); buf.set(x0 + 12, y0 + 7, '#fff');
+      buf.rect(x0 - 1, y0 + 1, 5, 5, '#3a8fff'); buf.rect(x0 + 5, y0 + 1, 5, 5, '#3a8fff'); buf.rect(x0 + 3, y0 + 2, 3, 3, '#1c5fd0'); buf.set(x0, y0 + 2, '#9fd0ff'); buf.set(x0 + 6, y0 + 2, '#9fd0ff');
     },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       const y = p.item === 'rest' ? fy - 2 : fy - 8;
-      buf.rect(fx - 2, y, 5, 8, '#e0a24a'); buf.rect(fx - 1, y - 2, 3, 2, '#7a4a2a'); buf.rect(fx - 1, y + 2, 3, 3, '#fff6c8');
+      buf.rect(fx - 1, y - 3, 3, 3, '#dff6ff'); buf.rect(fx - 1, y - 4, 3, 1, '#7a4a2a');
+      buf.shape(fx - 4, y, [[2, 4], [1, 6], [0, 8], [0, 8]], '#ff9fc8'); buf.shape(fx - 3, y + 2, [[1, 4], [0, 6]], '#ff4f9a'); buf.set(fx - 2, y + 1, '#fff');
     },
   },
   skill: {
@@ -134,14 +134,17 @@ const chem = base({
 // ---------- Animal Keeper (Veterinary): companion dog, paw badge ----------
 const animal = base({
   id: 'animal', name: 'animal_keeper', title: 'Animal Keeper', faculty: 'VS', folder: 'veterinary/animal_keeper', skillMode: 'onPulse', attackStyle: 'swing',
-  look: { ...STUDENT, shirt: '#d9f5e6', shirtShade: '#a9dcc2', hair: '#3d5a3a', hairStyle: 'curly', bottom: '#4a6b4f', bottomType: 'trousers', shoes: '#4a3a2a', accent: '#8de7ac' },
+  look: { ...STUDENT, shirt: '#d9f5e6', shirtShade: '#a9dcc2', hair: '#6a4328', hairHi: '#a8794a', hairShade: '#4a2e1a', hairStyle: 'ruffled', iris: '#6a4328', irisHi: '#c8975a', bottom: '#4a6b4f', bottomType: 'trousers', shoes: '#4a3a2a', accent: '#8de7ac' },
   acc: {
     back(buf, p, { tx, ty }) {
-      const bob = (p.f || 0) % 2;
-      buf.rect(CX - 20 + tx, 47 + ty - bob, 10, 6, '#c98a4a'); buf.rect(CX - 20 + tx, 53 + ty, 3, 2, '#8a5a2a'); buf.rect(CX - 13 + tx, 53 + ty, 3, 2, '#8a5a2a');
-      buf.rect(CX - 12 + tx, 43 + ty - bob, 5, 5, '#c98a4a'); buf.rect(CX - 8 + tx, 44 + ty - bob, 2, 3, '#8a5a2a'); buf.set(CX - 10 + tx, 45 + ty - bob, '#1a2342'); buf.rect(CX - 22 + tx, 45 + ty - bob + (bob ? 0 : 1), 2, 3, '#8a5a2a');
+      const bob = (p.f || 0) % 2, O = '#e8903a', W = '#fff3e0', D = '#b8661e';
+      buf.rect(CX - 12 + tx, 40 + ty, 6, 9, '#4a8a5a'); // backpack
+      // the companion stands on the ground (no body offset), only its upper body bobs
+      buf.rect(CX - 25, 45 - bob, 11, 6, O); buf.rect(CX - 24, 49 - bob, 9, 2, W);
+      buf.rect(CX - 26, 51, 3, 3, W); buf.rect(CX - 15, 51, 3, 3, W);
+      buf.rect(CX - 16, 40 - bob, 8, 7, O); buf.rect(CX - 12, 44 - bob, 4, 3, W); buf.set(CX - 13, 43 - bob, '#1b1a33'); buf.set(CX - 9, 45 - bob, '#1b1a33');
+      buf.rect(CX - 16, 38 - bob, 2, 3, D); buf.rect(CX - 10, 38 - bob, 2, 3, D); buf.rect(CX - 28, 45 - bob + (bob ? 0 : 1), 3, 2, O);
     },
-    head(buf, p, { x0, y0 }) { bmp(buf, ['10101', '01010', '01110'], x0 + 6, y0 - 4, '#8de7ac'); },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       if (p.item === 'rest') { buf.rect(fx - 3, fy, 7, 2, '#fff3d6'); buf.rect(fx - 4, fy - 1, 2, 4, '#fff3d6'); buf.rect(fx + 3, fy - 1, 2, 4, '#fff3d6'); }
@@ -163,16 +166,16 @@ const animal = base({
 // ---------- Dental Blitz (Dentistry): face mask, head mirror, dental drill ----------
 const dental = base({
   id: 'dental', name: 'dental_blitz', title: 'Dental Blitz', faculty: 'DT', folder: 'dentistry/dental_blitz', skillMode: 'every3', attackStyle: 'thrust',
-  look: { ...STUDENT, hair: '#5aa6c9', hairStyle: 'short', bottom: '#3a6e8a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#73ddff' },
+  look: { ...STUDENT, hair: '#1f2538', hairHi: '#5a6590', hairShade: '#161a2a', hairStyle: 'short', iris: '#2a3a6a', irisHi: '#7a8fd0', bottom: '#3a6e8a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#73ddff' },
   acc: {
     head(buf, p, { x0, y0 }) {
-      buf.rect(x0 + 3, y0 + 10, 12, 5, '#9fe3f5'); buf.rect(x0 + 3, y0 + 10, 12, 1, '#73ddff'); buf.rect(x0 + 1, y0 + 9, 2, 1, '#9fe3f5'); buf.rect(x0 + 15, y0 + 9, 2, 1, '#9fe3f5');
-      buf.disc(x0 + 9, y0 + 1, 2, '#c8d1ee'); buf.set(x0 + 9, y0 + 1, '#fff');
+      buf.rect(x0 + 3, y0 + 14, 16, 6, '#bfeaf5'); buf.rect(x0 + 3, y0 + 14, 16, 1, '#73ddff'); buf.rect(x0 + 1, y0 + 13, 2, 1, '#bfeaf5'); buf.rect(x0 + 19, y0 + 13, 2, 1, '#bfeaf5');
+      buf.rect(x0 + 5, y0 + 17, 12, 1, '#9ad4e8');
     },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
-      if (p.item === 'rest') { buf.rect(fx, fy, 2, 8, '#c8d1ee'); buf.rect(fx, fy + 8, 2, 2, '#73ddff'); }
-      else { buf.rect(fx - 1, fy - 1, 9, 2, '#c8d1ee'); buf.rect(fx + 8, fy - 1, 2, 2, '#73ddff'); buf.set(fx + 10, fy, (p.f || 0) % 2 ? '#fff' : '#73ddff'); }
+      if (p.item === 'rest') { buf.rect(fx, fy - 1, 2, 4, '#c8d1ee'); buf.disc(fx + 1, fy + 4, 2, '#bfeaf5'); buf.set(fx, fy + 3, '#fff'); }
+      else { buf.rect(fx - 1, fy - 1, 10, 2, '#c8d1ee'); buf.disc(fx + 12, fy, 3, '#bfeaf5'); buf.set(fx + 11, fy - 1, '#fff'); buf.set(fx + 12, fy - 1, '#fff'); }
     },
   },
   skill: {
@@ -191,15 +194,20 @@ const dental = base({
 // ---------- Sound Wave (Music): bass guitar ----------
 const music = base({
   id: 'music', name: 'sound_wave', title: 'Sound Wave', faculty: 'MUSIC', folder: 'music/sound_wave', skillMode: 'every3', attackStyle: 'strum',
-  look: { ...STUDENT, hair: '#d34bf0', hairStyle: 'spiky', bottom: '#3a2a5a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#ed7aff' },
+  look: { ...STUDENT, hair: '#6b3fb0', hairHi: '#a47ae0', hairShade: '#4f2d8a', hairStyle: 'long', hairLen: 34, iris: '#a050e0', irisHi: '#e0b0ff', bottom: '#3a2a5a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#ff7ad9' },
   acc: {
     body(buf, p, { tx, ty }) {
-      buf.line(CX - 6 + tx, 32 + ty, CX + 5 + tx, 44 + ty, '#27345f', 1); // strap
-      buf.line(CX - 10 + tx, 46 + ty, CX + 12 + tx, 34 + ty, '#6b4a2a', 2); // neck
-      buf.shape(CX - 6 + tx, 41 + ty, [[1, 8], [0, 10], [0, 10], [1, 8], [2, 6]], '#ed7aff'); buf.rect(CX - 3 + tx, 43 + ty, 3, 1, '#9a2fb0'); buf.set(CX - 1 + tx, 44 + ty, '#fff');
-      buf.rect(CX + 11 + tx, 32 + ty, 3, 3, '#9a2fb0');
+      buf.line(CX - 5 + tx, 40 + ty, CX + 4 + tx, 47 + ty, '#27345f', 1);
+      buf.line(CX - 9 + tx, 51 + ty, CX + 12 + tx, 39 + ty, '#6b4a2a', 2);
+      buf.shape(CX - 6 + tx, 45 + ty, [[1, 8], [0, 10], [0, 10], [1, 8], [2, 6]], '#8a3fd0'); buf.rect(CX - 3 + tx, 47 + ty, 3, 1, '#ff7ad9'); buf.set(CX - 1 + tx, 49 + ty, '#fff');
+      buf.rect(CX + 11 + tx, 37 + ty, 3, 3, '#d94fb8');
     },
-    head(buf, p, { x0, y0 }) { buf.rect(x0 + 18, y0 + 10, 1, 3, '#ffd45a'); },
+    head(buf, p, { x0, y0 }) {
+      const band = '#d94fb8', cup = '#ff7ad9';
+      buf.line(x0 - 1, y0 + 10, x0 - 1, y0 + 1, band, 2); buf.line(x0 - 1, y0 + 1, x0 + 4, y0 - 3, band, 2);
+      buf.line(x0 + 4, y0 - 3, x0 + 17, y0 - 3, band, 2); buf.line(x0 + 17, y0 - 3, x0 + 22, y0 + 1, band, 2); buf.line(x0 + 22, y0 + 1, x0 + 22, y0 + 10, band, 2);
+      buf.rect(x0 - 3, y0 + 9, 4, 8, cup); buf.rect(x0 - 3, y0 + 9, 4, 2, band); buf.rect(x0 + 21, y0 + 9, 4, 8, cup); buf.rect(x0 + 21, y0 + 9, 4, 2, band);
+    },
   },
   skill: {
     pose: (f) => seq({ item: 'use' }, [
@@ -218,10 +226,11 @@ const music = base({
 // ---------- Ace Runner (Sports Science): headband, sprint ----------
 const runner = base({
   id: 'runner', name: 'ace_runner', title: 'Ace Runner', faculty: 'SC2', folder: 'sports/ace_runner', skillMode: 'onDeploy', attackStyle: 'thrust',
-  look: { ...STUDENT, shirt: '#ff9c52', shirtShade: '#d9783a', hair: '#c0682a', hairStyle: 'ponytail', bottom: '#2d5a9a', bottomType: 'trousers', shoes: '#ffffff', accent: '#ffffff' },
+  look: { ...STUDENT, hair: '#7a4a2e', hairHi: '#b8805a', hairShade: '#5a3420', hairStyle: 'spiky', iris: '#a0402a', irisHi: '#f0a070', bottom: '#23233a', bottomType: 'trousers', shoes: '#ffffff', accent: '#2f7bff', lanyard: '#2f7bff' },
   acc: {
-    head(buf, p, { x0, y0 }) { buf.rect(x0, y0 + 4, 18, 2, '#ff4a4a'); buf.rect(x0 + 16, y0 + 5, 4, 2, '#ff4a4a'); },
-    hand(buf, p, { fx, fy }) { buf.rect(R(fx) - 1, R(fy) - 2, 3, 2, '#ff4a4a'); },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 6 + tx, 41 + ty, 12, 1, '#2f7bff'); },
+    head(buf, p, { x0, y0 }) { buf.rect(x0 - 1, y0 + 7, 24, 2, '#fff'); buf.rect(x0 + 9, y0 + 6, 4, 4, '#2f7bff'); buf.set(x0 + 10, y0 + 7, '#fff'); buf.rect(x0 + 22, y0 + 8, 3, 2, '#fff'); },
+    hand(buf, p, { fx, fy }) { buf.rect(R(fx) - 1, R(fy) - 2, 3, 2, '#2f7bff'); },
   },
   skill: {
     pose: (f) => [
@@ -243,11 +252,10 @@ const runner = base({
 // ---------- Global Exchange (MUIC): blazer, globe ----------
 const global = base({
   id: 'global', name: 'global_exchange', title: 'Global Exchange', faculty: 'MUIC', folder: 'muic/global_exchange', skillMode: 'onDeploy', attackStyle: 'cast',
-  look: { ...STUDENT, hair: '#d9a84a', hairStyle: 'bob', bottom: '#2f3a5a', bottomType: 'skirt', shoes: '#2d2a45', accent: '#69aaff' },
+  look: { ...STUDENT, hair: '#f1cf7a', hairHi: '#fff0b8', hairShade: '#d4aa50', hairStyle: 'long', hairLen: 36, hairFlare: 1, iris: '#3a8fff', irisHi: '#9fd0ff', bottom: '#2f3a5a', bottomType: 'skirt', shoes: '#2d2a45', accent: '#69aaff' },
   acc: {
-    body(buf, p, { tx, ty }) {
-      buf.rect(CX - 8 + tx, 33 + ty, 4, 11, '#2f5aa8'); buf.rect(CX + 4 + tx, 33 + ty, 4, 11, '#2f5aa8'); buf.rect(CX - 8 + tx, 33 + ty, 2, 11, '#69aaff'); buf.set(CX + 5 + tx, 36 + ty, '#ffd45a');
-    },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 7 + tx, 40 + ty, 4, 7, '#2f5aa8'); buf.rect(CX + 3 + tx, 40 + ty, 4, 7, '#2f5aa8'); buf.rect(CX - 7 + tx, 40 + ty, 2, 7, '#69aaff'); buf.set(CX + 4 + tx, 43 + ty, '#ffd45a'); },
+    head(buf, p, { x0, y0 }) { buf.rect(x0 + 13, y0 - 2, 4, 4, '#2f7bff'); buf.rect(x0 + 19, y0 - 2, 4, 4, '#2f7bff'); buf.rect(x0 + 17, y0 - 1, 2, 2, '#1c5fd0'); buf.set(x0 + 14, y0 - 1, '#9fd0ff'); buf.set(x0 + 20, y0 - 1, '#9fd0ff'); },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       const y = p.item === 'rest' ? fy - 3 : fy - 8;
@@ -271,10 +279,9 @@ const global = base({
 // ---------- Health Guardian (Public Health): reflective vest + shield ----------
 const pub = base({
   id: 'public', name: 'health_guardian', title: 'Health Guardian', faculty: 'PH', folder: 'public_health/health_guardian', skillMode: 'onPulse', attackStyle: 'thrust',
-  look: { ...STUDENT, hair: '#2c8a7a', hairStyle: 'short', bottom: '#2f5a55', bottomType: 'trousers', shoes: '#2d2a45', accent: '#5acbb9' },
+  look: { ...STUDENT, hair: '#1c2230', hairHi: '#566080', hairShade: '#12161f', hairStyle: 'short', glasses: '#1b1a33', iris: '#2fbf8f', irisHi: '#9ff0d0', bottom: '#2f5a55', bottomType: 'trousers', shoes: '#2d2a45', accent: '#5acbb9', lanyard: '#5acbb9' },
   acc: {
-    body(buf, p, { tx, ty }) { buf.rect(CX - 7 + tx, 33 + ty, 14, 9, '#5acbb9'); buf.rect(CX - 7 + tx, 36 + ty, 14, 1, '#fff'); buf.rect(CX - 7 + tx, 39 + ty, 14, 1, '#fff'); buf.rect(CX + 5 + tx, 34 + ty, 2, 7, '#2f8f80'); },
-    head(buf, p, { x0, y0 }) { buf.rect(x0 + 2, y0 - 2, 14, 3, '#2f8f80'); bmp(buf, CROSS, x0 + 6, y0 - 4, '#fff'); },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 6 + tx, 40 + ty, 12, 6, '#5acbb9'); buf.rect(CX - 6 + tx, 42 + ty, 12, 1, '#fff'); buf.rect(CX - 6 + tx, 44 + ty, 12, 1, '#fff'); buf.rect(CX + 4 + tx, 40 + ty, 2, 6, '#2f8f80'); },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       const y = fy - 6;
@@ -297,14 +304,17 @@ const pub = base({
 // ---------- Angel of Care (Nursing): nurse cap, wings, clipboard ----------
 const nurse = base({
   id: 'nurse', name: 'angel_of_care', title: 'Angel of Care', faculty: 'NS', folder: 'nursing/angel_of_care', skillMode: 'onPulse', attackStyle: 'cast',
-  look: { ...STUDENT, shirt: '#ffe3ec', shirtShade: '#f0b6c8', hair: '#ffa3be', hairStyle: 'long', bottom: '#ffa3be', bottomType: 'skirt', shoes: '#ffffff', accent: '#d6658c' },
+  look: { ...STUDENT, shirt: '#ffe3ec', shirtShade: '#f0b6c8', hair: '#8a5a40', hairHi: '#c08a68', hairShade: '#6a4230', hairStyle: 'long', hairLen: 24, iris: '#a0506a', irisHi: '#f0a0b8', bottom: '#ffa3be', bottomType: 'skirt', shoes: '#ffffff', accent: '#d6658c' },
   acc: {
     back(buf, p, { tx, ty }) {
       const flap = p.anim === 'skill' ? [0, 1, 2, 3, 4, 3, 2, 3, 2, 1][p.f] : 0;
-      buf.shape(CX - 17 + tx, 30 + ty - flap, [[3, 4], [1, 7], [0, 8], [0, 8], [1, 7], [2, 5], [4, 3]], '#e9f1ff');
-      buf.shape(CX + 8 + tx, 30 + ty - flap, [[0, 4], [0, 7], [0, 8], [0, 8], [0, 7], [0, 5], [0, 3]], '#e9f1ff');
+      buf.shape(CX - 19 + tx, 36 + ty - flap, [[3, 4], [1, 7], [0, 8], [0, 8], [1, 7], [2, 5], [4, 3]], '#e9f1ff');
+      buf.shape(CX + 11 + tx, 36 + ty - flap, [[0, 4], [0, 7], [0, 8], [0, 8], [0, 7], [0, 5], [0, 3]], '#e9f1ff');
     },
-    head(buf, p, { x0, y0 }) { buf.rect(x0 + 3, y0 - 4, 12, 4, '#fff'); buf.rect(x0 + 2, y0 - 1, 14, 1, '#fff'); buf.rect(x0 + 8, y0 - 3, 2, 3, '#d6658c'); buf.rect(x0 + 7, y0 - 2, 4, 1, '#d6658c'); },
+    head(buf, p, { x0, y0 }) {
+      buf.shape(x0 + 3, y0 - 5, [[1, 14], [0, 16], [0, 16], [0, 16], [0, 16]], '#fff'); buf.rect(x0 + 10, y0 - 4, 2, 4, '#d6658c'); buf.rect(x0 + 9, y0 - 3, 4, 2, '#d6658c');
+      buf.rect(x0 - 2, y0 + 8, 4, 3, '#ff8fb8'); buf.rect(x0 + 20, y0 + 8, 4, 3, '#ff8fb8'); buf.set(x0 - 1, y0 + 8, '#fff'); buf.set(x0 + 21, y0 + 8, '#fff');
+    },
     hand(buf, p, { fx, fy }) {
       fx = R(fx); fy = R(fy);
       if (p.item === 'rest') { buf.rect(fx - 3, fy - 1, 6, 8, '#fff'); buf.rect(fx - 3, fy - 1, 6, 1, '#d6658c'); buf.rect(fx - 1, fy + 2, 2, 3, '#d6658c'); }
@@ -327,7 +337,7 @@ const nurse = base({
 // ---------- Dog (summoned by Animal Keeper): custom small rig ----------
 function dogFrame(anim, f) {
   const buf = new PixBuf();
-  const FUR = '#c98a4a', DARK = '#8a5a2a', BELLY = '#f0d2a0', EYE = '#1a2342', TONGUE = '#ff9aa8', COLLAR = '#8de7ac';
+  const FUR = '#e8903a', DARK = '#b8661e', BELLY = '#fff3e0', EYE = '#1a2342', TONGUE = '#ff9aa8', COLLAR = '#8de7ac';
   let dx = 0, dy = 0, tail = 0, open = false, bark = false, eyes = 'open', flash = false, fade = 0, dead = false;
   let legs = [0, 0, 0, 0]; // lifts for back-left, back-right, front-left, front-right
   if (anim === 'idle') { dy = [0, 0, 1, 0][f]; tail = [0, 2, 0, -2][f]; }
@@ -358,7 +368,8 @@ function dogFrame(anim, f) {
   else { buf.set(hx + 5, hy + 2, EYE); buf.set(hx + 6, hy + 3, EYE); buf.set(hx + 6, hy + 2, EYE); buf.set(hx + 5, hy + 3, EYE); }
   if (open) { buf.rect(hx + 8, hy + 7, 4, 2, TONGUE); buf.rect(hx + 8, hy + 6, 4, 1, EYE); }
   if (flash) buf.flash('#ffffff');
-  buf.outline('#1a1d33');
+  buf.outline('#1b1a33');
+  buf.outline('#ffffff');
   if (fade) buf.fade(fade);
   if (bark) { bmp(buf, NOTE, hx + 15, hy - 8 - (f % 2), '#8de7ac'); }
   return buf;

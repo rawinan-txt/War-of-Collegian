@@ -16,6 +16,10 @@ assets/characters/        generated sheets (committed)
 
 Regenerate everything with `node tools/gen-sprites.js` (output is deterministic; a test fails if committed sheets are stale).
 
+## Visual style (rig v2)
+
+Big-head chibi: the head is 22 of 38 px (~58% of the figure), with large eyes (coloured iris + white sparkle), a dark inner outline plus a white outer outline, and hair with a lighter highlight band. Hair styles: short, swept, spiky, ruffled, long (with `hairLen` / `hairFlare`), sideponytail. The old pose keyframes still drive the new body through `mapHand` / `mapFoot` in `tools/pixel/rig.js`. Glasses are a `look.glasses` colour. Regenerate the overview with `node tools/character-sheet.js` (writes `docs/character-sheet.html`; a PNG screenshot is kept in `docs/character-sheet.png`).
+
 ## Character to animation mapping
 
 | id | Name | Faculty | Folder | skillMode (when the skill animation plays) | Attack style | Skill VFX kind |

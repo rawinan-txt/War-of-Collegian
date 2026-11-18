@@ -96,14 +96,14 @@ test('animations actually animate (frames are not all identical)', () => {
   }
 });
 
-test('palette is limited (<= 24 distinct opaque colours per character)', () => {
+test('palette is limited (<= 32 distinct opaque colours per character)', () => {
   for (const [id, def] of Object.entries(cfg)) {
     const colors = new Set();
     for (const a of ANIMS) {
       const { rgba } = sheet(def, a);
       for (let i = 0; i < rgba.length; i += 4) if (rgba[i + 3]) colors.add((rgba[i] << 16) | (rgba[i + 1] << 8) | rgba[i + 2]);
     }
-    assert.ok(colors.size <= 24, `${id} uses ${colors.size} colours`);
+    assert.ok(colors.size <= 32, `${id} uses ${colors.size} colours`);
   }
 });
 
@@ -205,4 +205,61 @@ test('hero skill animations differ from their own attack animations', () => {
     const s = fs.readFileSync(path.join(ROOT, cfg[id].anims.skill.sheet)).toString('base64');
     assert.notEqual(a, s, id);
   }
+});
+
+// ---- Remodel (reference style): proportions, outlines, hair highlight, eyes ----
+const { HEAD_H, FIGURE_H, OUT_DARK, OUT_WHITE } = require('../tools/pixel/rig');
+const { rgb } = require('../tools/pixel/buf');
+
+function pixelsOf(id, i = 0, anim = 'idle') { return frameOf(sheet(cfg[id], anim), i); }
+function countColor(f, hex) {
+  const [r, g, b] = rgb(hex); let n = 0;
+  for (let k = 0; k < f.length; k += 4) if (f[k + 3] && f[k] === r && f[k + 1] === g && f[k + 2] === b) n++;
+  return n;
+}
+const opaque = (f, x, y) => (x < 0 || y < 0 || x > 63 || y > 63 ? 0 : f[(y * 64 + x) * 4 + 3]);
+
+test('the head is about 55% of the figure height (big-head chibi proportions)', () => {
+  const ratio = HEAD_H / FIGURE_H;
+  assert.ok(ratio >= 0.5 && ratio <= 0.62, `head ratio ${ratio.toFixed(2)}`);
+});
+
+test('every character has a white outer outline over a dark inner outline', () => {
+  for (const id of [...HERO_IDS, 'dog']) {
+    const f = pixelsOf(id);
+    const [wr, wg, wb] = rgb(OUT_WHITE);
+    for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+      if (!opaque(f, x, y)) continue;
+      const edge = !opaque(f, x - 1, y) || !opaque(f, x + 1, y) || !opaque(f, x, y - 1) || !opaque(f, x, y + 1);
+      if (edge) {
+        const k = (y * 64 + x) * 4;
+        assert.ok(f[k] === wr && f[k + 1] === wg && f[k + 2] === wb, `${id} edge pixel (${x},${y}) is not white`);
+      }
+    }
+    assert.ok(countColor(f, OUT_DARK) >= 80, `${id} has too little dark inner outline`);
+  }
+});
+
+test('heroes have shaded hair (distinct highlight), a coloured iris and eye sparkle', () => {
+  for (const id of HERO_IDS) {
+    const look = CHARACTERS[id].look;
+    const f = pixelsOf(id);
+    assert.notEqual(look.hairHi.toLowerCase(), look.hair.toLowerCase(), `${id} highlight equals base hair`);
+    assert.ok(countColor(f, look.hairHi) >= 4, `${id} hair highlight not visible`);
+    assert.ok(countColor(f, look.iris) >= 4, `${id} iris colour not visible`);
+    // sparkle: white pixels surrounded by opaque pixels (inside the face, not the outline)
+    let sparkle = 0;
+    for (let y = 1; y < 63; y++) for (let x = 1; x < 63; x++) {
+      const k = (y * 64 + x) * 4;
+      if (f[k + 3] && f[k] === 255 && f[k + 1] === 255 && f[k + 2] === 255 && opaque(f, x - 1, y) && opaque(f, x + 1, y) && opaque(f, x, y - 1) && opaque(f, x, y + 1)) sparkle++;
+    }
+    assert.ok(sparkle >= 2, `${id} has no eye sparkle`);
+  }
+});
+
+test('Health Guardian keeps the public-health theme (green vest, shield with cross, not a business look)', () => {
+  assert.equal(cfg.public.faculty, 'PH');
+  assert.equal(cfg.public.name, 'Health Guardian');
+  const f = pixelsOf('public');
+  assert.ok(countColor(f, '#5acbb9') >= 20, 'public-health teal missing');
 });

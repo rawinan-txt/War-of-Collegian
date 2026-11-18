@@ -7,33 +7,15 @@ const { h, STUDENT, bmp, HEART, NOTE, CROSS, TOOTH, cog, dome, seq } = require('
 const bug = {
   id: 'bug', name: 'bug_hunter', title: 'Bug Hunter', faculty: 'ICT', folder: 'ict/bug_hunter',
   skillMode: 'onStack', impact: { attack: 3, skill: 6 }, attackStyle: 'shoot',
-  look: { ...STUDENT, hair: '#232a4a', hairStyle: 'spiky', bottom: '#27345f', bottomType: 'trousers', shoes: '#2d2a45', accent: '#35b8ff' },
+  look: { ...STUDENT, hair: '#232a4a', hairHi: '#6a72b8', hairShade: '#1a1f3a', hairStyle: 'swept', glasses: '#6fd0ff', iris: '#1e3fbf', irisHi: '#6fa0ff', bottom: '#27345f', bottomType: 'trousers', shoes: '#2d2a45', accent: '#35b8ff', lanyard: '#ffb347' },
   acc: {
-    // ICT backpack
-    back(buf, p, { tx, ty }) {
-      buf.rect(CX - 13 + tx, 33 + ty, 6, 10, '#27345f');
-      buf.rect(CX - 12 + tx, 34 + ty, 4, 2, '#1c6fa8');
-    },
-    // headphones
-    head(buf, p, { x0, y0 }) {
-      const band = '#27345f', cup = '#35b8ff', cupDark = '#1c6fa8';
-      buf.line(x0 - 1, y0 + 8, x0 - 1, y0 + 2, band, 1);
-      buf.line(x0 - 1, y0 + 2, x0 + 3, y0 - 2, band, 1);
-      buf.line(x0 + 3, y0 - 2, x0 + 14, y0 - 2, band, 1);
-      buf.line(x0 + 14, y0 - 2, x0 + 18, y0 + 2, band, 1);
-      buf.line(x0 + 18, y0 + 2, x0 + 18, y0 + 8, band, 1);
-      buf.rect(x0 - 3, y0 + 7, 3, 6, cup); buf.rect(x0 - 3, y0 + 7, 3, 1, cupDark);
-      buf.rect(x0 + 18, y0 + 7, 3, 6, cup); buf.rect(x0 + 18, y0 + 7, 3, 1, cupDark);
-    },
+    back(buf, p, { tx, ty }) { buf.rect(CX - 12 + tx, 40 + ty, 6, 9, '#27345f'); buf.rect(CX - 11 + tx, 41 + ty, 4, 2, '#1c6fa8'); },
+    body(buf, p, { tx, ty }) { buf.rect(CX - 6 + tx, 40 + ty, 3, 6, '#27345f'); buf.rect(CX + 3 + tx, 40 + ty, 3, 6, '#27345f'); },
     // laptop
     hand(buf, p, { fx, fy }) {
       const dark = '#2a3050', base = '#8a93b8', screen = '#35b8ff', code = '#bff3ff';
       fx = Math.round(fx); fy = Math.round(fy);
-      if (p.item === 'rest') {
-        buf.rect(fx - 4, fy - 1, 9, 3, dark);
-        buf.set(fx, fy, screen);
-        return;
-      }
+      if (p.item === 'rest') { buf.rect(fx - 4, fy - 1, 9, 3, dark); buf.set(fx, fy, screen); return; }
       buf.rect(fx - 5, fy, 11, 2, base);
       buf.rect(fx - 4, fy - 9, 10, 9, dark);
       buf.rect(fx - 3, fy - 8, 8, 7, screen);
