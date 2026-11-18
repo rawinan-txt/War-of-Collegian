@@ -1,0 +1,43 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "mecha",
+  "name": "Mecha Freshy",
+  "faculty": "EG",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [0, -20]
+  },
+  "signature": {
+    "skillMode": "onDeploy",
+    "fx": {
+      "kind": "gear-barrier",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#ffae44",
+          "radius": 12
+        },
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#ffd08a",
+          "radius": 20
+        },
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#c97a1e",
+          "count": 8,
+          "size": 3
+        },
+        {
+          "op": "shake",
+          "amount": 1
+        }
+      ]
+    }
+  }
+}

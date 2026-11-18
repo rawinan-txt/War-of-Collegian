@@ -1,0 +1,40 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "chem",
+  "name": "Chemist Pro",
+  "faculty": "PY",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [34, -20]
+  },
+  "signature": {
+    "skillMode": "every3",
+    "fx": {
+      "kind": "poison-cloud",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#9be86a",
+          "count": 14,
+          "size": 5
+        },
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#4fa83a",
+          "count": 8,
+          "size": 4
+        },
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#ec85bc",
+          "radius": 8
+        }
+      ]
+    }
+  }
+}

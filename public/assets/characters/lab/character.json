@@ -1,0 +1,44 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "lab",
+  "name": "Lab Maniac",
+  "faculty": "SC",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [30, -35]
+  },
+  "signature": {
+    "skillMode": "every3",
+    "fx": {
+      "kind": "flask-burst",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#b995ff",
+          "count": 12,
+          "size": 4
+        },
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#6ee0a5",
+          "count": 10,
+          "size": 3
+        },
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#e9eefc",
+          "radius": 10
+        },
+        {
+          "op": "shake",
+          "amount": 2
+        }
+      ]
+    }
+  }
+}

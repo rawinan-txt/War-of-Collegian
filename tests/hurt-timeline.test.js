@@ -14,7 +14,7 @@ function setup(seed, { speed = 1 } = {}) {
     globalThis.LOG={starts:[],launches:[],fx:[],samples:[]};
     const _sa=startAttack; startAttack=function(u,t,v){ if(u.id==='bug')LOG.starts.push(battle.t); return _sa(u,t,v)};
     const _lp=launchProjectile; launchProjectile=function(u,p){ if(u.id==='bug')LOG.launches.push({t:battle.t,name:u.animName,animT:u.animT,atkT:u.atkT}); return _lp(u,p)};
-    const _fx=SKILL_FX.bug.run; SKILL_FX.bug.run=function(u,o){ LOG.fx.push({t:battle.t,name:u.animName}); return _fx(u,o)};
+    const _fx=runSkillFx; runSkillFx=function(u){ if(u.id==='bug')LOG.fx.push({t:battle.t,name:u.animName}); return _fx(u)};
     globalThis.sample=function(){ LOG.samples.push({t:battle.t,name:B.animName,animT:B.animT,atkT:B.atkT,skillT:B.skillT,hurtT:B.hurtT}) };`);
   return g;
 }

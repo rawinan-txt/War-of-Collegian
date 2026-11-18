@@ -1,6 +1,6 @@
 // Reads the facts about the game that character configuration must agree with, straight from index.html (single source
-// of truth): combat timing constants, default anchors, the hero table, SKILL_MODE and SKILL_FX.
-// Nothing here changes the game; it only observes it (the game is executed in the headless test sandbox).
+// of truth): combat timing constants, default anchors, the hero table, SKILL_MODE, and what a character's skill effect
+// does when the real engine plays it. Nothing here changes the game; it only observes it (headless test sandbox).
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -28,13 +28,15 @@ function readConstants(html = fs.readFileSync(HTML, 'utf8')) {
     hurtDuration: num('HURT_DUR'),
     corpseLife: parseFloat(corpse[1]),
     muzzle: pt('DEFAULT_MUZZLE'),
-    skillAnchor: pt('DEFAULT_SKILL_ANCHOR'),
   };
 }
 
-// a game instance for probing; pass the generated manifest so anchors/fallback come from the configuration under test
-function makeGame(manifest) {
-  return require(path.join(ROOT, 'tests', 'harness')).loadGame(1, manifest ? { manifest, lazy: true } : { lazy: true });
+// a game instance for probing; pass the generated manifest / fx.js so the configuration under test is what the game uses
+function makeGame(manifest, fx) {
+  const opts = { lazy: true };
+  if (manifest) opts.manifest = manifest;
+  if (fx) opts.fx = fx;
+  return require(path.join(ROOT, 'tests', 'harness')).loadGame(1, opts);
 }
 
 // hero table / skill tables as the running game sees them
@@ -43,29 +45,27 @@ function heroes(g) {
 }
 function skillMode(g, id) { return g.run(`SKILL_MODE[${JSON.stringify(id)}]`) || null; }
 
-// run the real runSkillFx (anchor lookup included) with the fx helpers replaced by recorders; {kind, calls} or null
+// play the character's skill effect with the real engine at every effects level and report what it did
 function skillFx(g, id) {
-  if (!g.run(`!!SKILL_FX[${JSON.stringify(id)}]`)) return null;
-  g.run(`globalThis.__fxCalls=[];
-    fxBeam=function(a,b,c,d,e){__fxCalls.push(['beam',a,b,c,d,e])};
-    fxBurst=function(a,b,c,d,e){__fxCalls.push(['burst',a,b,c,d,e])};
-    fxRing=function(a,b,c,d){__fxCalls.push(['ring',a,b,c,d])};
-    fxSpawn=function(a,b,c,d,e,f,g2,h){__fxCalls.push(['spawn',a,b,c,d,e,f,g2,h])};
-    fxShake=function(a){__fxCalls.push(['shake',a])};
-    runSkillFx({x:0,y:0,id:${JSON.stringify(id)},ally:true});`);
-  return { kind: g.run(`SKILL_FX[${JSON.stringify(id)}].kind`), calls: JSON.parse(g.run('JSON.stringify(__fxCalls)')) };
+  if (!g.run(`typeof CHARACTER_FX!=='undefined'&&!!CHARACTER_FX[${JSON.stringify(id)}]`)) return null;
+  const q = JSON.stringify(id);
+  g.run('team=["bug"];screen="battle";startBattle(1)');
+  const result = { kind: g.run(`CHARACTER_FX[${q}].kind`) };
+  const play = (level) => {
+    g.run(`setFxLevel(${JSON.stringify(level)});battle.particles.length=0;battle.flash=null`);
+    const c0 = g.run('battle.rng.combat.draws');
+    try { g.run(`runSkillFx({id:${q},x:300,y:300,ally:true})`); } catch (e) { return { error: e.message }; }
+    return {
+      particles: g.run('battle.particles.length'),
+      flash: !!g.run('battle.flash'),
+      maxLife: g.run('battle.particles.reduce((m,p)=>Math.max(m,p.life),0)'),
+      combatDraws: g.run('battle.rng.combat.draws') - c0,
+    };
+  };
+  const full = play('full'), reduced = play('reduced'), off = play('off');
+  g.run('setFxLevel("full")');
+  if (full.error || reduced.error || off.error) return { ...result, error: full.error || reduced.error || off.error };
+  return { ...result, particles: full.particles, flash: full.flash, maxLife: full.maxLife, combatDraws: full.combatDraws + reduced.combatDraws + off.combatDraws, reducedParticles: reduced.particles, offParticles: off.particles };
 }
 
-// descriptor op -> the call shape recorded above
-function opToCall(o) {
-  switch (o.op) {
-    case 'beam': return ['beam', o.from[0], o.from[1], o.to[0], o.to[1], o.color];
-    case 'burst': return ['burst', o.at[0], o.at[1], o.color, o.count, o.size];
-    case 'ring': return ['ring', o.at[0], o.at[1], o.color, o.radius];
-    case 'spawn': return ['spawn', o.at[0], o.at[1], o.v[0], o.v[1], o.life, o.color, o.size, o.grav];
-    case 'shake': return ['shake', o.amount];
-    default: throw new Error('unknown fx op ' + o.op);
-  }
-}
-
-module.exports = { ROOT, HTML, readConstants, makeGame, heroes, skillMode, skillFx, opToCall };
+module.exports = { ROOT, HTML, readConstants, makeGame, heroes, skillMode, skillFx };

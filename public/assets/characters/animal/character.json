@@ -1,0 +1,61 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "animal",
+  "name": "Animal Keeper",
+  "faculty": "VS",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [30, 20]
+  },
+  "signature": {
+    "skillMode": "onPulse",
+    "fx": {
+      "kind": "paw-stampede",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "repeat",
+          "count": 6,
+          "step": [34, 0],
+          "ops": [
+            {
+              "op": "spawn",
+              "at": [0, 0],
+              "v": [0, 0],
+              "life": 0.55,
+              "color": "#8de7ac",
+              "size": 3,
+              "grav": 0
+            },
+            {
+              "op": "spawn",
+              "at": [-3, -3],
+              "v": [0, 0],
+              "life": 0.55,
+              "color": "#8de7ac",
+              "size": 2,
+              "grav": 0
+            },
+            {
+              "op": "spawn",
+              "at": [4, -3],
+              "v": [0, 0],
+              "life": 0.55,
+              "color": "#8de7ac",
+              "size": 2,
+              "grav": 0
+            }
+          ]
+        },
+        {
+          "op": "burst",
+          "at": [-20, -20],
+          "color": "#c98a4a",
+          "count": 8,
+          "size": 3
+        }
+      ]
+    }
+  }
+}

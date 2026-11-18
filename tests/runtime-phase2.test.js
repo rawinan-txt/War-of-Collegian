@@ -55,9 +55,20 @@ test('Bug Hunter: skill VFX anchor reproduces the old beam/burst coordinates exa
   }
 });
 
+// effect data (fx.js) with the Bug Hunter skill anchor moved
+function fxWithAnchor(anchor) {
+  const c = {};
+  new Function('globalThis', fs.readFileSync(path.join(SHIPPED, 'fx.js'), 'utf8'))(c);
+  c.CHARACTER_FX.bug.anchor = anchor;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'p2fx-'));
+  const file = path.join(dir, 'fx.js');
+  fs.writeFileSync(file, 'globalThis.CHARACTER_FX = ' + JSON.stringify(c.CHARACTER_FX) + ';');
+  return file;
+}
+
 test('anchors from character.json move the projectile and the skill effect; heroes without anchors keep their defaults', () => {
-  const m = manifestWith((c) => { c.anchors = { muzzle: [30, -20], skill: [40, -10] }; });
-  const g = loadGame(1, { manifest: m });
+  const m = manifestWith((c) => { c.anchors = { muzzle: [30, -20] }; });
+  const g = loadGame(1, { manifest: m, fx: fxWithAnchor([40, -10]) });
   assert.deepEqual(J(g, "muzzleOf({id:'bug',x:500,y:300,ally:true})"), [530, 280]);
   assert.deepEqual(J(g, "muzzleOf({id:'bug',x:500,y:300,ally:false})"), [470, 280], 'mirrored for enemies');
   assert.deepEqual(J(g, "muzzleOf({id:'mecha',x:500,y:300,ally:true})"), [518, 286], 'no anchors configured: defaults');
@@ -65,6 +76,9 @@ test('anchors from character.json move the projectile and the skill effect; hero
   const c = J(g, '__c');
   assert.deepEqual(c[0].slice(1, 5), [140, 290, 400, 290], 'beam starts at the configured skill anchor');
   assert.deepEqual(c[1].slice(1, 3), [142, 290]);
+  // mirrored for an enemy caster
+  g.run("__c.length=0;runSkillFx({id:'bug',x:900,y:300,ally:false})");
+  assert.deepEqual(J(g, '__c')[0].slice(1, 5), [860, 290, 600, 290], 'x offsets are mirrored for enemies');
 });
 
 test('feet alignment, display scale and the death shadow are taken from the generated configuration', () => {

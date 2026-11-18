@@ -18,7 +18,7 @@ function setup(seed, { speed = 1 } = {}) {
     globalThis.LOG={starts:[],launches:[],fx:[],names:[]};
     const _sa=startAttack; startAttack=function(u,t,v){ if(u.id==='bug')LOG.starts.push(battle.t); return _sa(u,t,v)};
     const _lp=launchProjectile; launchProjectile=function(u,p){ if(u.id==='bug')LOG.launches.push({t:battle.t,name:u.animName}); return _lp(u,p)};
-    const _fx=SKILL_FX.bug.run; SKILL_FX.bug.run=function(u,o){ LOG.fx.push(battle.t); return _fx(u,o)};`);
+    const _fx=runSkillFx; runSkillFx=function(u){ if(u.id==='bug')LOG.fx.push(battle.t); return _fx(u)};`);
   return g;
 }
 const tick = (g) => { g.run(`update(${STEP})`); g.run('LOG.names.push(B.animName)'); };

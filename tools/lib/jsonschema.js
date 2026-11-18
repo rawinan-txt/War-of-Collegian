@@ -1,6 +1,6 @@
 // Small JSON Schema (draft-07 subset) validator, no dependencies. Enough for public/assets/characters/character.schema.json:
 // type, enum, const, required, properties, additionalProperties(false), items, minItems, maxItems, minimum, maximum,
-// exclusiveMinimum, minLength, pattern, oneOf, $ref (local "#/definitions/..."). Unknown keywords are ignored.
+// exclusiveMinimum, minLength, pattern, oneOf, anyOf, $ref (local "#/definitions/..."). Unknown keywords are ignored.
 function typeOf(v) { return v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v; }
 
 function resolveRef(root, ref) {
@@ -21,6 +21,10 @@ function check(root, schema, value, at, errors) {
       errors.push(ok === 0 ? `${at}: does not match any allowed form (${best.e.slice(0, 2).join('; ')})` : `${at}: matches more than one form`);
     }
     return;
+  }
+  if (schema.anyOf) {
+    const results = schema.anyOf.map((s) => { const e = []; check(root, s, value, at, e); return e; });
+    if (!results.some((e) => e.length === 0)) errors.push(`${at}: does not match any allowed form (${results.map((e) => e[0]).join(' / ')})`);
   }
   const t = schema.type;
   if (t) {

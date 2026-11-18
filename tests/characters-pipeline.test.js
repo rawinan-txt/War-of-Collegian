@@ -65,7 +65,7 @@ test('fps "fit" reproduces the values Bug Hunter ships with, and fixed fps is va
 });
 
 test('game constants are read from index.html (single source), and equal what Bug Hunter was tuned for', () => {
-  assert.deepEqual(C, { attackDuration: 0.5, impactDelay: 0.25, skillDuration: 0.72, skillImpact: 0.43, hurtDuration: 0.25, corpseLife: 0.7, muzzle: [18, -14], skillAnchor: [22, -30] });
+  assert.deepEqual(C, { attackDuration: 0.5, impactDelay: 0.25, skillDuration: 0.72, skillImpact: 0.43, hurtDuration: 0.25, corpseLife: 0.7, muzzle: [18, -14] });
 });
 
 // ---------------------------------------------------------------- equivalence
@@ -76,6 +76,8 @@ test('the pipeline generates sprites.json and manifest.js identical to the shipp
   const r = pipe.build(root);
   assert.ok(r.ok, JSON.stringify(r.problems));
   for (const f of ['sprites.json', 'manifest.js']) assert.equal(fs.readFileSync(path.join(root, f), 'utf8'), fs.readFileSync(path.join(SHIPPED, f), 'utf8'), f);
+  const fxOf = (dir) => { const c = {}; new Function('globalThis', fs.readFileSync(path.join(dir, 'fx.js'), 'utf8'))(c); return c.CHARACTER_FX; };
+  assert.deepEqual(fxOf(root).bug, fxOf(SHIPPED).bug, 'effect data of the character');
 });
 
 test('shipped files are in sync with character.json, and the full check (schema, art, timing, game, smoke) has no errors', () => {
@@ -99,18 +101,20 @@ test('the generated manifest drives the game exactly like the old one: same anim
 });
 
 // ---------------------------------------------------------------- consistency with the game
-test('consistency: duplicated data (name, faculty, skill mode, fx kind and ops, anchors, timing) must agree with the game', () => {
+test('consistency: name, faculty, skill mode and timing must agree with the game; effect data must be valid and unique', () => {
   const root = tmpRoot();
+  fs.cpSync(path.join(SHIPPED, 'mecha'), path.join(root, 'mecha'), { recursive: true });
   const with_ = (mut) => { const d = bugDesc(); mut(d); writeDesc(root, 'bug', d); return errorsOf(root, { only: 'bug' }); };
   assert.equal(with_(() => {}), '');
   assert.match(with_((d) => { d.name = 'Bug Catcher'; }), /name "Bug Catcher" differs/);
   assert.match(with_((d) => { d.faculty = 'EG'; }), /faculty "EG" differs/);
   assert.match(with_((d) => { d.signature.skillMode = 'onDeploy'; }), /skillMode "onDeploy" differs from SKILL_MODE "onStack"/);
-  assert.match(with_((d) => { d.signature.fx.kind = 'laser'; }), /fx.kind "laser" differs/);
-  assert.match(with_((d) => { d.signature.fx.ops[0].to = [300, -30]; }), /do not reproduce the game's SKILL_FX/);
-  assert.match(with_((d) => { d.signature.fx.ops.pop(); }), /do not reproduce the game's SKILL_FX/);
-  assert.equal(with_((d) => { d.anchors.muzzle = [20, -14]; }), '', 'the muzzle anchor is read by the runtime now, so a different value is legitimate');
-  assert.match(with_((d) => { d.anchors.skill = [30, -30]; }), /do not reproduce the game's SKILL_FX/, 'moving the skill anchor moves the effect, so the described ops must change with it');
+  assert.match(with_((d) => { d.signature.fx.kind = 'gear-barrier'; }), /fx.kind "gear-barrier" is also used by mecha/);
+  assert.match(with_((d) => { d.signature.fx.ops[0].to = [1]; }), /does not match any allowed form/);
+  assert.match(with_((d) => { d.signature.fx.ops = [{ op: 'shake', amount: 2 }]; }), /draws nothing at full effects/);
+  assert.match(with_((d) => { d.signature.fx.ops = [{ op: 'beam', from: [0, 0], to: [10, 0], color: 'red' }]; }), /does not match/);
+  assert.equal(with_((d) => { d.anchors.muzzle = [20, -14]; }), '', 'the muzzle anchor is read by the runtime');
+  assert.equal(with_((d) => { d.anchors.skill = [30, -30]; }), '', 'the skill anchor moves the effect; the effect is data, so it is valid');
   assert.match(with_((d) => { d.timing.attackDuration = 0.6; }), /timing.attackDuration = 0.6 differs/);
   assert.match(with_((d) => { d.id = 'bugz'; }), /does not match the folder name/);
 });

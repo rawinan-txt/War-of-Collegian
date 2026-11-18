@@ -69,6 +69,9 @@ function loadGame(seed, opts = {}) {
   const animsFile = path.join(__dirname, '..', 'assets', 'characters', 'animations.js');
   if (fs.existsSync(animsFile)) vm.runInContext(fs.readFileSync(animsFile, 'utf8'), ctx);
   // built-in sprite tests are hermetic: the shipped external manifest is only loaded when asked for (opts.manifest)
+  // skill effect data (CHARACTER_FX) is always part of the game; sprite overrides are only loaded when asked for
+  const fxFile = opts.fx || path.join(__dirname, '..', 'public', 'assets', 'characters', 'fx.js');
+  if (fs.existsSync(fxFile)) vm.runInContext(fs.readFileSync(fxFile, 'utf8'), ctx);
   const extFile = opts.manifest;
   if (extFile && fs.existsSync(extFile)) vm.runInContext(fs.readFileSync(extFile, 'utf8'), ctx);
   vm.runInContext(m[1], ctx);

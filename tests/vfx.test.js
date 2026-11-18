@@ -135,8 +135,8 @@ test('every hero has its own skill VFX with a unique kind', () => {
   const g = loadGame();
   const kinds = new Set();
   for (const id of HEROES) {
-    assert.equal(g.run(`typeof SKILL_FX['${id}'].run`), 'function', id);
-    const kind = g.run(`SKILL_FX['${id}'].kind`);
+    assert.ok(g.run(`Array.isArray(CHARACTER_FX['${id}'].ops)`), id + ' has effect data');
+    const kind = g.run(`CHARACTER_FX['${id}'].kind`);
     assert.ok(kind && typeof kind === 'string', id);
     kinds.add(kind);
   }

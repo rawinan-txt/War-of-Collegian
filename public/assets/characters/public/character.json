@@ -1,0 +1,48 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "public",
+  "name": "Health Guardian",
+  "faculty": "PH",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [0, 14]
+  },
+  "signature": {
+    "skillMode": "onPulse",
+    "fx": {
+      "kind": "shield-dome",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "arc",
+          "at": [0, 0],
+          "radius": 34,
+          "from": 3.141592653589793,
+          "to": 6.293185307179586,
+          "step": 0.22,
+          "life": 0.7,
+          "color": "#5acbb9",
+          "size": 3
+        },
+        {
+          "op": "shockwave",
+          "at": [0, -24],
+          "color": "#c8f5ee",
+          "radius": 16
+        },
+        {
+          "op": "burst",
+          "at": [0, -34],
+          "color": "#fff",
+          "count": 6,
+          "size": 2
+        },
+        {
+          "op": "shake",
+          "amount": 1
+        }
+      ]
+    }
+  }
+}

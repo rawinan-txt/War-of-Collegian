@@ -1,0 +1,40 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "nurse",
+  "name": "Angel of Care",
+  "faculty": "NS",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [0, -30]
+  },
+  "signature": {
+    "skillMode": "onPulse",
+    "fx": {
+      "kind": "blessing-hearts",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#ff6b9a",
+          "count": 10,
+          "size": 4
+        },
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#ffd1e0",
+          "count": 8,
+          "size": 3
+        },
+        {
+          "op": "shockwave",
+          "at": [0, 6],
+          "color": "#ffd1e0",
+          "radius": 18
+        }
+      ]
+    }
+  }
+}

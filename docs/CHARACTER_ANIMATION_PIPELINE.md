@@ -265,7 +265,7 @@ How it fits the rest:
 - `import-sprite.js add/remove` refuse to touch a character that has a `character.json` (one source of truth). Characters without one keep working with the old importer.
 - The game and the placeholder heroes are untouched: `index.html`, `assets/characters/**`, stats, skills and balance are not changed in this phase.
 
-Fields the runtime does not read are cross-checked against the game instead of being trusted. Since Phase 2 the runtime reads `anchors` and `fallback`; it does not read per-character `timing` or `signature.fx.ops` yet. Checks: `timing` must equal the global constants, `signature.skillMode` must equal `SKILL_MODE`, `signature.fx.kind` must equal the `SKILL_FX` kind, `signature.fx.ops` must reproduce exactly the particle calls the game makes (run with the configured anchors), and `name`/`faculty` must equal the hero table. Until the runtime reads them, a different value is an error rather than a silent no-op.
+Fields the runtime does not read are cross-checked against the game instead of being trusted. Since Phase 2 the runtime reads `anchors` and `fallback`; it does not read per-character `timing` yet; since Phase 4 it plays `signature.fx`. Checks: `timing` must equal the global constants, `signature.skillMode` must equal `SKILL_MODE`, `signature.fx.kind` must equal the `SKILL_FX` kind, `signature.fx` is played by the real engine and must be valid, draw something, use no combat random numbers and have a unique kind (since Phase 4 the effect data is what the game plays; there is no hand-written effect to compare with), and `name`/`faculty` must equal the hero table. Until the runtime reads them, a different value is an error rather than a silent no-op.
 
 Adding a character by configuration only (visuals): put the PNG strips and a `character.json` in `public/assets/characters/<id>/`, run `node tools/characters.js check <id>` then `build`. The hero itself must already exist in the game's hero table (hero data is not externalised yet). A test adds a synthetic character this way and checks that the unchanged game draws it with the right frame, scale and feet row.
 
@@ -341,3 +341,110 @@ Recorded evidence (`tests/baselines/`, regenerate with `node tools/capture-basel
 4. Randomness that decides a gameplay outcome (where a hit lands, what spawns, who is chosen) uses `crand()`, is drawn at a simulation event (never in `draw()`), and the number of draws must not depend on effects level, frame rate or drawing.
 5. Use the `fx*` helpers (`fxBurst`, `fxRing`, `fxBeam`, `fxSpawn`, `fxShake`); they handle the effects levels (`reduced` halves, `off` skips). Effects must not call `draw()`-time randomness for gameplay.
 6. A new effect needs no test of its own for determinism; the existing scenarios already compare full, reduced and off. If a new gameplay random draw is added, record a new baseline and say so in the change.
+
+## 10. Phase 4 as built: data-driven skill VFX
+
+Every skill effect is now data in the character's `character.json`; `index.html` contains no hero-specific effect code (the hand-written `SKILL_FX` table is gone). Combat is untouched: the engine only visualises the `skillfx` event the combat system already emits at `SKILL_IMPACT`.
+
+### 10.1 The 12 effects before the change (mapping)
+
+| id | Faculty | Hero | Signature skill | Gameplay (unchanged) | Trigger (`SKILL_MODE`) | Former effect kind | Former particle behaviour (full / reduced) |
+|---|---|---|---|---|---|---|---|
+| bug | ICT | Bug Hunter | Infinite Loop | keeps firing at one target, faster each shot (ranged) | onStack | code-beam | beam + burst + shake: 54 / 27 |
+| mecha | EG | Mecha Freshy | Emergency Barrier | first hit taken is greatly reduced (tank) | onDeploy | gear-barrier | 2 rings + burst + shake: 40 / 20 |
+| lab | SC | Lab Maniac | Chain Reaction | hits the main target and splashes damage (aoe) | every3 | flask-burst | 2 bursts + ring + shake: 38 / 19 |
+| night | SI | Night Shifter | Emergency Care | heals the most injured ally (heal) | onPulse | medical-pulse | 2 rings + 5 rising crosses: 37 / 21 |
+| chem | PY | Chemist Pro | Toxic Formula | poisons enemies over time (poison) | every3 | poison-cloud | 2 bursts + ring: 38 / 19 |
+| animal | VS | Animal Keeper | Animal Assist | summons a dog periodically (summon) | onPulse | paw-stampede | 6 paw-print rows + burst: 26 / 22 |
+| dental | DT | Dental Blitz | Tooth Breaker | heavy armour-piercing attack (pierce) | every3 | drill-spiral | 16-particle spiral + beam + shake: 25 / 21 |
+| music | MUSIC | Sound Wave | Sonic Stage | sound wave slows a group (slow) | every3 | sound-waves | 3 expanding rings + burst + shake: 56 / 28 |
+| runner | SC2 | Ace Runner | Overdrive | dashes in with an opening hit (dash) | onDeploy | speed-trails | 5 speed lines + burst: 67 / 36 |
+| global | MUIC | Global Exchange | Global Link | restores team AT on deploy (income) | onDeploy | orbit-rings | 2 rings + burst: 38 / 19 |
+| public | PH | Health Guardian | Barrier Zone | shield for nearby allies (shield) | onPulse | shield-dome | dome arc of 15 + ring + burst + shake: 37 / 26 |
+| nurse | NS | Angel of Care | Blessing of Life | heals several allies at once (massheal) | onPulse | blessing-hearts | 2 bursts + ring: 34 / 17 |
+
+All 12 used 0 combat random draws; visual draws per effect were 0 to 66 (burst particles). Anchors were hard-coded offsets inside each effect function. The machine-readable snapshot is `tests/baselines/phase4-skillfx-before.json` (regenerate the table with `node tools/map-skill-fx.js`).
+
+### 10.2 Configuration format
+
+```json
+{
+  "id": "dental", "name": "Dental Blitz", "faculty": "DT",
+  "art": "builtin",
+  "anchors": { "skill": [46, -10] },
+  "signature": {
+    "skillMode": "every3",
+    "fx": { "kind": "drill-spiral", "at": "impact",
+      "ops": [
+        { "op": "spiral", "at": [0, 0], "count": 16, "angleStep": 0.9, "radius0": 4, "radiusStep": 1.6, "squash": 0.6, "life": 0.35, "colors": ["#73ddff", "#fff"], "size": 3 },
+        { "op": "beam", "from": [-24, 0], "to": [24, 0], "color": "#c8d1ee" },
+        { "op": "shake", "amount": 1 } ] }
+  }
+}
+```
+
+- `anchors.skill` is the origin of the effect relative to the unit (x mirrored for enemies); every coordinate inside `ops` is relative to it, so moving the anchor moves the whole effect.
+- `kind` names the effect (unique per character); `at: "impact"` means it plays at the skill impact moment decided by combat (`SKILL_IMPACT`, 0.43 s).
+- `art: "builtin"` marks a character that still uses the generated placeholder art; it has no `sprite`/`anims` yet. Characters with imported sheets (Bug Hunter) have `sprite` and `anims` instead, and the same `signature`.
+- `node tools/characters.js build` validates everything against `character.schema.json` and writes `public/assets/characters/fx.js` (`CHARACTER_FX`), which `index.html` loads before the game script. `fx.js` is generated, never edited by hand; `check` fails if it is stale.
+- `signature.skillMode` is still cross-checked against `SKILL_MODE` in the game (when a skill plays is gameplay, not presentation).
+
+### 10.3 Rendering primitives (the engine)
+
+The engine is `runFxOps` in `index.html`. Primitives only call the visual helpers, which only draw and only use the visual random stream.
+
+| `op` | What it renders | Main parameters |
+|---|---|---|
+| `beam` | straight line of pixels | `from`, `to`, `color` |
+| `burst` (Particle Burst) | particles flying outward in random directions (visual stream) | `at`, `color`, `count`, `size` |
+| `shockwave` (alias `ring`) | expanding ring | `at`, `color`, `radius` |
+| `explosion` | shockwave + burst + optional shake in one op | `at`, `color`, `color2`, `radius`, `count`, `size`, `shake` |
+| `aura` | particles orbiting and rising around a point | `at`, `color`, `radius`, `count`, `rise`, `life`, `size` |
+| `trail` (Projectile Trail) | fading particles along a segment | `from`, `to`, `color`, `count`, `life`, `size` |
+| `flash` (Screen Flash) | full-screen colour that fades | `color`, `alpha`, `duration` |
+| `dissolve` (Pixel Dissolve) | pixels rising and fading inside a rectangle (visual stream) | `at`, `w`, `h`, `color`, `count`, `life`, `size` |
+| `spawn` | one particle, full control | `at`, `v`, `life`, `color`, `size`, `grav` |
+| `spiral`, `arc` | particles on a spiral / circular arc | see the schema |
+| `repeat` | repeats a list of ops with an offset per repetition | `count`, `step`, `ops` |
+| `shake` | screen shake (full effects only) | `amount` |
+
+The 12 current skills use `beam`, `burst`, `shockwave`, `spawn`, `repeat`, `spiral`, `arc` and `shake`. `explosion`, `aura`, `trail`, `flash` and `dissolve` are new primitives available to future skills; they are tested but not used by an existing character, so no existing look changed. Effects levels: `reduced` halves bursts, auras, trails and dissolves and weakens the flash; `off` draws nothing and does not touch the visual stream.
+
+### 10.4 Adding a skill effect for a new character
+
+1. Make sure the gameplay exists first (hero entry and `SKILL_MODE` in `index.html`; those are not data-driven yet).
+2. Create `public/assets/characters/<id>/character.json` with `id`, `name`, `faculty` equal to the hero, `art: "builtin"` (or `sprite`/`anims` when you have sheets), `anchors.skill` and `signature` with `skillMode`, `fx.kind` (new, unique) and `fx.ops`.
+3. Run `node tools/characters.js check <id>`; fix errors until it reports none, then `node tools/characters.js build`.
+4. Look at it in the game (or use the browser capture below), then run `node --test tests/`.
+
+No change to `index.html` is needed. If a skill needs something none of the primitives can draw, add a primitive to the engine once (with a test) and use it from data; do not add character-specific code.
+
+### 10.5 Testing VFX
+
+- `node tools/characters.js check` plays every effect with the real engine at full / reduced / off and reports errors for: invalid data, drawing nothing, combat random draws, particles when off, more particles in reduced than full, a duplicate `kind` (error), and an effect with the same structure as another one differing only in colour (warning).
+- `node tools/map-skill-fx.js` prints the table above for the current code; `node tools/compare-skillfx.js` compares every effect with the snapshot of the hand-written originals (calls, particles, visual draws, shake, reduced/off).
+- `tests/vfx-engine.test.js`: the 12 effects equal the originals; all 12 activate once at `SKILL_IMPACT`; effects change no HP/stat/AT, call no `damage`, draw no combat random number; every primitive draws, honours reduced/off, mirrors for enemies, uses only the visual stream; nothing stays active (particles, flash, shake all expire); pause freezes effects and 2x ages them twice as fast.
+- `tests/rng-separation.test.js` and the Phase 3 baselines: full/reduced/off battles stay identical (skills fire throughout them).
+- Browser: seed a battle, deploy a hero, fix its position, call `runSkillFx` and screenshot after a fixed number of ticks (the capture helper used for the migration is described in the Phase 4 report). The screen-shake offset depends on how many frames the browser draws before the capture, so two captures of the same code can differ by a pixel offset; compare several captures.
+
+### 10.6 Keeping each skill's identity
+
+- The gameplay mechanic of each skill is unique and unchanged; the effect is its visual voice. Effects are not variations of one template: they use different primitives and geometry (a beam, a gear shockwave, a spiral, rows of paw prints, speed lines, a dome arc, rising crosses).
+- `kind` must be unique (error) and the structure of two effects must differ (warning when they differ only in colour). This is a hint, never a verdict that two skills are duplicates.
+- Describe a skill's imagery in the `notes` or review by what it shows (Bug Hunter: digital beam from a hologram; Mecha: gear-coloured barrier shockwaves; Lab: flask burst in two colours; Animal Keeper: paw prints stampeding; Sound Wave: three concentric sound rings; and so on). Use the repository's real names and abilities; do not copy another character's effect and change the colour.
+- Several of the original effects belong to the same family (Lab, Chemist and Nurse are two bursts plus a ring with different geometry, colours and sizes). That is how they were before and it was preserved; new characters should aim for something structurally distinct.
+
+### 10.7 Visual randomness
+
+Same rules as section 9.5. Additionally: primitives never use `crand` or `Math.random` (a test inspects the engine's source), particle counts may differ per effects level but nothing in combat may read them, and `dissolve` is the only new primitive that draws visual random numbers (`vrand`), via the visual stream only.
+
+### 10.8 Migration record
+
+Done incrementally with a comparison after each step against the snapshot of the hand-written effects: (1) Bug Hunter, (2) Mecha Freshy and Lab Maniac, (3) the other nine. After every step the migrated effects were identical (same top-level calls, same particles, same visual draws, no combat draws, same reduced/off behaviour). Final cleanup removed the `SKILL_FX` table and `DEFAULT_SKILL_ANCHOR` from `index.html`.
+
+### 10.9 Intentional differences and limitations
+
+- Particle positions of five effects are computed with the offsets summed in a different order (for example the rows of the paw-print stampede and the three music rings), which can differ from the original in the last bit of a floating-point number (below 1e-9 px). Nothing is visible; the comparison tolerance is 1e-9.
+- Skill effect anchors for the 11 placeholder heroes live in their new `character.json` files; their art still comes from the generated placeholder sheets.
+- `anchors.muzzle` (projectile origin) is still only configurable for characters with imported sheets; the placeholder heroes use the default.
+- The roster and `SKILL_MODE` are still in `index.html` (Phase 6).

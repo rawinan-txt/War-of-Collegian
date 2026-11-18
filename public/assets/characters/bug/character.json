@@ -4,28 +4,113 @@
   "name": "Bug Hunter",
   "faculty": "ICT",
   "notes": "Pilot character of the data-driven pipeline. Approved model: docs/BUG_HUNTER_SPEC.md (v3). Sheets are derived from the approved still by tools/pixel/art/bug_hunter_*.js.",
-  "sprite": { "frame": [96, 96], "scale": 1, "feetRow": "auto", "facing": "right" },
+  "sprite": {
+    "frame": [
+      96,
+      96
+    ],
+    "scale": 1,
+    "feetRow": "auto",
+    "facing": "right"
+  },
   "anims": {
-    "idle": { "file": "idle.png", "frames": 4, "fps": 6, "loop": true },
-    "walk": { "file": "walk.png", "frames": 6, "fps": 12, "loop": true },
-    "attack": { "file": "attack.png", "frames": 6, "fps": "fit", "impact": 3 },
-    "skill": { "file": "skill.png", "frames": 12, "fps": "fit", "impact": 7 },
-    "hurt": { "file": "hurt.png", "frames": 3, "fps": "fit" },
-    "death": { "file": "death.png", "frames": 6, "fps": "fit", "frame": [224, 96], "shadow": "auto" },
-    "stun": { "file": "stun.png", "frames": 4, "fps": 8, "loop": true }
+    "idle": {
+      "file": "idle.png",
+      "frames": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "walk": {
+      "file": "walk.png",
+      "frames": 6,
+      "fps": 12,
+      "loop": true
+    },
+    "attack": {
+      "file": "attack.png",
+      "frames": 6,
+      "fps": "fit",
+      "impact": 3
+    },
+    "skill": {
+      "file": "skill.png",
+      "frames": 12,
+      "fps": "fit",
+      "impact": 7
+    },
+    "hurt": {
+      "file": "hurt.png",
+      "frames": 3,
+      "fps": "fit"
+    },
+    "death": {
+      "file": "death.png",
+      "frames": 6,
+      "fps": "fit",
+      "frame": [
+        224,
+        96
+      ],
+      "shadow": "auto"
+    },
+    "stun": {
+      "file": "stun.png",
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    }
   },
   "fallback": {},
-  "anchors": { "muzzle": [18, -14], "skill": [22, -30] },
-  "timing": { "attackDuration": 0.5, "impactDelay": 0.25, "skillDuration": 0.72, "skillImpact": 0.43, "hurtDuration": 0.25, "corpseLife": 0.7 },
+  "anchors": {
+    "muzzle": [
+      18,
+      -14
+    ],
+    "skill": [
+      22,
+      -30
+    ]
+  },
+  "timing": {
+    "attackDuration": 0.5,
+    "impactDelay": 0.25,
+    "skillDuration": 0.72,
+    "skillImpact": 0.43,
+    "hurtDuration": 0.25,
+    "corpseLife": 0.7
+  },
   "signature": {
     "skillMode": "onStack",
     "fx": {
       "kind": "code-beam",
       "at": "impact",
       "ops": [
-        { "op": "beam", "from": [22, -30], "to": [282, -30], "color": "#7fe3ff" },
-        { "op": "burst", "at": [24, -30], "color": "#bff3ff", "count": 10, "size": 3 },
-        { "op": "shake", "amount": 2 }
+        {
+          "op": "beam",
+          "from": [
+            0,
+            0
+          ],
+          "to": [
+            260,
+            0
+          ],
+          "color": "#7fe3ff"
+        },
+        {
+          "op": "burst",
+          "at": [
+            2,
+            0
+          ],
+          "color": "#bff3ff",
+          "count": 10,
+          "size": 3
+        },
+        {
+          "op": "shake",
+          "amount": 2
+        }
       ]
     }
   }

@@ -22,6 +22,10 @@ test('Math.random is only used to pick a battle seed; every other draw is explic
   assert.ok(/vrand\(\)/.test(fn('fxBurst')) && !/crand\(\)/.test(fn('fxBurst')));
   const draw = fn('draw');
   assert.ok(/vrand\(\)/.test(draw) && !/crand\(\)/.test(draw));
+  // the data-driven effect engine (all skill VFX) draws only from the visual stream
+  const engine = html.slice(html.indexOf('function runFxOps('), html.indexOf('function runSkillFx('));
+  assert.ok(engine.length > 500 && /vrand\(\)/.test(engine), 'found the effect engine');
+  assert.ok(!/crand\(|Math\.random/.test(engine), 'the effect engine never uses combat or Math.random numbers');
   // simulation code never touches the visual stream
   for (const name of ['update', 'spawnEnemy', 'bumpEnemy', 'makeUnit', 'damage', 'bossPhase', 'applyAttack', 'resolvePend', 'launchProjectile', 'updateProjectiles']) {
     assert.ok(!/vrand\(\)/.test(code(fn(name))), `${name} must not draw from the visual stream`);
@@ -29,7 +33,7 @@ test('Math.random is only used to pick a battle seed; every other draw is explic
   // the combat draws are exactly the documented ones
   const crandSites = [...html.matchAll(/crand\(\)/g)].length;
   assert.equal(crandSites, 7, 'combat draws: unit y jitter, walk phase, enemy spawn x, enemy y jitter, boss rain x, damage-number jitter, enemy type pick');
-  assert.equal([...html.matchAll(/vrand\(\)/g)].length, 5, 'visual draws: 3 per particle burst, 2 for screen shake');
+  assert.equal([...html.matchAll(/vrand\(\)/g)].length, 9, 'visual draws: 3 per particle burst, 2 for screen shake, 4 in the pixel-dissolve primitive');
 });
 
 // ---------------------------------------------------------------- stream isolation at run time
