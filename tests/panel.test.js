@@ -60,7 +60,7 @@ test('renderStatsPanel writes sorted values and bars into the DOM', () => {
 test('statistics update during battle from real combat events', () => {
   const g = loadGame();
   g.run("startBattle();battle.at=5000;deploy('bug');spawnEnemy('basic');{const e=battle.enemies[0];e.hp=e.maxHp=100000;e.x=battle.units[0].x+100}");
-  tick(g, 0.3);
+  tick(g, 1.0);
   g.run("if(!statsOpen)toggleStatsPanel();renderStatsPanel(true)");
   assert.equal(g.run("document.getElementById('sval-bug').textContent"), '43'); // 39 ATK x1.1 Tech Alliance (default team has ICT + EG)
 });

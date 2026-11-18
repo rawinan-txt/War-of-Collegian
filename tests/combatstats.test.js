@@ -41,7 +41,7 @@ test('AoE splash damage is credited to the AoE hero', () => {
   const g = setup();
   g.run("deploy('lab')");
   g.run('{const x=battle.units[0].x;spawnEnemy(\'basic\');spawnEnemy(\'basic\');battle.enemies.forEach((e,i)=>{e.hp=e.maxHp=100000;e.x=x+100+i*20})}');
-  tick(g, 0.3);
+  tick(g, 1.0);
   near(stat(g, 'lab', 'totalDamage'), 85 + 85 * 0.48, 0.01);
 });
 
@@ -56,11 +56,11 @@ test('damage over time keeps its source even after the source dies', () => {
 test('summoned dog damage is credited to the summoner, even after the summoner dies', () => {
   const g = setup();
   g.run("deploy('animal')");
-  tick(g, 0.1);
+  tick(g, 0.5);
   assert.equal(g.run("battle.units.some(u=>u.id==='dog')"), true);
   g.run("{const a=battle.units.find(u=>u.id==='animal');a.atk=0;a.alive=false}");
   g.run("{const d=battle.units.find(u=>u.id==='dog');spawnEnemy('basic');const e=battle.enemies[battle.enemies.length-1];e.hp=e.maxHp=100000;e.x=d.x+20}");
-  tick(g, 0.5);
+  tick(g, 1.0);
   assert.ok(stat(g, 'animal', 'totalDamage') >= 33);
   assert.equal(g.run("CombatStats.getCharacterStats('dog')"), null);
 });
@@ -163,7 +163,7 @@ test('overheal is excluded: 185 heal on 100 missing HP records 100', () => {
   const g = setup(TEAM_SH);
   g.run("deploy('night')");
   allyAt(g, 'mecha', g.run('battle.units[0].x+10'), 'd.hp=d.maxHp-100');
-  tick(g, 0.3);
+  tick(g, 1.0);
   assert.equal(stat(g, 'night', 'totalHealing'), 100);
   assert.equal(g.run('battle.units[1].hp'), g.run('battle.units[1].maxHp'));
 });
@@ -175,7 +175,7 @@ test('mass heal credits each target its effective amount', () => {
   allyAt(g, 'mecha', x + 10, 'd.hp=d.maxHp-50');
   allyAt(g, 'mecha', x + 20, 'd.hp=d.maxHp-150');
   allyAt(g, 'mecha', x + 30, 'd.hp=d.maxHp-400');
-  tick(g, 0.3);
+  tick(g, 1.0);
   assert.equal(stat(g, 'nurse', 'totalHealing'), 50 + 150 + 150);
 });
 
@@ -183,6 +183,6 @@ test('Healthcare Network multiplier applies before the overheal cap', () => {
   const g = setup(['night', 'chem', 'nurse', 'public', 'bug', 'lab']);
   g.run("deploy('night')");
   allyAt(g, 'mecha', g.run('battle.units[0].x+10'), 'd.hp=d.maxHp-300');
-  tick(g, 0.3);
+  tick(g, 1.0);
   near(stat(g, 'night', 'totalHealing'), 185 * 1.12, 1e-9);
 });
