@@ -73,7 +73,7 @@ Each item was checked in the code; numbers are from this repository.
 | F4 | Config is built one sheet at a time by CLI flags | `import-sprite.js add <id> <png> --anim ...` | Easy to forget `--impact` or `--shadow`; no single reviewable file per character |
 | F5 | Art checks are hand-written per character | `bug-hunter-anim.test.js` knows Bug Hunter's face rows and laptop rectangle | Does not scale; a generic validator is needed |
 | F6 | Global timing | the constants in 1.3 | Fine while all heroes share timing, but fps must be fitted per sheet and verified; a hero with different swing speed cannot be expressed |
-| F7 | VFX uses the battle RNG | `fxBurst` calls `Math.random`. Measured: same seed, `full` vs `reduced` effects gives different kills, enemy HP and unit positions (kills 10/10, enemy 6307 vs 6295, positions differ) | Visual settings change combat results. Adding many data-driven effects makes it worse. Needs its own seeded RNG before the VFX system is expanded |
+| F7 | VFX uses the battle RNG (fixed in Phase 3, see section 9) | `fxBurst` calls `Math.random`. Measured: same seed, `full` vs `reduced` effects gives different kills, enemy HP and unit positions (kills 10/10, enemy 6307 vs 6295, positions differ) | Visual settings change combat results. Adding many data-driven effects makes it worse. Needs its own seeded RNG before the VFX system is expanded |
 | F8 | Fallback is implicit | any missing state silently becomes `idle` | A "complete" character cannot be distinguished from a half-finished one; skill falling back to idle hides a missing signature animation |
 | F9 | Every sheet is loaded at page load | `loadSprites()` loops over all heroes (13 heroes x up to 7 files today) | 100 heroes = ~700 image requests before the first screen |
 | F10 | Still-to-animation tooling is Bug Hunter specific | `bug_hunter_*.js` hard-code leg rows, laptop rectangle, tuft rectangle | Reusable idea (rigid parts), non-reusable code |
@@ -281,3 +281,63 @@ The runtime in `index.html` now reads the generated configuration. Combat code i
 - **Lazy loading.** Nothing is requested at page start. `ensureSprites(ids)` creates the sprite record and requests its sheets once; the record stays in `SPRITES` (the cache). It runs when the team screen is shown or the team changes (prefetch), and again at battle start for the team, its summons (`SPRITE_DEPS`, for example Animal Keeper brings the dog) and the stage enemies (`ENEMY_SPRITE_IDS`; no enemy has a sprite yet). Until a sheet is ready the unit is drawn with the placeholder, so a battle never waits for an asset. The headless test harness loads every configured sprite by default (`{ lazy: true }` switches to the real behaviour).
 
 Measured in a real browser (Edge, default team): image requests at page load went from every configured sheet (about 79) to 0; the team screen requests 43 (default team plus the dog); picking one more hero adds its 6; starting a battle adds none; a hero that is not in the team is never requested.
+
+## 9. Phase 3 as built: separate combat and visual randomness
+
+Finding F7 (visual settings changed combat results) is fixed. For the same battle seed and the same player inputs, the effects level can no longer change the outcome of a battle.
+
+### 9.1 Every random draw, classified
+
+Before the change the game had 12 `Math.random()` calls on one shared stream. Each one, and where it went:
+
+| Where | What it draws | Class | Stream now |
+|---|---|---|---|
+| `update`: enemy wave timer | which enemy type spawns (`r < .25` tank, ...) | Combat | `crand` |
+| `spawnEnemy` | enemy spawn x offset (`968 - r*15`) | Combat | `crand` |
+| `bossPhase` | x of each Exam-Paper-Rain warning (`150 + i*180 + r*100`); the warning deals damage there | Combat | `crand` |
+| `makeUnit` | unit lane y (`327 +- 15`) | **Ambiguous** (cosmetic state of the simulation) | `crand` |
+| `makeUnit` | unit walk-cycle phase (`r*6`) | **Ambiguous** (cosmetic state of the simulation) | `crand` |
+| `bumpEnemy` | enemy lane y (`326 +- 12.5`) | **Ambiguous** (cosmetic state of the simulation) | `crand` |
+| `damage` | damage-number x jitter | **Ambiguous** (cosmetic state of the simulation) | `crand` |
+| `fxBurst` | particle angle, speed, life (3 per particle) | VFX | `vrand` |
+| `draw` | screen-shake offset x and y (2 per drawn frame) | VFX | `vrand` |
+
+The five ambiguous draws are decided like this: y, walk phase and damage-number jitter do not influence any gameplay number (hits are decided by x distance only), but they are part of the simulation state, they are drawn at simulation events (a unit being created, damage being dealt) and the amount drawn does not depend on the effects level or the frame rate. Putting them on the visual stream would make unit positions differ between quality levels, because that stream is consumed differently by each level. They therefore stay on the combat stream, which also keeps the order of the simulation draws exactly as it was. The test suite still checks positions including y.
+
+There is no other randomness: no custom random functions, no critical hits, no random targeting, no random skill effects, no random AI choices. Target selection is deterministic (nearest foe). `performance.now` is used only to throttle the statistics panel.
+
+### 9.2 Architecture
+
+```
+battle.rng.combat   crand()   seeded; every draw the simulation makes
+battle.rng.vfx      vrand()   seeded; only particles and screen shake
+battle.seed                  the battle seed; the visual seed is derived from it
+```
+
+- `createSeededRng(seed)` is mulberry32. Each stream exposes `next()`, `state` and `draws`, so tests can compare the exact RNG state.
+- Seed management: `startBattle(seed)` uses the given seed; otherwise `setBattleSeed(n)` (or `?seed=n` in the URL) if set; otherwise one `Math.random()` call picks a seed. That single call is the only use of `Math.random` left in the game. The visual seed is `seed XOR 0x9e3779b9`, so one number reproduces a whole battle, visuals included.
+- Effects levels: `full`, `reduced` (half the particles, no shake) and a new `off` (no particles, no shake). `off` is available through `setFxLevel('off')`; the header button still toggles full/reduced and `off` is not saved to `localStorage`. In `off` the visual stream is not touched at all.
+- Combat never draws from the visual stream and the visual code never draws from the combat stream; tests check both directions by source inspection and at run time (including a visual stream that throws when touched).
+
+### 9.3 Intentional difference
+
+The old combat sequence cannot be reproduced. Before, one stream served both purposes and most of its draws were particles (11,141 draws per battle on average before; after the split a comparable battle uses about 620 combat draws and about 9,700 visual ones, roughly 94% visual), so the k-th combat decision received whatever number was left after an effects-level-dependent number of particle draws. There is no seed that gives the old combat numbers back, and the old numbers themselves changed with the effects level. What is preserved is the order and the call sites of the combat draws, and all rules, formulas and stats. Every battle now draws a different (but fixed per seed) set of combat numbers, and a battle no longer depends on the effects level or on how often the screen was drawn.
+
+Recorded evidence (`tests/baselines/`, regenerate with `node tools/capture-baseline.js`, compare with `node tools/compare-baselines.js before.json after.json --md out.md`):
+
+- `phase3-before.json`: 23 scenarios on the old code (6 seeds x 3 teams, 2x speed, pause/resume, boss rain) plus 9 variants. In the old code the same seed gave different kills in every variant that changed the effects level or drew every frame (for example seed 1 mixed team: 16, 17 and 15 kills).
+- `phase3-after.json`: the same scenarios and 15 variants on the new code. Every variant, including `off`, is bit-identical to the main run (same digest of every simulation tick).
+- `phase3-comparison.md`: per-scenario and aggregate comparison. Over the 23 scenarios the means of kills, damage, defense and healing are within one standard deviation of each other. A separate 120-run-per-build comparison (40 seeds x 3 teams, 90 s) found no statistically significant difference (kills 22.5 vs 22.5, damage 14167 vs 13856, enemy base HP 5389 vs 5274; all |z| < 1.6).
+
+### 9.4 Deterministic testing
+
+`tests/lib/combat-trace.js` runs a scripted battle headlessly (fixed simulation step, inputs at fixed simulation times: deploys, income upgrades, faculty laser, ultimate) and records spawns, projectile launches, boss-rain positions, checkpoints of every unit (x, y, HP), the final DMG/DEF/HEAL statistics, the outcome, the RNG state and a SHA-256 digest of the whole simulation. `tests/rng-separation.test.js` runs the same battle with full, reduced and off effects, with and without drawing every frame, over several seeds and teams, with 2x speed, pause/resume and the boss, and requires every gameplay field and the combat RNG state to match exactly. It also checks that the visual stream really differs between modes (so the comparison cannot pass vacuously) and that the current code reproduces the recorded baseline.
+
+### 9.5 Rules for developers of skill VFX
+
+1. Anything that only changes how a skill looks (particles, shake, flashes, trails) must use `vrand()`, never `crand()` and never `Math.random()`. A test fails if `Math.random` appears anywhere except the seed pick.
+2. VFX code must not read or write anything the simulation reads: no HP, positions, timers, cooldowns, target lists, `battle.rng.combat`. Unit fields written only for drawing (`animName`, `animT`, `flashT`) are fine.
+3. Do not make gameplay depend on whether a particle exists. Particle counts change with the effects level; the simulation must not know.
+4. Randomness that decides a gameplay outcome (where a hit lands, what spawns, who is chosen) uses `crand()`, is drawn at a simulation event (never in `draw()`), and the number of draws must not depend on effects level, frame rate or drawing.
+5. Use the `fx*` helpers (`fxBurst`, `fxRing`, `fxBeam`, `fxSpawn`, `fxShake`); they handle the effects levels (`reduced` halves, `off` skips). Effects must not call `draw()`-time randomness for gameplay.
+6. A new effect needs no test of its own for determinism; the existing scenarios already compare full, reduced and off. If a new gameplay random draw is added, record a new baseline and say so in the change.
