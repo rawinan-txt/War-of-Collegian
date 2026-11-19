@@ -1,0 +1,49 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "music",
+  "name": "Sound Wave",
+  "faculty": "MUSIC",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [22, -22]
+  },
+  "signature": {
+    "skillMode": "every3",
+    "fx": {
+      "kind": "sound-waves",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#ed7aff",
+          "radius": 8
+        },
+        {
+          "op": "shockwave",
+          "at": [16, 0],
+          "color": "#ffd1ff",
+          "radius": 14
+        },
+        {
+          "op": "shockwave",
+          "at": [32, 0],
+          "color": "#ed7aff",
+          "radius": 20
+        },
+        {
+          "op": "burst",
+          "at": [8, -18],
+          "color": "#ffd1ff",
+          "count": 8,
+          "size": 3
+        },
+        {
+          "op": "shake",
+          "amount": 2
+        }
+      ]
+    }
+  }
+}

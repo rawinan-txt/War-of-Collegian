@@ -36,7 +36,7 @@ function healedHp(team, faculty) {
   g.run(`team=${JSON.stringify(team)};faculty='${faculty}';startBattle()`);
   g.run("deploy('night')");
   g.run("const d=makeUnit(heroes.find(h=>h.id==='mecha'),true,battle.units[0].x+10);d.hp=100;battle.units.push(d)");
-  tick(g, 0.3);
+  tick(g, 1.0);
   return g.run('battle.units[1].hp');
 }
 
@@ -61,8 +61,8 @@ function firstHit(heroId, team) {
   g.run(`team=${JSON.stringify(team)};startBattle();battle.at=1000`);
   g.run(`deploy('${heroId}')`);
   g.run("spawnEnemy('basic');const e=battle.enemies[0];e.hp=e.maxHp=100000;e.x=battle.units[0].x+100");
-  tick(g, 0.3);
-  return g.run(`battle.damageDone['${heroId}']`);
+  tick(g, 1.0);
+  return g.run(`CombatStats.getCharacterStats('${heroId}').totalDamage`);
 }
 
 test('Tech Alliance: ICT hero +10% damage, other heroes unchanged', () => {

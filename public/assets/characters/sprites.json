@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "characters": {
+    "bug": {
+      "scale": 1,
+      "anims": {
+        "idle": {
+          "file": "bug/idle.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 4,
+          "frameRate": 6,
+          "repeat": -1,
+          "feetRow": 89
+        },
+        "walk": {
+          "file": "bug/walk.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12,
+          "repeat": -1,
+          "feetRow": 89
+        },
+        "attack": {
+          "file": "bug/attack.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 12.5,
+          "repeat": 0,
+          "feetRow": 89
+        },
+        "skill": {
+          "file": "bug/skill.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 12,
+          "frameRate": 17,
+          "repeat": 0,
+          "feetRow": 89
+        },
+        "hurt": {
+          "file": "bug/hurt.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 3,
+          "frameRate": 12,
+          "repeat": 0,
+          "feetRow": 89
+        },
+        "death": {
+          "file": "bug/death.png",
+          "frameWidth": 224,
+          "frameHeight": 96,
+          "frameCount": 6,
+          "frameRate": 8.5,
+          "repeat": 0,
+          "feetRow": 89,
+          "shadow": [
+            [
+              0,
+              19,
+              1
+            ],
+            [
+              -7,
+              14,
+              1
+            ],
+            [
+              -14,
+              14,
+              1
+            ],
+            [
+              -50,
+              43,
+              1
+            ],
+            [
+              -50,
+              42,
+              0.68
+            ],
+            [
+              -50,
+              41,
+              0.15
+            ]
+          ]
+        },
+        "stun": {
+          "file": "bug/stun.png",
+          "frameWidth": 96,
+          "frameHeight": 96,
+          "frameCount": 4,
+          "frameRate": 8,
+          "repeat": -1,
+          "feetRow": 89
+        }
+      },
+      "impact": {
+        "attack": 3,
+        "skill": 7
+      },
+      "anchors": {
+        "muzzle": [
+          18,
+          -14
+        ]
+      }
+    }
+  }
+}

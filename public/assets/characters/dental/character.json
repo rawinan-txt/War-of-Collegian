@@ -1,0 +1,42 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "dental",
+  "name": "Dental Blitz",
+  "faculty": "DT",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [46, -10]
+  },
+  "signature": {
+    "skillMode": "every3",
+    "fx": {
+      "kind": "drill-spiral",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "spiral",
+          "at": [0, 0],
+          "count": 16,
+          "angleStep": 0.9,
+          "radius0": 4,
+          "radiusStep": 1.6,
+          "squash": 0.6,
+          "life": 0.35,
+          "colors": ["#73ddff", "#fff"],
+          "size": 3
+        },
+        {
+          "op": "beam",
+          "from": [-24, 0],
+          "to": [24, 0],
+          "color": "#c8d1ee"
+        },
+        {
+          "op": "shake",
+          "amount": 1
+        }
+      ]
+    }
+  }
+}

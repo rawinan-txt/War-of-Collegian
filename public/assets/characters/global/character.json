@@ -1,0 +1,39 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "global",
+  "name": "Global Exchange",
+  "faculty": "MUIC",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [0, -24]
+  },
+  "signature": {
+    "skillMode": "onDeploy",
+    "fx": {
+      "kind": "orbit-rings",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#69aaff",
+          "radius": 22
+        },
+        {
+          "op": "shockwave",
+          "at": [0, 0],
+          "color": "#ffd45a",
+          "radius": 12
+        },
+        {
+          "op": "burst",
+          "at": [0, 0],
+          "color": "#fff",
+          "count": 6,
+          "size": 2
+        }
+      ]
+    }
+  }
+}

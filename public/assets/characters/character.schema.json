@@ -1,0 +1,844 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "war-of-collegian/character.schema.json",
+  "title": "War of Collegian - character visual configuration",
+  "description": "One character.json per character folder. Source of truth for sprite sheets, animation timing, anchors, shadow, fallback and the visual side of the signature skill (signature.fx). Gameplay stats and skill behaviour are NOT part of this file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Must equal the hero id in the game and the folder name."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Must equal the hero name in the game (checked)."
+    },
+    "faculty": {
+      "type": "string",
+      "description": "Must equal the hero faculty in the game when present (checked)."
+    },
+    "notes": {
+      "type": "string"
+    },
+    "sprite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frame"
+      ],
+      "properties": {
+        "frame": {
+          "$ref": "#/definitions/size",
+          "description": "Default frame size in pixels [width, height]."
+        },
+        "scale": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 8,
+          "description": "Display scale; integer values keep pixels uniform. Default 2."
+        },
+        "feetRow": {
+          "oneOf": [
+            {
+              "const": "auto"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 511
+            }
+          ],
+          "description": "Row of the feet line in the frame. auto = lowest opaque row of the first idle frame."
+        },
+        "facing": {
+          "const": "right",
+          "description": "Sheets face right; the game mirrors enemies."
+        }
+      }
+    },
+    "anims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idle"
+      ],
+      "properties": {
+        "idle": {
+          "$ref": "#/definitions/anim"
+        },
+        "walk": {
+          "$ref": "#/definitions/anim"
+        },
+        "attack": {
+          "$ref": "#/definitions/anim"
+        },
+        "skill": {
+          "$ref": "#/definitions/anim"
+        },
+        "hurt": {
+          "$ref": "#/definitions/anim"
+        },
+        "stun": {
+          "$ref": "#/definitions/anim"
+        },
+        "death": {
+          "$ref": "#/definitions/anim"
+        }
+      }
+    },
+    "fallback": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Explicit fallback chain per missing state. A state without a sheet and without a chain falls back to idle and is reported.",
+      "properties": {
+        "walk": {
+          "$ref": "#/definitions/stateList"
+        },
+        "attack": {
+          "$ref": "#/definitions/stateList"
+        },
+        "skill": {
+          "$ref": "#/definitions/stateList"
+        },
+        "hurt": {
+          "$ref": "#/definitions/stateList"
+        },
+        "stun": {
+          "$ref": "#/definitions/stateList"
+        },
+        "death": {
+          "$ref": "#/definitions/stateList"
+        }
+      }
+    },
+    "anchors": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Pixel offsets from the unit position (x, y); mirrored for enemies.",
+      "properties": {
+        "muzzle": {
+          "$ref": "#/definitions/point",
+          "description": "Projectile / muzzle-flash origin."
+        },
+        "skill": {
+          "$ref": "#/definitions/point",
+          "description": "Skill VFX origin."
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Per-character combat timing (seconds). Supported by the schema and the build tool; the runtime still uses the global values, so any value different from the global one is rejected until the runtime reads it.",
+      "properties": {
+        "attackDuration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "impactDelay": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "skillDuration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "skillImpact": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "hurtDuration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "corpseLife": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Visual side of the signature skill. The skill gameplay lives in the game; skillMode and fx.kind are cross-checked against it.",
+      "properties": {
+        "skillMode": {
+          "enum": [
+            "onDeploy",
+            "onPulse",
+            "onStack",
+            "every3"
+          ]
+        },
+        "fx": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "ops"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "at": {
+              "enum": [
+                "impact"
+              ]
+            },
+            "ops": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/fxOp"
+              }
+            }
+          }
+        }
+      }
+    },
+    "art": {
+      "const": "builtin",
+      "description": "The character keeps its generated placeholder art (assets/characters/animations.json); only effects and metadata come from this file. Staged migration: replaced by sprite + anims when the sprite sheets are imported."
+    }
+  },
+  "definitions": {
+    "size": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "integer",
+        "minimum": 16,
+        "maximum": 512
+      }
+    },
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "integer",
+        "minimum": -512,
+        "maximum": 512
+      }
+    },
+    "pointNum": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "stateList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "idle",
+          "walk",
+          "attack",
+          "skill",
+          "hurt",
+          "stun",
+          "death"
+        ]
+      }
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{3,8}$"
+    },
+    "anim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "frames"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+\\.png$"
+        },
+        "frames": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "fps": {
+          "oneOf": [
+            {
+              "const": "fit"
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 60
+            }
+          ],
+          "description": "fit = computed from the combat timing (attack, skill, hurt, death only). Default: fit where allowed."
+        },
+        "loop": {
+          "type": "boolean"
+        },
+        "impact": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Frame shown when the combat event happens (attack: projectile launch / hit, skill: effect)."
+        },
+        "frame": {
+          "$ref": "#/definitions/size",
+          "description": "Frame size override for this animation (for example a wide death sheet)."
+        },
+        "shadow": {
+          "oneOf": [
+            {
+              "const": "auto"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          ],
+          "description": "Ground shadow per frame [dx, halfWidth, alpha]; auto computes it from the frames."
+        }
+      }
+    },
+    "fxOp": {
+      "description": "One rendering primitive. Coordinates are pixels relative to the skill anchor (signature anchors.skill); x is mirrored for enemies. Primitives only draw: they never touch combat.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "to",
+            "color"
+          ],
+          "properties": {
+            "op": {
+              "const": "beam"
+            },
+            "from": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "to": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "color",
+            "count",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "burst"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "color",
+            "radius"
+          ],
+          "properties": {
+            "op": {
+              "const": "shockwave"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "color",
+            "radius"
+          ],
+          "properties": {
+            "op": {
+              "const": "ring"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "v",
+            "life",
+            "color",
+            "size",
+            "grav"
+          ],
+          "properties": {
+            "op": {
+              "const": "spawn"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "v": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            },
+            "grav": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "amount"
+          ],
+          "properties": {
+            "op": {
+              "const": "shake"
+            },
+            "amount": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "count",
+            "step",
+            "ops"
+          ],
+          "properties": {
+            "op": {
+              "const": "repeat"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "step": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "ops": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions/fxOp"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "count",
+            "angleStep",
+            "radius0",
+            "radiusStep",
+            "life",
+            "colors",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "spiral"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 256
+            },
+            "angleStep": {
+              "type": "number"
+            },
+            "radius0": {
+              "type": "number"
+            },
+            "radiusStep": {
+              "type": "number"
+            },
+            "squash": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "colors": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions/color"
+              }
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "radius",
+            "from",
+            "to",
+            "step",
+            "life",
+            "color",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "arc"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "from": {
+              "type": "number"
+            },
+            "to": {
+              "type": "number"
+            },
+            "step": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "squash": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "color",
+            "radius",
+            "count",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "explosion"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "color2": {
+              "$ref": "#/definitions/color"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            },
+            "shake": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "color",
+            "radius",
+            "count",
+            "rise",
+            "life",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "aura"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 128
+            },
+            "rise": {
+              "type": "number"
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "to",
+            "color",
+            "count",
+            "life",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "trail"
+            },
+            "from": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "to": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 128
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "color",
+            "alpha",
+            "duration"
+          ],
+          "properties": {
+            "op": {
+              "const": "flash"
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "alpha": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "duration": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1.5
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "at",
+            "w",
+            "h",
+            "color",
+            "count",
+            "life",
+            "size"
+          ],
+          "properties": {
+            "op": {
+              "const": "dissolve"
+            },
+            "at": {
+              "$ref": "#/definitions/pointNum"
+            },
+            "w": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "h": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "color": {
+              "$ref": "#/definitions/color"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 256
+            },
+            "life": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "sprite",
+        "anims"
+      ]
+    },
+    {
+      "required": [
+        "art"
+      ]
+    }
+  ]
+}

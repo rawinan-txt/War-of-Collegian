@@ -1,0 +1,57 @@
+{
+  "$schema": "../character.schema.json",
+  "id": "runner",
+  "name": "Ace Runner",
+  "faculty": "SC2",
+  "art": "builtin",
+  "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
+  "anchors": {
+    "skill": [-8, -48]
+  },
+  "signature": {
+    "skillMode": "onDeploy",
+    "fx": {
+      "kind": "speed-trails",
+      "at": "impact",
+      "ops": [
+        {
+          "op": "beam",
+          "from": [0, 0],
+          "to": [-62, 0],
+          "color": "#ffd2a8"
+        },
+        {
+          "op": "beam",
+          "from": [-3, 11],
+          "to": [-76, 11],
+          "color": "#fff"
+        },
+        {
+          "op": "beam",
+          "from": [-6, 22],
+          "to": [-90, 22],
+          "color": "#ffd2a8"
+        },
+        {
+          "op": "beam",
+          "from": [-9, 33],
+          "to": [-62, 33],
+          "color": "#fff"
+        },
+        {
+          "op": "beam",
+          "from": [-12, 44],
+          "to": [-76, 44],
+          "color": "#ffd2a8"
+        },
+        {
+          "op": "burst",
+          "at": [18, 64],
+          "color": "#ff9c52",
+          "count": 8,
+          "size": 3
+        }
+      ]
+    }
+  }
+}
