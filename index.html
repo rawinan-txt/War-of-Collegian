@@ -376,6 +376,55 @@ body:has(#home:not(.hidden)) .footer { display:none; }
 #home .menu-hotspot.play:active { background:#fff5; transform:scale(.985); }
 #home .menu-hotspot:focus-visible { outline:4px solid #fff; outline-offset:2px; }
 @media(max-width:650px) { body:has(#home:not(.hidden)) .app { padding:0; } #home.title-screen { width:100vw; } }
+
+/* Faculty selection: Base / Info / Select */
+body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
+.faculty-screen {padding:clamp(16px,2.3vw,30px);}
+.faculty-title {text-align:center;margin-bottom:22px;}
+.faculty-title h2 {font-size:clamp(25px,3vw,38px);margin:5px 0 7px;color:#ffe18d;}
+.faculty-title p {margin:0;}
+.faculty-eyebrow {font-size:12px;font-weight:900;letter-spacing:3px;color:#7ac8ff;}
+.faculty-layout {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch;}
+.faculty-column {height:620px;overflow:hidden;background:linear-gradient(160deg,#10254b,#0a1b38);border:1px solid #426da2;border-radius:18px;padding:18px;min-width:0;}
+.faculty-column h3 {font-size:15px;letter-spacing:1.5px;color:#d5e9ff;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid #355780;}
+.faculty-base {display:flex;flex-direction:column;}
+.faculty-base-art {min-height:0;--faculty-color:#39c5ff;position:relative;min-height:0;flex:1;overflow:hidden;border-radius:15px;background:linear-gradient(#68b6f4 0%,#bce7ff 63%,#8cc69e 63%,#6eaa75 100%);border:2px solid #6ca9d7;isolation:isolate;}
+.base-sun {position:absolute;top:32px;right:38px;width:66px;height:66px;background:#fff5c2;border-radius:50%;box-shadow:0 0 45px #fff8c0;}
+.base-cloud {position:absolute;top:67px;left:18px;width:110px;height:27px;background:#ffffffb5;border-radius:50%;box-shadow:65px 23px 0 -6px #ffffff99;}
+.base-building {position:absolute;width:68%;height:48%;bottom:16%;left:16%;border:5px solid #557092;border-radius:8px 8px 2px 2px;background:linear-gradient(90deg,#d5e8f3,#f5fbff 52%,#c8dbe8);box-shadow:10px 12px 0 #24415b4d;}
+.base-roof {position:absolute;bottom:100%;left:-9%;width:118%;height:25px;background:var(--faculty-color);border:4px solid #355477;border-radius:8px 8px 2px 2px;box-shadow:0 -8px 0 -3px #eaf8ff;}
+.base-emblem {position:absolute;top:9%;left:50%;transform:translateX(-50%);font-size:clamp(28px,4vw,48px);filter:drop-shadow(0 3px 2px #0003);}
+.base-windows {position:absolute;top:49%;left:9%;right:9%;display:flex;justify-content:space-between;gap:5px;}
+.base-windows i {width:18%;height:30px;background:#5e9bc8;border:3px solid #fff;}
+.base-door {position:absolute;bottom:0;left:39%;width:22%;height:29%;background:#32577b;border:4px solid #a5c9e1;border-bottom:0;}
+.base-ground {position:absolute;bottom:10%;left:-10%;width:120%;height:7%;background:#e6d7aa;border-top:5px solid #faf2d4;}
+.base-name {text-align:center;margin-top:18px;font-weight:900;font-size:clamp(17px,2vw,23px);color:#ffe18d;}
+.base-caption {text-align:center;margin-top:6px;}
+.faculty-info-content {display:flex;flex-direction:column;gap:3px;min-height:0;overflow-y:auto;}
+.info-faction {display:flex;gap:14px;align-items:center;background:#1b3965;padding:15px;border:1px solid #477ab2;border-radius:14px;margin-bottom:12px;}
+.info-faction strong {display:block;font-size:clamp(17px,1.6vw,23px);margin:4px 0;overflow-wrap:anywhere;}
+.info-big-icon {font-size:44px;}
+.info-line {display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #29466c;font-size:13px;}
+.info-line span {color:#b4cce9;}
+.info-line strong {text-align:right;font-size:14px;overflow-wrap:anywhere;}
+.info-hint {margin-top:18px;padding:14px;border-radius:12px;background:#1a3555;color:#c2daf5;font-size:13px;line-height:1.7;}
+.faculty-select {display:flex;flex-direction:column;}
+.faculty-select h3 {display:flex;justify-content:space-between;align-items:center;}
+#facultySelectCount {font-size:11px;color:#91b6e3;letter-spacing:0;}
+.faculty-options {display:flex;flex-direction:column;gap:8px;min-height:0;flex:1;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#4e7cb2 transparent;}
+.faculty-option {display:flex;align-items:center;text-align:left;gap:12px;width:100%;min-height:58px;padding:10px 12px;background:#162f57;color:#edf6ff;border:1px solid #42658e;border-radius:12px;font-weight:400;transition:background .12s,border-color .12s,transform .12s;}
+.faculty-option:hover {background:#244777;border-color:#87c7ff;transform:translateX(-2px);}
+.faculty-option.selected {background:#294e7b;border:2px solid #ffd45a;padding:9px 11px;}
+.faculty-option-emoji {font-size:25px;flex:none;}
+.faculty-option-text {min-width:0;flex:1;}
+.faculty-option-text strong {display:block;font-size:14px;line-height:1.35;}
+.faculty-option-text small {display:block;color:#a9c5e8;font-size:11px;margin-top:3px;}
+.faculty-option-check {color:#ffd45a;font-size:20px;font-weight:900;}
+.faculty-preview-note {text-align:center;color:#a8c5e6;font-size:12px;margin:13px 0 0;}
+.faculty-actions {display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:15px;}
+.faculty-confirm {font-size:17px;padding:14px 26px;box-shadow:0 5px 0 #b58124;}
+@media(max-width:1000px){.faculty-layout {grid-template-columns:1fr 1fr;}.faculty-column {height:560px;}.faculty-select {grid-column:1/-1;}.faculty-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;}.faculty-base-art {min-height:300px;}}
+@media(max-width:640px){.faculty-layout {grid-template-columns:1fr;}.faculty-column {height:500px;}.faculty-select {grid-column:auto;}.faculty-options {grid-template-columns:1fr;}.faculty-base-art {min-height:260px;}.faculty-column {padding:13px;}}
 </style></head><body>
 <div class="app">
 <header>
@@ -391,14 +440,15 @@ body:has(#home:not(.hidden)) .footer { display:none; }
 <button type="button" class="menu-hotspot characters" disabled aria-label="Characters - ยังไม่เปิดใช้งาน">Characters</button>
 <button type="button" class="menu-hotspot settings" disabled aria-label="Settings - ยังไม่เปิดใช้งาน">Settings</button>
 </section>
-<section id="faculty" class="panel hidden">
-<h2>1 · เลือกคณะสังกัด (Guild + Base)</h2>
-<p class="muted">การเลือกนี้เปลี่ยนชื่อ สี อาคารฐาน และแอนิเมชันสกิลฐาน แต่ไม่เปลี่ยนพลังโจมตีหรือจำกัดตัวละคร</p>
-<div id="facultyGrid" class="grid">
-</div>
-<p id="facultyPreview" class="status">
-</p>
-<button onclick="confirmFaculty()">ยืนยันคณะ → จัดทีม</button>
+<section id="faculty" class="panel hidden faculty-screen">
+  <div class="faculty-title"><span class="faculty-eyebrow">CHOOSE YOUR FACTION</span><h2>เลือกคณะสังกัด</h2><p class="muted">เลือกคณะเพื่อกำหนดฐานและสีประจำทีม · ตัวละครทุกคณะยังสามารถจัดทีมร่วมกันได้</p></div>
+  <div class="faculty-layout">
+    <div class="faculty-column faculty-base"><h3>🏰 BASE</h3><div class="faculty-base-art" id="facultyBaseArt" aria-label="ภาพจำลองฐานของคณะที่เลือก"><div class="base-sun"></div><div class="base-cloud"></div><div class="base-building"><div class="base-roof"></div><div class="base-emblem" id="baseEmblem">💻</div><div class="base-windows"><i></i><i></i><i></i><i></i></div><div class="base-door"></div></div><div class="base-ground"></div></div><div class="base-name" id="baseName"></div><p class="small base-caption">ภาพจำลองฐานในธีมคณะที่เลือก</p></div>
+    <div class="faculty-column faculty-info"><h3>📋 INFO</h3><div id="facultyInfo" class="faculty-info-content"></div></div>
+    <div class="faculty-column faculty-select"><h3>🎓 SELECT <span id="facultySelectCount"></span></h3><div id="facultyGrid" class="faculty-options" role="group" aria-label="เลือกคณะสังกัด"></div></div>
+  </div>
+  <p id="facultyPreview" class="faculty-preview-note status"></p>
+  <div class="faculty-actions"><button class="secondary" onclick="show('home')">← กลับหน้าแรก</button><button class="faculty-confirm" onclick="confirmFaculty()">ยืนยันคณะ → จัดทีม</button></div>
 </section>
 <section id="team" class="panel hidden">
 <h2>2 · จัดทีม 6 ตัวละคร</h2>
@@ -487,7 +537,8 @@ body:has(#home:not(.hidden)) .footer { display:none; }
 </section>
 <div class="footer">Fan-made prototype · งานภาพเป็น Canvas Chibi placeholder เพื่อทดสอบระบบก่อนสร้าง sprites จริง · ไม่มี backend หรือการชำระเงิน</div>
 </div><script src="assets/characters/animations.js"></script><script src="public/assets/characters/fx.js"></script><script src="public/assets/characters/manifest.js"></script><script>
-const faculties=[['ICT', 'ICT', '💻', '#39c5ff', 'Digital Beam'], ['EG', 'วิศวกรรมศาสตร์', '⚙️', '#ffae44', 'Missile Strike'], ['SC', 'วิทยาศาสตร์', '🧪', '#bb83ff', 'Chemical Burst'], ['SI', 'แพทยศาสตร์ศิริราชฯ', '🩺', '#5bd6a2', 'Pulse Strike'], ['RA', 'แพทยศาสตร์รามาธิบดี', '🏥', '#59ccaa', 'Care Wave'], ['DT', 'ทันตแพทยศาสตร์', '🦷', '#73ddff', 'Toothfall'], ['PY', 'เภสัชศาสตร์', '💊', '#ec85bc', 'Potion Burst'], ['NS', 'พยาบาลศาสตร์', '👩‍⚕️', '#ffa3be', 'Nursing Pulse'], ['MT', 'เทคนิคการแพทย์', '🔬', '#89b4ff', 'Scan Burst'], ['PT', 'กายภาพบำบัด', '🦿', '#87c4aa', 'Motion Wave'], ['TM', 'เวชศาสตร์เขตร้อน', '🦠', '#b5d56d', 'Bio Storm'], ['SC2', 'วิทยาลัยวิทยาศาสตร์และเทคโนโลยีการกีฬา', '🏃', '#ffae68', 'Sport Rush'], ['VS', 'สัตวแพทยศาสตร์', '🐾', '#8de7ac', 'Animal Stampede'], ['EN', 'สิ่งแวดล้อมฯ', '🌱', '#8bd98b', 'Nature Surge'], ['PH', 'สาธารณสุขศาสตร์', '🛡️', '#5acbb9', 'Guardian Wave'], ['SH', 'สังคมศาสตร์และมนุษยศาสตร์', '🗣️', '#dda5ff', 'Voice Wave'], ['LA', 'ศิลปศาสตร์', '📖', '#ffbc88', 'Word Storm'], ['GR', 'บัณฑิตวิทยาลัย', '🎓', '#e1c583', 'Research Storm'], ['MUIC', 'วิทยาลัยนานาชาติ', '🌐', '#69aaff', 'Global Burst'], ['MUSIC', 'วิทยาลัยดุริยางคศิลป์', '🎵', '#ed7aff', 'Sonic Wave'], ['CMMU', 'วิทยาลัยการจัดการ', '📈', '#e6d068', 'Market Shock'], ['CRS', 'วิทยาลัยศาสนศึกษา', '🕊️', '#d2c7ff', 'Harmony Wave']];
+const faculties=[['SI', 'แพทยศาสตร์ศิริราชพยาบาล', '🩺', '#5bd6a2', 'Pulse Strike'], ['RA', 'แพทยศาสตร์โรงพยาบาลรามาธิบดี', '🏥', '#59ccaa', 'Care Wave'], ['DT', 'ทันตแพทยศาสตร์', '🦷', '#73ddff', 'Toothfall'], ['PY', 'เภสัชศาสตร์', '💊', '#ec85bc', 'Potion Burst'], ['NS', 'พยาบาลศาสตร์', '👩\u200d⚕️', '#ffa3be', 'Nursing Pulse'], ['SC', 'วิทยาศาสตร์', '🧪', '#bb83ff', 'Chemical Burst'], ['PH', 'สาธารณสุขศาสตร์', '🛡️', '#5acbb9', 'Guardian Wave'], ['MT', 'เทคนิคการแพทย์', '🔬', '#89b4ff', 'Scan Burst'], ['PT', 'กายภาพบำบัด', '🦿', '#87c4aa', 'Motion Wave'], ['TM', 'เวชศาสตร์เขตร้อน', '🦠', '#b5d56d', 'Bio Storm'], ['EG', 'วิศวกรรมศาสตร์', '⚙️', '#ffae44', 'Missile Strike'], ['EN', 'สิ่งแวดล้อมและทรัพยากรศาสตร์', '🌱', '#8bd98b', 'Nature Surge'], ['VS', 'สัตวแพทยศาสตร์', '🐾', '#8de7ac', 'Animal Stampede'], ['ICT', 'เทคโนโลยีสารสนเทศและการสื่อสาร', '💻', '#39c5ff', 'Digital Beam'], ['LA', 'ศิลปศาสตร์', '📖', '#ffbc88', 'Word Storm'], ['SH', 'สังคมศาสตร์และมนุษยศาสตร์', '🗣️', '#dda5ff', 'Voice Wave'], ['IC', 'วิทยาลัยนานาชาติ', '🌐', '#69aaff', 'Global Burst'], ['MS', 'วิทยาลัยดุริยางคศิลป์', '🎵', '#ed7aff', 'Sonic Wave'], ['SS', 'วิทยาลัยวิทยาศาสตร์และเทคโนโลยีการกีฬา', '🏃', '#ffae68', 'Sport Rush'], ['CRS', 'วิทยาลัยศาสนศึกษา', '🕊️', '#d2c7ff', 'Harmony Wave']];
+const SELECTABLE_FACULTY_IDS=new Set(['SI', 'RA', 'DT', 'PY', 'NS', 'SC', 'PH', 'MT', 'PT', 'TM', 'EG', 'EN', 'VS', 'ICT', 'LA', 'SH', 'IC', 'MS', 'SS']);
 const heroes=[ {
     id:'bug', name:'Bug Hunter', f:'ICT', star:1, cost:80, cd:3.8, hp:360, atk:39, range:160, spd:52, interval:.85, emoji:'💻', skill:'Infinite Loop', desc:'ยิงเป้าหมายเดิมต่อเนื่อง ยิ่งยิงยิ่งเร็ว', type:'ranged'
 }, {
@@ -503,17 +554,17 @@ const heroes=[ {
 }, {
     id:'dental', name:'Dental Blitz', f:'DT', star:4, cost:240, cd:11, hp:1200, atk:118, range:45, spd:54, interval:1.1, emoji:'🦷', skill:'Tooth Breaker', desc:'เจาะเกราะศัตรูด้วยการโจมตีหนัก', type:'pierce'
 }, {
-    id:'music', name:'Sound Wave', f:'MUSIC', star:4, cost:240, cd:12, hp:950, atk:48, range:155, spd:40, interval:1.4, emoji:'🎸', skill:'Sonic Stage', desc:'ปล่อยคลื่นเสียงชะลอศัตรูเป็นกลุ่ม', type:'slow'
+    id:'music', name:'Sound Wave', f:'MS', star:4, cost:240, cd:12, hp:950, atk:48, range:155, spd:40, interval:1.4, emoji:'🎸', skill:'Sonic Stage', desc:'ปล่อยคลื่นเสียงชะลอศัตรูเป็นกลุ่ม', type:'slow'
 }, {
-    id:'runner', name:'Ace Runner', f:'SC2', star:4, cost:300, cd:13, hp:1400, atk:135, range:43, spd:91, interval:1.05, emoji:'🏃', skill:'Overdrive', desc:'พุ่งเข้าหาศัตรูพร้อมดาเมจเปิดตัว', type:'dash'
+    id:'runner', name:'Ace Runner', f:'SS', star:4, cost:300, cd:13, hp:1400, atk:135, range:43, spd:91, interval:1.05, emoji:'🏃', skill:'Overdrive', desc:'พุ่งเข้าหาศัตรูพร้อมดาเมจเปิดตัว', type:'dash'
 }, {
-    id:'global', name:'Global Exchange', f:'MUIC', star:4, cost:320, cd:14, hp:1120, atk:58, range:155, spd:43, interval:1.4, emoji:'🌐', skill:'Global Link', desc:'ฟื้น AT ให้ทีมทันทีเมื่อ Deploy', type:'income'
+    id:'global', name:'Global Exchange', f:'IC', star:4, cost:320, cd:14, hp:1120, atk:58, range:155, spd:43, interval:1.4, emoji:'🌐', skill:'Global Link', desc:'ฟื้น AT ให้ทีมทันทีเมื่อ Deploy', type:'income'
 }, {
     id:'public', name:'Health Guardian', f:'PH', star:5, cost:340, cd:15, hp:2350, atk:85, range:55, spd:30, interval:1.5, emoji:'🛡️', skill:'Barrier Zone', desc:'สร้างโล่ลดความเสียหายให้พันธมิตรใกล้เคียง', type:'shield'
 }, {
     id:'nurse', name:'Angel of Care', f:'NS', star:5, cost:360, cd:16, hp:1550, atk:35, range:185, spd:38, interval:1.35, emoji:'👩‍⚕️', skill:'Blessing of Life', desc:'รักษาเพื่อนหลายตัวพร้อมกัน', type:'massheal'
 }];
-const HEALTH_GROUP=['SI', 'RA', 'DT', 'PY', 'NS', 'MT', 'PT', 'TM', 'PH'], CAMPUS_GROUP=['MUSIC', 'SC2', 'MUIC', 'SH', 'LA', 'CMMU'];
+const HEALTH_GROUP=['SI', 'RA', 'DT', 'PY', 'NS', 'MT', 'PT', 'TM', 'PH'], CAMPUS_GROUP=['MS', 'SS', 'IC', 'SH', 'LA', 'CMMU'];
 const SYNERGIES=[ {
     id:'tech_alliance', name:'💻⚙️ Tech Alliance', desc:'ICT + วิศวะ: ดาเมจ +10% (เฉพาะสองตัวนี้)', active:fs=>fs.includes('ICT')&&fs.includes('EG'), fx:{
         dmgMul:1.1, dmgFaculties:['ICT', 'EG']
@@ -572,7 +623,7 @@ const FACULTY_LASER_VFX={
         color:'#22D3EE', particleStyle:'heartbeat'
     }, RA:{
         color:'#22D3EE', particleStyle:'heartbeat'
-    }, MUSIC:{
+    }, MS:{
         color:'#F472B6', particleStyle:'notes'
     }, VS:{
         color:'#4ADE80', particleStyle:'nature'
@@ -1245,8 +1296,15 @@ function fdata(){
     return faculties.find(f=>f[0]===faculty)
 }
 function renderFaculty(){
-    document.getElementById('facultyGrid').innerHTML=faculties.map(f=>`<div class="tile ${f[0]===faculty?'sel':''}" onclick="chooseFaculty('${f[0]}')"><strong>${f[2]} ${f[1]}</strong><span class="small">${f[0]} · ${f[4]}</span></div>`).join('');
-    document.getElementById('facultyPreview').textContent=`ฐาน ${fdata()[1]} · Guild ${faculty} · Faculty Laser · 500 Damage / 45s cooldown (เลเซอร์เหมือนกันทุกคณะ ต่างกันแค่เอฟเฟกต์ภาพ)`
+    const selected=fdata();
+    const grid=document.getElementById('facultyGrid');
+    grid.innerHTML=faculties.filter(f=>SELECTABLE_FACULTY_IDS.has(f[0])).map(f=>`<button type="button" class="faculty-option ${f[0]===faculty?'selected':''}" onclick="chooseFaculty('${f[0]}')" aria-pressed="${f[0]===faculty}"><span class="faculty-option-emoji">${f[2]}</span><span class="faculty-option-text"><strong>${f[1]}</strong><small>${f[0]}</small></span>${f[0]===faculty?'<span class="faculty-option-check">✓</span>':''}</button>`).join('');
+    document.getElementById('facultySelectCount').textContent=SELECTABLE_FACULTY_IDS.size+' คณะ';
+    document.getElementById('baseEmblem').textContent=selected[2];
+    document.getElementById('facultyBaseArt').style.setProperty('--faculty-color',selected[3]);
+    document.getElementById('baseName').textContent=selected[1]+' BASE';
+    document.getElementById('facultyInfo').innerHTML=`<div class="info-faction"><span class="info-big-icon">${selected[2]}</span><div><span class="small">SELECTED FACULTY</span><strong>${selected[1]}</strong><span class="small">${selected[0]} · Faculty Guild</span></div></div><div class="info-line"><span>ประเภทฐาน</span><strong>Faculty Base</strong></div><div class="info-line"><span>สกิลฐาน</span><strong>⚡ Faculty Laser</strong></div><div class="info-line"><span>เอฟเฟกต์ประจำคณะ</span><strong>${selected[4]}</strong></div><div class="info-line"><span>พลังโจมตีสกิลฐาน</span><strong>500 DMG</strong></div><div class="info-line"><span>คูลดาวน์</span><strong>45 วินาที</strong></div><div class="info-hint">การเลือกคณะมีผลกับชื่อ สี และเอฟเฟกต์ของฐาน ไม่จำกัดตัวละครที่ใช้จัดทีม</div>`;
+    document.getElementById('facultyPreview').textContent='เลือกคณะทางขวาเพื่อดูฐานและรายละเอียดทางซ้าย';
 }
 function chooseFaculty(id){
     faculty=id;
