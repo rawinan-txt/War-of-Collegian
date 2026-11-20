@@ -23,7 +23,7 @@ Evidence: `docs/ENEMY_SYSTEM.md` (Balance) and `docs/enemy-remodel/balance-summa
 6. **Final visual quality sign-off** of the enemy animations in the real game is pending the maintainer's review (`docs/enemy-remodel/preview.html`).
 
 ## Auto Play (see docs/AUTO_PLAY.md)
-7. **Auto does not use the Ultimate.** Adding it would be a small extension (same rules as a human); left out of the first milestone.
+7. ~~Auto does not use the Ultimate~~ **Done**: Auto Ultimate (docs/AUTO_PLAY.md). Still open: a healing / support ultimate does not exist in the game, so Auto has no rule for one.
 8. **Auto is weaker than a cheap-unit spammer in Stage 1** and much stronger than the scripted baseline in Stage 2 (94 %): Stage 2 may deserve a retune against a smarter player. Not changed (no balance edits in the Auto milestone).
 9. **Auto options (laser / AT upgrade) are not saved between sessions.**
 

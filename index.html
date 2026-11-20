@@ -644,7 +644,7 @@ body:has(#faculty:not(.hidden)) .app > .footer { display: none; }
 <div class="hpbar" id="hpEnemyBar"><div id="hpEnemyFill"></div></div></div>
 <div class="b-controls">
 <button class="secondary" onclick="toggleAuto()" id="autoBtn" title="Auto Play: ระบบช่วยส่งตัวละคร อัปเกรด AT และยิงเลเซอร์ ตามกฎเดียวกับผู้เล่น">Auto: ปิด</button>
-<span id="autoOpts" class="auto-opts hidden"><button class="secondary mini on" onclick="setAutoOpt('laser')" id="autoLaserBtn" title="Auto ยิงเลเซอร์ฐาน">เลเซอร์</button><button class="secondary mini on" onclick="setAutoOpt('upgrade')" id="autoUpgBtn" title="Auto อัปเกรด AT">อัป AT</button></span>
+<span id="autoOpts" class="auto-opts hidden"><button class="secondary mini on" onclick="setAutoOpt('laser')" id="autoLaserBtn" title="Auto ยิงเลเซอร์ฐาน">เลเซอร์</button><button class="secondary mini on" onclick="setAutoOpt('upgrade')" id="autoUpgBtn" title="Auto อัปเกรด AT">อัป AT</button><button class="secondary mini on" onclick="setAutoOpt('ult')" id="autoUltBtn" title="Auto ใช้ Ultimate ที่เลือกไว้เมื่อคุ้มค่า">Ultimate</button></span>
 <button class="secondary" onclick="togglePause()" id="pauseBtn">หยุด</button>
 <button class="secondary" onclick="speedToggle()" id="speedBtn">1×</button>
 <button class="secondary" onclick="toggleFx()" id="fxBtn">เอฟเฟกต์: เต็ม</button>
@@ -1971,12 +1971,13 @@ function baseSkill(){
    observable state, evaluated every AUTO.interval seconds of SIMULATION time (so pause and 2x speed behave); no random draws.
    The ultimate stays manual. */
 const AUTO={
-    on:false, laser:true, upgrade:true, interval:.25
+    on:false, laser:true, upgrade:true, ult:true, interval:.25
 };
 const AUTO_BASE_X=135, AUTO_FRONT=new Set(['tank', 'shield', 'pierce', 'dash']), AUTO_DPS=new Set(['ranged', 'aoe', 'poison', 'slow', 'pierce', 'summon']), AUTO_HEAL=new Set(['heal', 'massheal']);
 function autoTick(dt){
     const b=battle;
     b.autoT=(b.autoT||0)+dt;
+    b.autoUltT=b.ult>=100?(b.autoUltT||0)+dt:0;
     for(let n=0; n<2&&b.autoT>=AUTO.interval; n++){
         b.autoT-=AUTO.interval;
         autoDecide()
@@ -1995,7 +1996,7 @@ function autoState(){
         foes, mine, gap, clustered, threat:gap<260, danger:gap<160, boss:foes.some(e=>e.type==='boss'), bigFoe:foes.some(e=>e.hp>1000),
         ranged:foes.filter(e=>e.range>RANGED_MIN).length, injured:mine.filter(a=>a.hp<a.maxHp*.65).length,
         hurtFront:mine.some(a=>AUTO_FRONT.has(a.type)&&a.hp<a.maxHp*.5), front:mine.filter(a=>AUTO_FRONT.has(a.type)).length,
-        healers:mine.filter(a=>AUTO_HEAL.has(a.type)).length
+        healers:mine.filter(a=>AUTO_HEAL.has(a.type)).length, engaged:foes.filter(e=>mine.some(a=>Math.abs(a.x-e.x)<150)).length
     }
 }
 function autoScore(h, S){
@@ -2061,11 +2062,39 @@ function autoWantsLaser(S){
     }
     return S.danger&&value>=300||S.threat&&value>=dmg*2||value>=dmg*3||kills>=2
 }
+/* Auto Ultimate. Rules per ultimate, on observable state only. The meter (100) is the only cost and useUltimate() enforces it,
+   pause and the end of the battle. Rule inputs: S = autoState(), held = seconds the meter has been full. After 25 s of holding a
+   full meter the bar for a fire is lowered (a full meter gains nothing, so waiting longer wastes the damage that would fill it).
+   Game today has three ultimates: a damage sweep, a stun and a slow. There is no healing or buff ultimate, so there is no
+   "heal" or "support" rule; a future ultimate must add its own entry here or it stays manual. */
+const AUTO_ULT_RULES={
+    shuttle:(S, held)=>{
+        let value=0, kills=0;
+        for(const e of S.foes){
+            const left=e.hp+(e.shield||0);
+            value+=Math.min(300, left);
+            if(left<=300)kills++
+        }
+        return S.danger&&value>=200||S.foes.length>=3&&value>=700||kills>=3||S.boss&&S.foes.length>=2&&value>=500||held>25&&S.foes.length>=2&&value>=400
+    }, wifi:(S, held)=>{
+        const n=S.foes.length;
+        return S.danger||S.threat&&n>=2||S.hurtFront&&S.engaged>=3||S.boss&&S.engaged>=1&&S.injured>=1||held>25&&S.engaged>=2
+    }, rain:(S, held)=>{
+        const n=S.foes.length;
+        return n>=4&&S.gap<620||S.threat&&n>=2||S.boss&&S.gap<620||held>25&&n>=2
+    }
+};
+function autoWantsUlt(S){
+    const b=battle, rule=AUTO_ULT_RULES[ultType];
+    if(!AUTO.ult||!rule||b.ult<100||!S.foes.length)return false;
+    return rule(S, b.autoUltT||0)
+}
 function autoDecide(){
     const b=battle;
     if(!b||b.ended||b.paused)return;
     const S=autoState();
     if(autoWantsLaser(S))baseSkill();
+    if(autoWantsUlt(S))useUltimate();
     if(autoWantsUpgrade(S)){
         const lv=b.level;
         upgradeIncome();
@@ -2097,6 +2126,8 @@ function renderAuto(){
     document.getElementById('autoOpts').classList.toggle('hidden', !AUTO.on);
     document.getElementById('autoLaserBtn').classList.toggle('on', AUTO.laser);
     document.getElementById('autoUpgBtn').classList.toggle('on', AUTO.upgrade);
+    document.getElementById('autoUltBtn').classList.toggle('on', AUTO.ult);
+    document.getElementById('autoUltBtn').ariaPressed=String(AUTO.ult);
     document.getElementById('autoLaserBtn').ariaPressed=String(AUTO.laser);
     document.getElementById('autoUpgBtn').ariaPressed=String(AUTO.upgrade)
 }
@@ -2109,7 +2140,7 @@ function toggleAuto(){
     renderAuto()
 }
 function setAutoOpt(k){
-    if(k!=='laser'&&k!=='upgrade')return;
+    if(k!=='laser'&&k!=='upgrade'&&k!=='ult')return;
     AUTO[k]=!AUTO[k];
     renderAuto()
 }
