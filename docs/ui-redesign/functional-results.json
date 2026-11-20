@@ -1,0 +1,177 @@
+[
+ {
+  "name": "menu visible",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Characters/Settings hotspots still disabled (unchanged behaviour)",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Play -> faculty screen",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "faculty list renders",
+  "pass": true,
+  "extra": "options=19"
+ },
+ {
+  "name": "faculty select updates faculty + base name",
+  "pass": true,
+  "extra": "DT"
+ },
+ {
+  "name": "confirm -> team builder",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "12 character cards, 6 slots",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "default team 6/6 and start enabled",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "clicking a slot removes the hero (5/6, start disabled)",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "mixed-faculty hero added (6/6)",
+  "pass": true,
+  "extra": "mecha,lab,night,animal,music,chem"
+ },
+ {
+  "name": "ultimate pick works",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "confirm button visible without scrolling at 1280x720",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Start Battle -> battle screen",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "6 deploy cards present",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "AT deployment works (AT spent, unit spawned)",
+  "pass": true,
+  "extra": "at 187.1->70"
+ },
+ {
+  "name": "cooldown overlay shows after deploy",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "income upgrade works",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Faculty Laser fires (cooldown running)",
+  "pass": true,
+  "extra": "cd=45"
+ },
+ {
+  "name": "2x speed",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "pause freezes battle clock",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "deploy disabled while paused",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "resume advances battle clock",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "VFX quality toggle",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "stats panel opens (collapsible)",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "stats panel shows realtime rows",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "stats panel closes",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "HP / wave HUD populated",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "ultimate becomes usable",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "ultimate fires (meter reset)",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Victory screen",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "result stats table rendered",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Play again restarts battle",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "Defeat screen",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "result -> team builder",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "no runtime errors",
+  "pass": true,
+  "extra": ""
+ }
+]

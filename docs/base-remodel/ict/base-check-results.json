@@ -1,0 +1,102 @@
+[
+ {
+  "n": "[1920x1080] faculty screen shows the ICT base sprite",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] sprite sits inside the preview (not clipped)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] other faculty (EG) keeps its original base preview",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] battle canvas draws the ICT sprite (sign pixels present)",
+  "pass": true,
+  "x": "{\"blue\":208,\"opaque\":14640}"
+ },
+ {
+  "n": "[1920x1080] sprite feet row is on the ground line (y≈341)",
+  "pass": true,
+  "x": "row 339"
+ },
+ {
+  "n": "[1920x1080] HUD does not overlap the canvas and page fits",
+  "pass": true,
+  "x": "{\"topAboveCanvas\":true,\"canvasAboveDock\":true,\"pageFits\":true}"
+ },
+ {
+  "n": "[1366x768] faculty screen shows the ICT base sprite",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] sprite sits inside the preview (not clipped)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] other faculty (EG) keeps its original base preview",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] battle canvas draws the ICT sprite (sign pixels present)",
+  "pass": true,
+  "x": "{\"blue\":208,\"opaque\":14640}"
+ },
+ {
+  "n": "[1366x768] sprite feet row is on the ground line (y≈341)",
+  "pass": true,
+  "x": "row 339"
+ },
+ {
+  "n": "[1366x768] HUD does not overlap the canvas and page fits",
+  "pass": true,
+  "x": "{\"topAboveCanvas\":true,\"canvasAboveDock\":true,\"pageFits\":true}"
+ },
+ {
+  "n": "[1280x720] faculty screen shows the ICT base sprite",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] sprite sits inside the preview (not clipped)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] other faculty (EG) keeps its original base preview",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] battle canvas draws the ICT sprite (sign pixels present)",
+  "pass": true,
+  "x": "{\"blue\":208,\"opaque\":14640}"
+ },
+ {
+  "n": "[1280x720] sprite feet row is on the ground line (y≈341)",
+  "pass": true,
+  "x": "row 339"
+ },
+ {
+  "n": "[1280x720] HUD does not overlap the canvas and page fits",
+  "pass": true,
+  "x": "{\"topAboveCanvas\":true,\"canvasAboveDock\":true,\"pageFits\":true}"
+ },
+ {
+  "n": "laser fired and cooldown matches the universal value",
+  "pass": true,
+  "x": "{\"x0\":150,\"y\":318,\"cd\":44.533300000000025}"
+ },
+ {
+  "n": "no runtime errors",
+  "pass": true,
+  "x": ""
+ }
+]

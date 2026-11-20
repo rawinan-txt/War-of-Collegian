@@ -1,0 +1,78 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Team Builder v2 mockup</title>
+<link rel="stylesheet" href="ui-v2.css"><script src="data.js"></script>
+<style>
+  body { height: 100vh; overflow: hidden; display: grid; grid-template-rows: 56px 1fr; gap: 12px; padding: 12px 16px 16px; }
+  header { display: flex; align-items: center; gap: 16px; }
+  header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+  header .step { color: var(--chalk-2); font-size: 13px; }
+  header .sp { flex: 1; }
+  main { display: grid; grid-template-columns: 248px minmax(0, 1fr) 392px; gap: 16px; min-height: 0; }
+  .rail, .dock { padding: 14px; display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--navy-500) transparent; }
+  .search { display: flex; align-items: center; gap: 8px; padding: 10px 12px; color: var(--chalk-3); font-size: 13px; }
+  .group h4 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--chalk-2); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip .n { color: var(--chalk-3); margin-left: 4px; font-family: var(--pixel); }
+  .chip.on .n { color: #6b4a0c; }
+  .starbtns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .starbtns .chip { text-align: center; padding: 6px 0; }
+  .coll { display: flex; flex-direction: column; min-height: 0; gap: 12px; }
+  .coll-head { display: flex; align-items: baseline; gap: 12px; }
+  .coll-head b { font-size: 18px; } .coll-head .num { color: var(--gold-400); font-size: 18px; }
+  .sim { margin-left: auto; font-size: 12px; color: var(--purple-300); border: 2px dashed var(--purple-700); padding: 2px 8px; }
+  .grid { flex: 1; min-height: 0; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; align-content: start; padding: 4px 8px 8px 2px; scrollbar-width: thin; scrollbar-color: var(--navy-500) transparent; }
+  .focus { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; padding: 12px 16px; align-items: center; }
+  .focus .por { width: 80px; height: 80px; margin: 0; }
+  .focus h3 { margin: 0 0 2px; font-size: 18px; } .focus p { margin: 4px 0 0; color: var(--chalk-2); }
+  .focus .sk { color: var(--gold-400); font-weight: 600; }
+  .stats { display: grid; grid-template-columns: repeat(3, 72px); gap: 8px; text-align: center; }
+  .stats div { background: var(--navy-800); border: 2px solid var(--ink); padding: 6px 0; } .stats span { display: block; font-size: 12px; color: var(--chalk-3); } .stats b { font-size: 16px; }
+  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .slot { aspect-ratio: 1 / 1.12; border: 2px dashed var(--navy-500); display: grid; place-items: center; color: var(--chalk-3); font-size: 12px; }
+  .slots .card { padding-bottom: 4px; } .slots .por { width: 56px; height: 56px; }
+  .syn { padding: 10px 12px; font-size: 13px; color: var(--chalk-2); line-height: 1.6; } .syn b { color: var(--purple-300); font-weight: 600; }
+  .ult { display: grid; gap: 8px; }
+  .ult .opt { padding: 10px 12px; border: 2px solid var(--ink); background: var(--navy-800); font-size: 13px; position: relative; }
+  .ult .opt b { display: block; font-size: 14px; } .ult .opt span { color: var(--chalk-2); font-size: 12px; }
+  .ult .opt.on { background: var(--purple-700); box-shadow: inset 0 0 0 2px var(--purple-400); }
+  .ult .opt.on::after { content: "เลือกแล้ว"; position: absolute; right: 10px; top: 10px; font-size: 12px; color: var(--purple-300); }
+  .confirm { margin-top: auto; padding-top: 4px; position: sticky; bottom: 0; background: linear-gradient(transparent, var(--navy-700) 30%); }
+  .confirm .btn { width: 100%; }
+  .count { font-size: 13px; color: var(--pos); font-weight: 600; margin-top: 8px; }
+  @media (max-height: 800px) { .dock { gap: 10px; padding: 12px; } .slots { gap: 6px; } .slots .stars { display: none; } .slots .por { width: 44px; height: 44px; } .slots .card { padding: 4px 4px 2px; } .syn { padding: 6px 10px; } .ult { grid-template-columns: repeat(3, 1fr); } .ult .opt { padding: 8px 4px; text-align: center; } .ult .opt span, .ult .opt.on::after { display: none; } .ultdesc { display: block !important; } }
+  .ultdesc { display: none; font-size: 12px; color: var(--chalk-2); margin-top: 6px; }
+  @media (max-width: 1400px) { main { grid-template-columns: 220px minmax(0, 1fr) 340px; } .focus { grid-template-columns: 80px 1fr; } .stats { display: none; } }
+</style></head><body>
+<header><button class="btn sm">← เปลี่ยนคณะ</button><h1>จัดทีม</h1><span class="step">ขั้นที่ 2 จาก 2 · เลือกได้จากทุกคณะ</span><span class="sp"></span><span class="sub">ดาวสูง = ค่าพลังโดยรวมสูงกว่า · สกิลแต่ละตัวไม่ซ้ำกัน</span></header>
+<main>
+  <aside class="rail panel cut">
+    <div class="search panel well">ค้นหาชื่อ หรือสกิล</div>
+    <div class="group"><h4>คณะ</h4><div class="chips" id="fchips"></div></div>
+    <div class="group"><h4>ดาว</h4><div class="starbtns"><span class="chip">1★</span><span class="chip">2★</span><span class="chip on">3★</span><span class="chip on">4★</span><span class="chip on">5★</span></div></div>
+    <div class="group"><h4>บทบาท</h4><div class="chips"><span class="chip on">ทั้งหมด</span><span class="chip">แทงก์</span><span class="chip">ระยะไกล</span><span class="chip">ฮีล</span><span class="chip">โจมตีวงกว้าง</span><span class="chip">อัญเชิญ</span></div></div>
+    <div class="group"><h4>เรียงตาม</h4><div class="chips"><span class="chip on">ดาว</span><span class="chip">ต้นทุน AT</span><span class="chip">คณะ</span></div></div>
+  </aside>
+  <section class="coll">
+    <div class="coll-head"><b>ตัวละครทั้งหมด</b><span class="num">100</span><span class="sub">เลื่อนเพื่อดูเพิ่ม · คลิกเพื่อเพิ่มเข้าทีม</span><span class="sim">ภาพจำลอง: ใช้ 12 ตัวจริงซ้ำให้ครบ 100 ใบเพื่อทดสอบเลย์เอาต์</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="focus panel cut" id="focus"></div>
+  </section>
+  <aside class="dock panel cut">
+    <div><div class="title" style="margin-bottom:10px">ทีมของคุณ</div><div class="slots" id="slots"></div><div class="count">เลือกแล้ว 6/6 ตัว</div></div>
+    <div><div class="title" style="margin-bottom:8px">Synergy</div><div class="syn panel well"><b>Tech Alliance</b> ICT + วิศวะ: ดาเมจ +10% เฉพาะสองตัวนี้</div></div>
+    <div><div class="title" style="margin-bottom:8px">Ultimate</div><div class="ult"><div class="opt"><b>Wi-Fi Down</b><span>ศัตรูทั้งหมดสตัน 3 วินาที</span></div><div class="opt on"><b>Salaya Rain</b><span>ศัตรูเคลื่อนที่ช้าลง 40% นาน 12 วินาที</span></div><div class="opt"><b>Campus Shuttle</b><span>รถชัตเทิลพุ่งผ่านสนาม ดาเมจ 300 และผลักศัตรู</span></div></div><div class="ultdesc">Salaya Rain: ศัตรูเคลื่อนที่ช้าลง 40% นาน 12 วินาที</div></div>
+    <div class="confirm"><button class="btn gold big">เริ่ม Battle</button></div>
+  </aside>
+</main>
+<script>
+  const team = ['bug', 'mecha', 'lab', 'night', 'animal', 'music'];
+  const cnt = { ICT: 9, EG: 8, SC: 7, SI: 6, PY: 6, VS: 5, DT: 5, MS: 5, SS: 4, IC: 4, PH: 6, NS: 6 };
+  document.getElementById('fchips').innerHTML = '<span class="chip on">ทั้งหมด<span class="n">100</span></span>' + Object.keys(cnt).map(k => `<span class="chip fc" style="--fc:${FAC[k]}">${k}<span class="n">${cnt[k]}</span></span>`).join('');
+  let html = '', seen = {};
+  for (let i = 0; i < 100; i++) { const h = HEROES[(i * 7) % 12]; const first = !seen[h.id]; seen[h.id] = 1; html += card(h, { sel: first && team.includes(h.id) }); }
+  document.getElementById('grid').innerHTML = html;
+  const f = HEROES[0];
+  document.getElementById('focus').innerHTML = `<div style="--fc:${FAC[f.f]}">${por(f, 80)}</div><div><h3>${f.name} ${stars(f.star)}</h3><span class="chip fc" style="--fc:${FAC[f.f]}">${f.f}</span> <span class="chip">${f.type}</span><p><span class="sk">${f.skill}</span> · ${f.desc}</p></div><div class="stats"><div><span>HP</span><b class="num">${f.hp}</b></div><div><span>ATK</span><b class="num">${f.atk}</b></div><div><span>ระยะ</span><b class="num">${f.range}</b></div></div>`;
+  let s = '';
+  for (let i = 0; i < 6; i++) { const h = HEROES.find(x => x.id === team[i]); s += h ? card(h, {}) : '<div class="slot">ว่าง</div>'; }
+  document.getElementById('slots').innerHTML = s;
+</script></body></html>

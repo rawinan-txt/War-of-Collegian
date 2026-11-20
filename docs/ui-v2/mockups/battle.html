@@ -1,0 +1,62 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Battle HUD v2 mockup</title>
+<link rel="stylesheet" href="ui-v2.css"><script src="data.js"></script>
+<style>
+  :root { --m-up: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5M5 12l7-7 7 7'/></svg>"); --m-zap: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M13 2L4 14h7l-1 8 9-12h-7z'/></svg>"); --m-star: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z'/></svg>"); }
+  body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 8px 12px; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) 232px minmax(0, 1fr) auto; gap: 10px; }
+  .plaque { padding: 8px 12px 10px 16px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+  .plaque::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--fc, var(--chalk-3)); }
+  .plaque .row { display: flex; align-items: center; gap: 10px; }
+  .plaque .nm { font-size: 15px; } .plaque .num { margin-left: auto; font-size: 14px; color: var(--chalk-2); }
+  .mono { font: 700 12px var(--pixel); background: var(--fc); color: #0b1230; padding: 2px 6px; border: 2px solid var(--ink); }
+  .enemy { --fc: var(--purple-400); }
+  .mid { text-align: center; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; align-items: center; }
+  .mid .w { font-size: 20px; color: var(--chalk); } .mid .st { font-size: 12px; color: var(--chalk-2); }
+  .mid .chip { background: var(--purple-700); color: var(--purple-300); border-color: var(--ink); }
+  .ctl { display: flex; gap: 8px; align-items: center; }
+  .stage { position: relative; flex: 1; min-height: 0; display: flex; justify-content: center; }
+  .scene { height: 100%; aspect-ratio: 5 / 2; max-width: 100%; image-rendering: pixelated; border: 2px solid var(--ink); box-shadow: 0 0 0 2px var(--navy-500); object-fit: cover; }
+  .edge { position: absolute; right: 0; top: 28%; width: 34px; height: 56px; display: grid; place-items: center; }
+  .dock { display: grid; grid-template-columns: 372px minmax(0, 1fr); gap: 10px; }
+  .at { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .at .row { display: flex; align-items: baseline; gap: 10px; } .at .big { font-size: 26px; color: var(--gold-400); line-height: 1; } .at .inc { margin-left: auto; font-size: 13px; color: var(--pos); }
+  .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .acts .btn { padding: 8px 4px 10px; font-size: 13px; line-height: 1.15; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .acts .btn small { font: 700 12px var(--pixel); opacity: .85; }
+  .acts .btn .ic { margin: 0 0 2px; width: 16px; height: 16px; }
+  .deck { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .dcard { --fc: #4f9ae8; position: relative; overflow: hidden; padding: 6px 4px 6px; text-align: center; background: var(--navy-700); border: 2px solid var(--rc, var(--r1)); box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--navy-800); }
+  .dcard::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--fc); }
+  .dcard.r2 { --rc: var(--r2); } .dcard.r3 { --rc: var(--r3); } .dcard.r4 { --rc: var(--r4); } .dcard.r5 { --rc: var(--r5); box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 4px var(--purple-400), inset 0 -6px 0 var(--navy-800); }
+  .dcard .por { width: 48px; height: 48px; margin: 4px auto 2px; }
+  .dcard .nm { font-size: 12px; } .dcard .cost { font-size: 13px; } .dcard .st { font-size: 12px; color: var(--pos); font-weight: 500; min-height: 14px; }
+  .dcard.cool .por, .dcard.cool .nm, .dcard.cool .cost { opacity: .45; }
+  .dcard .sweep { position: absolute; left: 0; right: 0; top: 4px; background: #070b1ccc; border-bottom: 2px solid var(--purple-300); }
+  .dcard .cd { position: absolute; left: 0; right: 0; top: 20px; font: 700 20px var(--pixel); color: #fff; text-shadow: 0 2px 0 #000; }
+  .dcard.lack .st { color: var(--neg-text); } .dcard.lack .por, .dcard.lack .cost { opacity: .5; }
+  .msg { text-align: center; font-size: 12px; color: var(--chalk-3); }
+  @media (max-width: 1400px) { .dock { grid-template-columns: 330px minmax(0, 1fr); } .top { grid-template-columns: minmax(0, 1fr) 190px minmax(0, 1fr) auto; } }
+</style></head><body>
+<div class="top">
+  <div class="plaque panel cut" style="--fc:#39c5ff"><div class="row"><span class="mono">ICT</span><span class="nm">ฐานของเรา</span><span class="num">5000 / 5000</span></div><div class="meter" id="hp1"></div></div>
+  <div class="mid panel cut"><span class="st">Stage 1 · Midterm Rush</span><span class="w num">02:14 · WAVE 3</span><span class="chip">Tech Alliance</span></div>
+  <div class="plaque panel cut enemy"><div class="row"><span class="mono">EXAM</span><span class="nm">ฐานข้อสอบ</span><span class="num">4380 / 6500</span></div><div class="meter purple" id="hp2"></div></div>
+  <div class="ctl"><button class="btn sm">หยุด</button><button class="btn sm">1×</button><button class="btn sm">เอฟเฟกต์ เต็ม</button><button class="btn sm danger">ออก</button></div>
+</div>
+<div class="stage"><img class="scene" src="scene.png" alt=""><button class="btn edge sm" style="padding:0" aria-label="สถิติ"><span class="ic" style="margin:0;--m:var(--m-up);-webkit-mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><path d='M5 20v-7M12 20V5M19 20v-10'/></svg>&quot;);mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><path d='M5 20v-7M12 20V5M19 20v-10'/></svg>&quot;)"></span></button></div>
+<div class="dock">
+  <div class="at panel cut"><div class="row"><span class="big num">AT 818</span><span class="sub num">/ 1000</span><span class="inc num">+10 AT/s · Lv.1</span></div><div class="meter gold" id="at"></div>
+    <div class="acts"><button class="btn gold"><span class="ic" style="--m:var(--m-up)"></span>อัปเกรด AT<small>130 AT</small></button><button class="btn gold"><span class="ic" style="--m:var(--m-zap)"></span>Faculty Laser<small>พร้อม</small></button><button class="btn purple disabled"><span class="ic" style="--m:var(--m-star)"></span>Wi-Fi Down<small>0%</small></button></div></div>
+  <div class="deck" id="deck"></div>
+</div>
+<div class="msg">เลือกเวลาส่งตัวให้คุ้มค่า AT และรับมือศัตรูแต่ละประเภท</div>
+<script>
+  const seg = (id, n, on) => { let h = ''; for (let i = 0; i < n; i++) h += `<i class="${i < on ? 'on' : ''}"></i>`; document.getElementById(id).innerHTML = h; };
+  seg('hp1', 20, 20); seg('hp2', 20, 13); seg('at', 25, 20);
+  const states = { bug: ['ready'], mecha: ['ready'], lab: ['cool', 1.9, 30], night: ['cool', 2.9, 50], animal: ['lack'], music: ['lack'] };
+  document.getElementById('deck').innerHTML = ['bug', 'mecha', 'lab', 'night', 'animal', 'music'].map(id => {
+    const h = HEROES.find(x => x.id === id), s = states[id];
+    const cls = s[0] === 'cool' ? 'cool' : s[0] === 'lack' ? 'lack' : '';
+    return `<div class="dcard r${h.star} ${cls}" style="--fc:${FAC[h.f]}">${s[0] === 'cool' ? `<div class="sweep" style="height:${s[2]}%"></div><div class="cd">${s[1]}s</div>` : ''}${por(h, 48)}<div class="nm">${h.name}</div><div class="cost">${h.cost} AT</div><div class="st">${s[0] === 'ready' ? 'พร้อม' : s[0] === 'lack' ? 'ขาด AT' : '&nbsp;'}</div></div>`;
+  }).join('');
+</script></body></html>

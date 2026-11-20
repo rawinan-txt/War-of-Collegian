@@ -425,11 +425,13 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 .faculty-confirm {font-size:17px;padding:14px 26px;box-shadow:0 5px 0 #b58124;}
 @media(max-width:1000px){.faculty-layout {grid-template-columns:1fr 1fr;}.faculty-column {height:560px;}.faculty-select {grid-column:1/-1;}.faculty-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;}.faculty-base-art {min-height:300px;}}
 @media(max-width:640px){.faculty-layout {grid-template-columns:1fr;}.faculty-column {height:500px;}.faculty-select {grid-column:auto;}.faculty-options {grid-template-columns:1fr;}.faculty-base-art {min-height:260px;}.faculty-column {padding:13px;}}
-</style></head><body>
+</style><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/kanit-thai-400-normal.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/mitr-thai-600-normal.woff2"><link rel="preload" as="image" href="public/assets/ui/logo.webp"><link rel="stylesheet" href="public/assets/ui/ui.css"></head><body>
+<div id="boot" role="status" aria-label="กำลังโหลด War of Collegian"><div class="boot-logo"><img src="public/assets/ui/logo.webp" alt="War of Collegian" width="1376" height="768" decoding="async" fetchpriority="high"></div></div><script src="public/assets/ui/boot.js"></script>
 <div class="app">
+<div id="curtain" aria-hidden="true"></div>
 <header>
 <div>
-<h1>⚔ WAR OF COLLEGIAN</h1>
+<h1>War of Collegian</h1>
 <div class="muted">Student Chibi · Faculty Guild + Base · Playable Demo v0.3.1.1</div>
 </div>
 <span id="tag" class="muted">DEMO</span>
@@ -441,43 +443,62 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 <button type="button" class="menu-hotspot settings" disabled aria-label="Settings - ยังไม่เปิดใช้งาน">Settings</button>
 </section>
 <section id="faculty" class="panel hidden faculty-screen">
-  <div class="faculty-title"><span class="faculty-eyebrow">CHOOSE YOUR FACTION</span><h2>เลือกคณะสังกัด</h2><p class="muted">เลือกคณะเพื่อกำหนดฐานและสีประจำทีม · ตัวละครทุกคณะยังสามารถจัดทีมร่วมกันได้</p></div>
+  <div class="faculty-title"><span class="faculty-eyebrow">ขั้นที่ 1 · สังกัด</span><h2>เลือกคณะสังกัด</h2><p class="muted">เลือกคณะเพื่อกำหนดฐานและสีประจำทีม · ตัวละครทุกคณะยังสามารถจัดทีมร่วมกันได้</p></div>
   <div class="faculty-layout">
-    <div class="faculty-column faculty-base"><h3>🏰 BASE</h3><div class="faculty-base-art" id="facultyBaseArt" aria-label="ภาพจำลองฐานของคณะที่เลือก"><div class="base-sun"></div><div class="base-cloud"></div><div class="base-building"><div class="base-roof"></div><div class="base-emblem" id="baseEmblem">💻</div><div class="base-windows"><i></i><i></i><i></i><i></i></div><div class="base-door"></div></div><div class="base-ground"></div></div><div class="base-name" id="baseName"></div><p class="small base-caption">ภาพจำลองฐานในธีมคณะที่เลือก</p></div>
-    <div class="faculty-column faculty-info"><h3>📋 INFO</h3><div id="facultyInfo" class="faculty-info-content"></div></div>
-    <div class="faculty-column faculty-select"><h3>🎓 SELECT <span id="facultySelectCount"></span></h3><div id="facultyGrid" class="faculty-options" role="group" aria-label="เลือกคณะสังกัด"></div></div>
+    <div class="faculty-column faculty-base"><h3>ฐาน</h3><div class="faculty-base-art" id="facultyBaseArt" aria-label="ภาพจำลองฐานของคณะที่เลือก"><div class="base-sun"></div><div class="base-cloud"></div><img id="facultyBaseImg" class="base-sprite hidden" alt="" onerror="this.classList.add('hidden');document.getElementById('baseBuilding').classList.remove('hidden')"><div class="base-building" id="baseBuilding"><div class="base-roof"></div><div class="base-emblem" id="baseEmblem">💻</div><div class="base-windows"><i></i><i></i><i></i><i></i></div><div class="base-door"></div></div><div class="base-ground"></div></div><div class="base-name" id="baseName"></div><p class="small base-caption">ภาพจำลองฐานในธีมคณะที่เลือก</p></div>
+    <div class="faculty-column faculty-info"><h3>ข้อมูลคณะ</h3><div id="facultyInfo" class="faculty-info-content"></div></div>
+    <div class="faculty-column faculty-select"><h3>เลือกคณะ <span id="facultySelectCount"></span></h3><div id="facultyGrid" class="faculty-options" role="group" aria-label="เลือกคณะสังกัด"></div></div>
   </div>
   <p id="facultyPreview" class="faculty-preview-note status"></p>
   <div class="faculty-actions"><button class="secondary" onclick="show('home')">← กลับหน้าแรก</button><button class="faculty-confirm" onclick="confirmFaculty()">ยืนยันคณะ → จัดทีม</button></div>
 </section>
-<section id="team" class="panel hidden">
-<h2>2 · จัดทีม 6 ตัวละคร</h2>
-<p class="muted">เลือกได้จากทุกคณะ · ★ สูงกว่า Stat โดยรวมสูงกว่า · สกิลแต่ละตัวมีหน้าที่ไม่ซ้ำกัน</p>
-<div id="teamGrid" class="grid">
-</div>
-<p id="teamCount" class="status">
-</p>
-<div id="teamSyn" class="status">
-</div>
-<h3 style="margin:14px 0 8px">💥 เลือก Ultimate (1 อย่าง)</h3>
-<div id="ultPick" class="grid" style="margin-bottom:12px">
-</div>
-<div class="row">
-<button onclick="startBattle()" id="startBtn">เริ่ม Battle →</button>
+<section id="team" class="panel hidden team-screen">
+<div class="tb-head">
+<h2>จัดทีม 6 ตัวละคร</h2>
+<p class="muted">ขั้นที่ 2 · เลือกได้จากทุกคณะ · ดาวสูงหมายถึงค่าพลังโดยรวมสูงกว่า · สกิลแต่ละตัวไม่ซ้ำกัน</p>
 <button class="secondary" onclick="show('faculty')">← เปลี่ยนคณะ</button>
+</div>
+<div class="tb-layout">
+<aside class="tb-rail panel" aria-label="ตัวกรองตัวละคร">
+<div><label class="lbl" for="tbSearch">ค้นหา</label>
+<input id="tbSearch" type="search" placeholder="ชื่อตัวละคร หรือสกิล" autocomplete="off" oninput="tbSet('q',this.value)"></div>
+<div id="tbFilters"></div>
+</aside>
+<div class="tb-center">
+<div class="tb-count"><b>ตัวละครทั้งหมด</b><span class="num" id="tbCount">12</span><span class="small" id="tbCountNote"></span></div>
+<div id="teamGrid" class="grid"></div>
+<div class="tb-focus panel" id="tbFocus"></div>
+</div>
+<aside class="tb-side panel" aria-label="ทีมของคุณ">
+<div class="tb-scroll">
+<div><h3>ทีมของคุณ</h3>
+<div id="teamSlots" class="tb-slots"></div>
+<p id="teamCount" class="status"></p></div>
+<div><h3>Synergy</h3>
+<div id="teamSyn" class="status"></div></div>
+<div><h3>Ultimate (เลือก 1 อย่าง)</h3>
+<div id="ultPick" class="grid"></div>
+<p class="ultdesc" id="ultDesc"></p></div>
+</div>
+<div class="tb-actions">
+<button onclick="startBattle()" id="startBtn">เริ่ม Battle</button>
+</div>
+</aside>
 </div>
 </section>
 <section id="battle" class="hidden">
-<div class="panel">
-<div class="row space">
-<div><b id="battleTitle"></b>
-<div id="battleInfo" class="stats">
-</div>
-</div>
-<div class="row">
-<button class="secondary" onclick="togglePause()" id="pauseBtn">⏸ หยุด</button>
+<div class="b-top">
+<div class="b-base player" id="hpPlayerBox"><div class="lbl"><span id="hpPlayerName">ฐานของเรา</span><span id="hpPlayerText">5000 / 5000</span></div>
+<div class="hpbar" id="hpPlayerBar"><div id="hpPlayerFill"></div></div></div>
+<div class="b-center"><b id="battleTitle"></b>
+<span class="wave" id="waveText">⏱ 0s · WAVE 1</span>
+<div id="battleInfo" class="stats"></div></div>
+<div class="b-base enemy"><div class="lbl"><span>ฐานข้อสอบ</span><span id="hpEnemyText">6500 / 6500</span></div>
+<div class="hpbar" id="hpEnemyBar"><div id="hpEnemyFill"></div></div></div>
+<div class="b-controls">
+<button class="secondary" onclick="togglePause()" id="pauseBtn">หยุด</button>
 <button class="secondary" onclick="speedToggle()" id="speedBtn">1×</button>
-<button class="secondary" onclick="toggleFx()" id="fxBtn">✨ เอฟเฟกต์: เต็ม</button>
+<button class="secondary" onclick="toggleFx()" id="fxBtn">เอฟเฟกต์: เต็ม</button>
 <button class="danger" onclick="show('team')">ออก</button>
 </div>
 </div>
@@ -485,9 +506,9 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 <div class="stagecol">
 <canvas id="game" width="1100" height="440"></canvas>
 </div>
-<button id="statsEdge" class="stats-edge" onclick="toggleStatsPanel()" aria-label="เปิด/ปิดสถิติการต่อสู้" title="Combat Statistics">📊</button>
+<button id="statsEdge" class="stats-edge" onclick="toggleStatsPanel()" aria-label="เปิด/ปิดสถิติการต่อสู้" title="สถิติการต่อสู้"></button>
 <aside id="statsPanel" class="stats-panel tab-dmg" aria-label="Combat statistics">
-<div class="stats-head"><b>⚔ COMBAT STATISTICS</b>
+<div class="stats-head"><b>สถิติการต่อสู้</b>
 <button class="stats-x" onclick="toggleStatsPanel()" aria-label="ปิด">✕</button>
 </div>
 <div class="stats-tabs">
@@ -505,22 +526,19 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 </div>
 </aside>
 </div>
-<div class="row space" style="margin-top:12px">
-<div style="min-width:180px;flex:1"><b id="atText">AT 100 / 1000</b>
-<div class="meter">
-<div id="atBar" style="width:10%">
+<div class="b-dock">
+<div class="b-left">
+<div class="at-row"><b id="atText">AT 100 / 1000</b><span id="incomeText">+10 AT/s</span></div>
+<div class="meter"><div id="atBar" style="width:10%"></div></div>
+<div class="b-actions">
+<button id="upgradeBtn" onclick="upgradeIncome()">AT Generation</button>
+<button id="baseBtn" onclick="baseSkill()">Faculty Laser</button>
+<button id="ultBtn" onclick="useUltimate()" disabled>Ultimate 0%</button>
 </div>
 </div>
-<span class="small" id="incomeText">+10 AT/s</span>
+<div class="hud" id="battleCards"></div>
 </div>
-<button id="upgradeBtn" onclick="upgradeIncome()">⬆ AT Generation</button>
-<button id="baseBtn" onclick="baseSkill()">⚡ Faculty Laser</button>
-<button id="ultBtn" onclick="useUltimate()" disabled>💥 Ultimate 0%</button>
-</div>
-<div class="hud" id="battleCards">
-</div>
-<div id="message" class="status">Deploy ตัวละครเพื่อหยุดศัตรู!</div>
-</div>
+<div id="message" class="status">Deploy ตัวละครเพื่อหยุดศัตรู</div>
 </section>
 <section id="result" class="panel hidden">
 <h2 id="resultTitle">
@@ -535,9 +553,11 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 <button class="secondary" onclick="show('faculty')">เปลี่ยนคณะ</button>
 </div>
 </section>
-<div class="footer">Fan-made prototype · งานภาพเป็น Canvas Chibi placeholder เพื่อทดสอบระบบก่อนสร้าง sprites จริง · ไม่มี backend หรือการชำระเงิน</div>
-</div><script src="assets/characters/animations.js"></script><script src="public/assets/characters/fx.js"></script><script src="public/assets/characters/manifest.js"></script><script src="assets/enemies/enemies.js"></script><script>
-const faculties=[['SI', 'แพทยศาสตร์ศิริราชพยาบาล', '🩺', '#5bd6a2', 'Pulse Strike'], ['RA', 'แพทยศาสตร์โรงพยาบาลรามาธิบดี', '🏥', '#59ccaa', 'Care Wave'], ['DT', 'ทันตแพทยศาสตร์', '🦷', '#73ddff', 'Toothfall'], ['PY', 'เภสัชศาสตร์', '💊', '#ec85bc', 'Potion Burst'], ['NS', 'พยาบาลศาสตร์', '👩\u200d⚕️', '#ffa3be', 'Nursing Pulse'], ['SC', 'วิทยาศาสตร์', '🧪', '#bb83ff', 'Chemical Burst'], ['PH', 'สาธารณสุขศาสตร์', '🛡️', '#5acbb9', 'Guardian Wave'], ['MT', 'เทคนิคการแพทย์', '🔬', '#89b4ff', 'Scan Burst'], ['PT', 'กายภาพบำบัด', '🦿', '#87c4aa', 'Motion Wave'], ['TM', 'เวชศาสตร์เขตร้อน', '🦠', '#b5d56d', 'Bio Storm'], ['EG', 'วิศวกรรมศาสตร์', '⚙️', '#ffae44', 'Missile Strike'], ['EN', 'สิ่งแวดล้อมและทรัพยากรศาสตร์', '🌱', '#8bd98b', 'Nature Surge'], ['VS', 'สัตวแพทยศาสตร์', '🐾', '#8de7ac', 'Animal Stampede'], ['ICT', 'เทคโนโลยีสารสนเทศและการสื่อสาร', '💻', '#39c5ff', 'Digital Beam'], ['LA', 'ศิลปศาสตร์', '📖', '#ffbc88', 'Word Storm'], ['SH', 'สังคมศาสตร์และมนุษยศาสตร์', '🗣️', '#dda5ff', 'Voice Wave'], ['IC', 'วิทยาลัยนานาชาติ', '🌐', '#69aaff', 'Global Burst'], ['MS', 'วิทยาลัยดุริยางคศิลป์', '🎵', '#ed7aff', 'Sonic Wave'], ['SS', 'วิทยาลัยวิทยาศาสตร์และเทคโนโลยีการกีฬา', '🏃', '#ffae68', 'Sport Rush'], ['CRS', 'วิทยาลัยศาสนศึกษา', '🕊️', '#d2c7ff', 'Harmony Wave']];
+<div class="footer">Fan-made prototype · ภาพตัวละครเป็น pixel art ที่สร้างด้วยโค้ด · ไม่มี backend หรือการชำระเงิน</div>
+</div><script src="assets/characters/animations.js"></script><script src="public/assets/characters/fx.js"></script><script src="public/assets/characters/manifest.js"></script><script src="public/assets/ui/zoom.js"></script><script src="assets/enemies/enemies.js"></script><script>
+const faculties=[['SI', 'แพทยศาสตร์ศิริราชพยาบาล', '🩺', '#5bd6a2', 'Pulse Strike'], ['RA', 'แพทยศาสตร์โรงพยาบาลรามาธิบดี', '🏥', '#59ccaa', 'Care Wave'], ['DT', 'ทันตแพทยศาสตร์', '🦷', '#73ddff', 'Toothfall'], ['PY', 'เภสัชศาสตร์', '💊', '#ec85bc', 'Potion Burst'], ['NS', 'พยาบาลศาสตร์', '👩\u200d⚕️', '#ffa3be', 'Nursing Pulse'], ['SC', 'วิทยาศาสตร์', '🧪', '#bb83ff', 'Chemical Burst'], ['PH', 'สาธารณสุขศาสตร์', '🛡️', '#5acbb9', 'Guardian Wave'], ['MT', 'เทคนิคการแพทย์', '🔬', '#89b4ff', 'Scan Burst'], ['PT', 'กายภาพบำบัด', '🦿', '#87c4aa', 'Motion Wave'], ['TM', 'เวชศาสตร์เขตร้อน', '🦠', '#b5d56d', 'Bio Storm'], ['EG', 'วิศวกรรมศาสตร์', '⚙️', '#ffae44', 'Missile Strike'], ['EN', 'สิ่งแวดล้อมและทรัพยากรศาสตร์', '🌱', '#8bd98b', 'Nature Surge'], ['VS', 'สัตวแพทยศาสตร์', '🐾', '#8de7ac', 'Animal Stampede'], ['ICT', 'เทคโนโลยีสารสนเทศและการสื่อสาร', '💻', '#39c5ff', 'Digital Beam', {
+    buildingName:'ICT Building (MUICT)', sprite:'assets/bases/ict.png', referenceUrl:'https://www.ict.mahidol.ac.th/en/contact-us/', displayScale:2, groundOffset:0
+}], ['LA', 'ศิลปศาสตร์', '📖', '#ffbc88', 'Word Storm'], ['SH', 'สังคมศาสตร์และมนุษยศาสตร์', '🗣️', '#dda5ff', 'Voice Wave'], ['IC', 'วิทยาลัยนานาชาติ', '🌐', '#69aaff', 'Global Burst'], ['MS', 'วิทยาลัยดุริยางคศิลป์', '🎵', '#ed7aff', 'Sonic Wave'], ['SS', 'วิทยาลัยวิทยาศาสตร์และเทคโนโลยีการกีฬา', '🏃', '#ffae68', 'Sport Rush'], ['CRS', 'วิทยาลัยศาสนศึกษา', '🕊️', '#d2c7ff', 'Harmony Wave']];
 const SELECTABLE_FACULTY_IDS=new Set(['SI', 'RA', 'DT', 'PY', 'NS', 'SC', 'PH', 'MT', 'PT', 'TM', 'EG', 'EN', 'VS', 'ICT', 'LA', 'SH', 'IC', 'MS', 'SS']);
 const heroes=[ {
     id:'bug', name:'Bug Hunter', f:'ICT', star:1, cost:80, cd:3.8, hp:360, atk:39, range:160, spd:52, interval:.85, emoji:'💻', skill:'Infinite Loop', desc:'ยิงเป้าหมายเดิมต่อเนื่อง ยิ่งยิงยิ่งเร็ว', type:'ranged'
@@ -683,7 +703,7 @@ function buildStatsList(){
     const el=document.getElementById('statsList');
     if(!el)return;
     el.innerHTML=team.map(id=>{
-        const h=heroes.find(x=>x.id===id); return '<div class="srow" id="srow-'+id+'"><div class="shead"><span class="sname">'+h.emoji+' '+h.name+'</span><b class="sval" id="sval-'+id+'">0</b></div><div class="small" id="sfac-'+id+'"></div><div class="sbar"><div id="sbar-'+id+'" style="width:0%"></div></div></div>'
+        const h=heroes.find(x=>x.id===id); return '<div class="srow" id="srow-'+id+'" style="border-left:4px solid '+facColor(h.f)+';padding-left:8px"><div class="shead"><span class="sname">'+h.name+'</span><b class="sval" id="sval-'+id+'">0</b></div><div class="small" id="sfac-'+id+'"></div><div class="sbar"><div id="sbar-'+id+'" style="width:0%"></div></div></div>'
     }).join('')
 }
 function renderStatsPanel(force=false){
@@ -693,11 +713,11 @@ function renderStatsPanel(force=false){
     statsTick=now;
     const r=statsRows(statsTab), max=Math.max(1, ...r.map(x=>x.value));
     r.forEach((x, idx)=>{
-        const row=document.getElementById('srow-'+x.id); if(!row)return; row.style.order=String(idx); const prev=force?x.value:(statsShown[x.id]===undefined?0:statsShown[x.id]); const shown=Math.abs(x.value-prev)<1?x.value:prev+(x.value-prev)*.45; statsShown[x.id]=shown; document.getElementById('sval-'+x.id).textContent=fmtNum(shown); document.getElementById('sfac-'+x.id).textContent=(idx+1)+'. '+x.faculty; document.getElementById('sbar-'+x.id).style.width=(Math.round(1000*x.value/max)/10)+'%'
+        const row=document.getElementById('srow-'+x.id); if(!row)return; row.style.order=String(idx); const prev=force?x.value:(statsShown[x.id]===undefined?0:statsShown[x.id]); const shown=Math.abs(x.value-prev)<1?x.value:prev+(x.value-prev)*.45; statsShown[x.id]=shown; document.getElementById('sval-'+x.id).textContent=fmtNum(shown); document.getElementById('sfac-'+x.id).textContent=(idx+1)+'. '+stripIcon(x.faculty); document.getElementById('sbar-'+x.id).style.width=(Math.round(1000*x.value/max)/10)+'%'
     });
     const f=battle&&battle.finalStats;
     document.getElementById('statsTime').textContent=mmss(battle?(f?f.time:battle.t):0);
-    document.getElementById('statsExtra').textContent='⚡ Faculty Laser '+fmtNum(f?f.laserDamage:CombatStats.laserDamage)+' · 💥 Ultimate '+fmtNum(f?f.ultDamage:CombatStats.ultDamage)+' (นับแยก)'
+    document.getElementById('statsExtra').textContent='Faculty Laser '+fmtNum(f?f.laserDamage:CombatStats.laserDamage)+' · Ultimate '+fmtNum(f?f.ultDamage:CombatStats.ultDamage)+' (นับแยก)'
 }
 function setStatsTab(tab){
     if(!STATS_TABS[tab])return;
@@ -715,8 +735,7 @@ function renderResultStats(){
     const f=battle&&battle.finalStats, el=document.getElementById('resultStats');
     if(!f||!el)return;
     const rows=f.rows.slice().sort((a, b)=>b.totalDamage-a.totalDamage);
-    el.innerHTML='<table style="width:100%;border-collapse:collapse;margin:10px 0"><tr><th align="left">ตัวละคร</th><th>DMG</th><th>DEF</th><th>HEAL</th><th>Deploy</th></tr>'+rows.map(r=>'<tr><td>'+((heroes.find(h=>h.id===r.characterId)||{
-    }).emoji||'')+' '+r.characterName+'</td><td align="center">'+fmtNum(r.totalDamage)+'</td><td align="center">'+fmtNum(r.totalDefense)+'</td><td align="center">'+fmtNum(r.totalHealing)+'</td><td align="center">'+r.deploymentCount+'</td></tr>').join('')+'</table><div class="small">⚡ Faculty Laser '+fmtNum(f.laserDamage)+' · 💥 Ultimate '+fmtNum(f.ultDamage)+' (นับแยกจากตัวละคร)</div>'
+    el.innerHTML='<table style="width:100%;border-collapse:collapse;margin:10px 0"><tr><th align="left">ตัวละคร</th><th>DMG</th><th>DEF</th><th>HEAL</th><th>Deploy</th></tr>'+rows.map(r=>'<tr><td>'+r.characterName+'</td><td align="center">'+fmtNum(r.totalDamage)+'</td><td align="center">'+fmtNum(r.totalDefense)+'</td><td align="center">'+fmtNum(r.totalHealing)+'</td><td align="center">'+r.deploymentCount+'</td></tr>').join('')+'</table><div class="small">Faculty Laser '+fmtNum(f.laserDamage)+' · Ultimate '+fmtNum(f.ultDamage)+' (นับแยกจากตัวละคร)</div>'
 }
 const SPRITES={
 };
@@ -885,8 +904,8 @@ function drawSpriteFrame(id, name, t, x, y, ally){
         ctx.restore()
     }
 }
-function drawBars(u){
-    const x=u.x, y=u.y, w=45;
+function drawBars(u){/* a boss sprite is drawn 1.65x larger, so its bar sits higher and wider (visual only) */
+    const boss=u.type==='boss', x=u.x, y=u.y-(boss?62:0), w=boss?95:45;
     rect(x-w/2, y-70, w, 6, '#28314b');
     rect(x-w/2, y-70, w*Math.max(0, u.hp/u.maxHp), 6, u.ally?'#50ed9c':'#ff697e');
     if(u.stun>0){
@@ -899,7 +918,7 @@ function drawBars(u){
         ctx.strokeStyle='#66d6ff99';
         ctx.lineWidth=2;
         ctx.beginPath();
-        ctx.arc(x, y-17, 31, 0, Math.PI*2);
+        ctx.arc(x, u.y-17, 31, 0, Math.PI*2);
         ctx.stroke()
     }
 }
@@ -934,7 +953,7 @@ function setFxLevel(l){
     }
 }
 function fxLabel(){
-    return fxLevel==='full'?'✨ เอฟเฟกต์: เต็ม':'✨ เอฟเฟกต์: ลด'
+    return fxLevel==='full'?'เอฟเฟกต์: เต็ม':'เอฟเฟกต์: ลด'
 }
 function toggleFx(){
     setFxLevel(fxLevel==='full'?'reduced':'full');
@@ -1286,8 +1305,17 @@ const CombatStats={
     }
 };
 let faculty='ICT', team=['bug', 'mecha', 'lab', 'night', 'animal', 'music'], screen='home', battle=null, ctx=document.getElementById('game').getContext('2d'), last=0;
+/* one orchestrated moment: a navy curtain with a gold edge wipes across on every screen change (reduced motion: hidden by CSS) */
+function curtain(){
+    const c=document.getElementById('curtain');
+    if(!c||c.offsetWidth===undefined)return;
+    c.classList.remove('go');
+    void c.offsetWidth;
+    c.classList.add('go')
+}
 function show(s){
     screen=s;
+    curtain();
     ['home', 'faculty', 'team', 'battle', 'result'].forEach(id=>document.getElementById(id).classList.toggle('hidden', id!==s));
     if(s==='faculty')renderFaculty();
     if(s==='team')renderTeam()
@@ -1298,12 +1326,20 @@ function fdata(){
 function renderFaculty(){
     const selected=fdata();
     const grid=document.getElementById('facultyGrid');
-    grid.innerHTML=faculties.filter(f=>SELECTABLE_FACULTY_IDS.has(f[0])).map(f=>`<button type="button" class="faculty-option ${f[0]===faculty?'selected':''}" onclick="chooseFaculty('${f[0]}')" aria-pressed="${f[0]===faculty}"><span class="faculty-option-emoji">${f[2]}</span><span class="faculty-option-text"><strong>${f[1]}</strong><small>${f[0]}</small></span>${f[0]===faculty?'<span class="faculty-option-check">✓</span>':''}</button>`).join('');
+    grid.innerHTML=faculties.filter(f=>SELECTABLE_FACULTY_IDS.has(f[0])).map(f=>`<button type="button" class="faculty-option ${f[0]===faculty?'selected':''}" style="--fo:${f[3]}" onclick="chooseFaculty('${f[0]}')" aria-pressed="${f[0]===faculty}"><span class="fac-mono" style="--fc:${f[3]}">${f[0]}</span><span class="faculty-option-text"><strong>${f[1]}</strong><small>${f[0]}</small></span>${f[0]===faculty?'<span class="faculty-option-check">✓</span>':''}</button>`).join('');
     document.getElementById('facultySelectCount').textContent=SELECTABLE_FACULTY_IDS.size+' คณะ';
-    document.getElementById('baseEmblem').textContent=selected[2];
+    document.getElementById('baseEmblem').textContent=selected[0];
+    const bcfg=baseCfg(selected);
+    ensureBase(selected);
+    document.getElementById('facultyBaseImg').classList.toggle('hidden', !bcfg);
+    document.getElementById('baseBuilding').classList.toggle('hidden', !!bcfg);
+    if(bcfg){
+        document.getElementById('facultyBaseImg').alt=bcfg.buildingName;
+        document.getElementById('facultyBaseImg').src=bcfg.sprite
+    }
     document.getElementById('facultyBaseArt').style.setProperty('--faculty-color',selected[3]);
     document.getElementById('baseName').textContent=selected[1]+' BASE';
-    document.getElementById('facultyInfo').innerHTML=`<div class="info-faction"><span class="info-big-icon">${selected[2]}</span><div><span class="small">SELECTED FACULTY</span><strong>${selected[1]}</strong><span class="small">${selected[0]} · Faculty Guild</span></div></div><div class="info-line"><span>ประเภทฐาน</span><strong>Faculty Base</strong></div><div class="info-line"><span>สกิลฐาน</span><strong>⚡ Faculty Laser</strong></div><div class="info-line"><span>เอฟเฟกต์ประจำคณะ</span><strong>${selected[4]}</strong></div><div class="info-line"><span>พลังโจมตีสกิลฐาน</span><strong>500 DMG</strong></div><div class="info-line"><span>คูลดาวน์</span><strong>45 วินาที</strong></div><div class="info-hint">การเลือกคณะมีผลกับชื่อ สี และเอฟเฟกต์ของฐาน ไม่จำกัดตัวละครที่ใช้จัดทีม</div>`;
+    document.getElementById('facultyInfo').innerHTML=`<div class="info-faction" style="--fc:${selected[3]}"><span class="fac-mono" style="--fc:${selected[3]}">${selected[0]}</span><div><span class="small">คณะที่เลือก</span><strong>${selected[1]}</strong><span class="small">${selected[0]} · Faculty Guild</span></div></div><div class="info-line"><span>ประเภทฐาน</span><strong>Faculty Base</strong></div><div class="info-line"><span>สกิลฐาน</span><strong>Faculty Laser</strong></div><div class="info-line"><span>เอฟเฟกต์ประจำคณะ</span><strong>${selected[4]}</strong></div><div class="info-line"><span>พลังโจมตีสกิลฐาน</span><strong>500 DMG</strong></div><div class="info-line"><span>คูลดาวน์</span><strong>45 วินาที</strong></div><div class="info-hint">การเลือกคณะมีผลกับชื่อ สี และเอฟเฟกต์ของฐาน ไม่จำกัดตัวละครที่ใช้จัดทีม</div>`;
     document.getElementById('facultyPreview').textContent='เลือกคณะทางขวาเพื่อดูฐานและรายละเอียดทางซ้าย';
 }
 function chooseFaculty(id){
@@ -1313,16 +1349,97 @@ function chooseFaculty(id){
 function confirmFaculty(){
     show('team')
 }
+/* UI helpers (presentation only) */
+const ROLE_TH={ranged:'ระยะไกล', tank:'แทงก์', aoe:'โจมตีวงกว้าง', heal:'ฮีล', massheal:'ฮีลหมู่', poison:'พิษ', summon:'อัญเชิญ', pierce:'เจาะเกราะ', slow:'หน่วง', dash:'พุ่งชน', income:'เพิ่ม AT', shield:'โล่', basic:'พื้นฐาน'};
+function facColor(code){
+    const f=faculties.find(x=>x[0]===code);
+    return f?f[3]:'#3d8bff'
+}
+function stripIcon(t){
+    return String(t).replace(/^[^\p{L}\p{N}]+/u, '')
+}
+function starsHtml(n){
+    return '<span class="stars" aria-label="'+n+' ดาว">'+'★'.repeat(n)+'<i>'+'★'.repeat(5-n)+'</i></span>'
+}
+/* first idle frame of the real sprite sheet; native lazy loading keeps a 100-character collection light */
+function portrait(h, cls){
+    const c=typeof CHARACTER_ANIMS!=='undefined'&&CHARACTER_ANIMS[h.id], a=c&&c.anims&&c.anims.idle;
+    if(!a)return '<span class="'+cls+' noimg spr-box">'+h.name.charAt(0)+'</span>';
+    return '<span class="'+cls+' spr-box"><img src="'+a.sheet+'" alt="" loading="lazy" decoding="async" draggable="false" style="width:'+(a.frameCount*100)+'%"></span>'
+}
+/* Team Builder collection state (kept while the player moves between screens) */
+const TB={q:'', fac:'', role:'', stars:{}, sort:'default', focus:null};
+function filterHeroes(list, st){
+    const q=(st.q||'').trim().toLowerCase(), anyStar=Object.keys(st.stars||{}).some(k=>st.stars[k]);
+    const out=list.filter(h=>(!q||(h.name+' '+h.skill+' '+h.desc+' '+h.f).toLowerCase().includes(q))&&(!st.fac||h.f===st.fac)&&(!st.role||h.type===st.role)&&(!anyStar||st.stars[h.star]));
+    const by=({star:(a, b)=>b.star-a.star||a.cost-b.cost, cost:(a, b)=>a.cost-b.cost||b.star-a.star, fac:(a, b)=>a.f.localeCompare(b.f)||b.star-a.star})[st.sort];
+    return by?out.slice().sort(by):out
+}
+function tbSet(k, v){
+    if(k==='q'||k==='sort')TB[k]=v;
+    else TB[k]=TB[k]===v?'':v;
+    renderTeam()
+}
+function tbStar(n){
+    TB.stars[n]=!TB.stars[n];
+    renderTeam()
+}
+function tbClear(){
+    TB.q='';
+    TB.fac='';
+    TB.role='';
+    TB.stars={};
+    TB.sort='default';
+    document.getElementById('tbSearch').value='';
+    renderTeam()
+}
+function tbFocusHero(id){
+    TB.focus=id;
+    const h=heroes.find(x=>x.id===id);
+    if(h)document.getElementById('tbFocus').innerHTML=focusHtml(h)
+}
+function focusHtml(h){
+    return `<div class="fp" style="--fc:${facColor(h.f)}">${portrait(h,'')}</div><div><h3>${h.name} ${starsHtml(h.star)}</h3><div class="cmeta" style="justify-content:flex-start"><span class="cfac">${h.f}</span><span>${ROLE_TH[h.type]||h.type}</span><span>${h.cost} AT</span></div><p><span class="sk">${h.skill}</span> · ${h.desc}</p></div><div class="tb-stats"><div><span>HP</span><b>${h.hp}</b></div><div><span>ATK</span><b>${h.atk}</b></div><div><span>ระยะ</span><b>${h.range}</b></div></div>`
+}
+function renderTbFilters(){
+    const facs=[...new Set(heroes.map(h=>h.f))], roles=[...new Set(heroes.map(h=>h.type))];
+    const chip=(on, onclick, label, extra, fc)=>`<button type="button" class="fchip ${fc?'':'plain'} ${on?'on':''}" ${fc?'style="--fc:'+fc+'"':''} aria-pressed="${on}" onclick="${onclick}">${label}${extra||''}</button>`;
+    let h='<div><h4>คณะ</h4><div class="chips">'+facs.map(f=>chip(TB.fac===f, "tbSet('fac','"+f+"')", f, '<span class="n">'+heroes.filter(x=>x.f===f).length+'</span>', facColor(f))).join('')+'</div></div>';
+    h+='<div><h4>ดาว</h4><div class="chips">'+[1, 2, 3, 4, 5].map(n=>chip(!!TB.stars[n], 'tbStar('+n+')', n+'★')).join('')+'</div></div>';
+    h+='<div><h4>บทบาท</h4><div class="chips">'+roles.map(r=>chip(TB.role===r, "tbSet('role','"+r+"')", ROLE_TH[r]||r)).join('')+'</div></div>';
+    h+='<div><h4>เรียงตาม</h4><div class="chips">'+[['default', 'ค่าเริ่มต้น'], ['star', 'ดาว'], ['cost', 'ต้นทุน AT'], ['fac', 'คณะ']].map(([k, l])=>chip(TB.sort===k, "tbSet('sort','"+k+"')", l)).join('')+'</div></div>';
+    const active=TB.q||TB.fac||TB.role||TB.sort!=='default'||Object.keys(TB.stars).some(k=>TB.stars[k]);
+    if(active)h+='<div><button type="button" class="secondary" onclick="tbClear()">ล้างตัวกรอง</button></div>';
+    document.getElementById('tbFilters').innerHTML=h
+}
 function renderTeam(){
     ensureSprites(spriteIdsFor(team));
-    document.getElementById('teamGrid').innerHTML=heroes.map(h=>`<div class="tile ${team.includes(h.id)?'sel':''}" onclick="toggleHero('${h.id}')"><div class="row space"><strong>${h.emoji} ${h.name}</strong><span>${team.includes(h.id)?'✔':''}</span></div><div style="color:#ffd25d">${'★'.repeat(h.star)}</div><div class="small">${h.f} · ${h.cost} AT · ${h.type}</div><div class="small">${h.skill}: ${h.desc}</div></div>`).join('');
+    const full=team.length>=6, list=filterHeroes(heroes, TB);
+    renderTbFilters();
+    document.getElementById('tbCount').textContent=heroes.length;
+    document.getElementById('tbCountNote').textContent=list.length===heroes.length?'เลื่อนเพื่อดูเพิ่ม · คลิกเพื่อเพิ่มเข้าทีม':`แสดง ${list.length} จาก ${heroes.length}`;
+    document.getElementById('teamGrid').innerHTML=list.length?list.map(h=>{
+        const on=team.includes(h.id);
+        return `<div class="ccard r${h.star} ${on?'sel':''} ${full?'full':''}" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-pressed="${on}" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}" onmouseenter="tbFocusHero('${h.id}')" onfocus="tbFocusHero('${h.id}')"><span class="ccoin">${h.cost}</span><div class="cin"><div class="cportrait">${portrait(h,'')}</div><div class="cribbon" title="${h.name}">${h.name}</div>${starsHtml(h.star)}<div class="cmeta"><span class="cfac">${h.f}</span><span>${ROLE_TH[h.type]||h.type}</span></div></div></div>`
+    }).join(''):'<div class="tb-empty"><b>ไม่พบตัวละครที่ตรงกัน</b>ลองลบตัวกรองบางอย่าง หรือล้างทั้งหมด<br><br><button type="button" class="secondary" onclick="tbClear()">ล้างตัวกรอง</button></div>';
+    let slots='';
+    for(let i=0;i<6;i++){
+        const h=heroes.find(x=>x.id===team[i]);
+        slots+=h?`<div class="tslot filled" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-label="เอา ${h.name} ออกจากทีม" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}"><span class="n">${i+1}</span>${portrait(h,'e')}<span class="nm">${h.name}</span><span class="ct">${h.cost} AT</span></div>`:`<div class="tslot"><span class="n">${i+1}</span><span>ว่าง</span></div>`
+    }
+    document.getElementById('teamSlots').innerHTML=slots;
+    const fh=heroes.find(x=>x.id===TB.focus)||heroes.find(x=>x.id===team[0])||heroes[0];
+    document.getElementById('tbFocus').innerHTML=focusHtml(fh);
+    document.getElementById('teamCount').classList.toggle('ok', team.length===6);
     document.getElementById('teamCount').textContent=`เลือกแล้ว ${team.length}/6 ตัว · สามารถผสมคณะได้อิสระ`;
     document.getElementById('startBtn').disabled=team.length!==6;
-    document.getElementById('ultPick').innerHTML=Object.entries(ULTIMATES).map(([id, u])=>`<div class="tile ${ultType===id?'sel':''}" onclick="chooseUlt('${id}')"><strong>${u.name}</strong><span class="small">${u.desc}</span></div>`).join('');
+    document.getElementById('ultPick').innerHTML=Object.entries(ULTIMATES).map(([id, u])=>`<div class="tile ${ultType===id?'sel':''}" role="button" tabindex="0" aria-pressed="${ultType===id}" onclick="chooseUlt('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseUlt('${id}')}"><strong>${stripIcon(u.name)}</strong></div>`).join('');
+    document.getElementById('ultDesc').textContent=ULTIMATES[ultType]?stripIcon(ULTIMATES[ultType].name)+': '+ULTIMATES[ultType].desc:'';
     const sl=team.length?calcSynergies(team):[];
-    document.getElementById('teamSyn').innerHTML=sl.length?'<b>Synergy ที่ติดอยู่</b><br>'+sl.map(s=>`${s.name} — ${s.desc}`).join('<br>'):'ไม่มี Synergy'
+    document.getElementById('teamSyn').innerHTML=sl.length?'<b>Synergy ที่ติดอยู่</b><br>'+sl.map(s=>`${stripIcon(s.name)} — ${s.desc}`).join('<br>'):'ไม่มี Synergy'
 }
 function toggleHero(id){
+    TB.focus=id;
     if(team.includes(id))team=team.filter(x=>x!==id);
     else if(team.length<6)team.push(id);
     renderTeam()
@@ -1334,13 +1451,15 @@ function startBattle(seed){
         rng:R, seed:R.seed, t:0, at:180, maxAt:1000, income:10, level:1, upgrade:130, baseHp:5000, enemyHp:6500, units:[], enemies:[], particles:[], floaters:[], trails:[], cd:{
         }, baseCd:0, enemyTimer:4, bossSpawned:false, bossDead:false, paused:false, speed:1, ended:false, kills:0, deployed:0, notice:'ส่งตัวละครเพื่อป้องกันฐาน', noticeTime:4, syn:synergyFx(team), ult:0, rain:0, shuttle:null, warnings:[], laser:null, corpses:[], projectiles:[], projFree:[], shake:0, fxHead:0, fxFree:[]
     };
-    document.getElementById('battleInfo').textContent=battle.syn.list.length?'Synergy: '+battle.syn.list.map(s=>s.name).join(' · '):'ไม่มี Synergy';
+    document.getElementById('battleInfo').textContent=battle.syn.list.length?'Synergy: '+battle.syn.list.map(s=>stripIcon(s.name)).join(' · '):'ไม่มี Synergy';
     team.forEach(id=>battle.cd[id]=0);
-    document.getElementById('battleTitle').textContent=`Stage 1 · Midterm Rush | ${fdata()[2]} ${fdata()[1]} Base`;
+    document.getElementById('battleTitle').textContent=`Stage 1 · Midterm Rush`;
+    document.getElementById('hpPlayerName').textContent=`ฐาน ${fdata()[0]}`;
+    document.getElementById('hpPlayerBox').style.borderLeftColor=fdata()[3];
     document.getElementById('battleCards').innerHTML=team.map(id=>{
-        const h=heroes.find(x=>x.id===id); return `<button class="unitbtn ready" id="card-${id}" onclick="deploy('${id}')"><span class="face">${h.emoji}</span><span>${h.name}</span><span class="cost">${h.cost} AT</span><small id="cd-${id}">READY</small></button>`
+        const h=heroes.find(x=>x.id===id); return `<button class="unitbtn r${h.star} ready" id="card-${id}" style="--fc:${facColor(h.f)}" onclick="deploy('${id}')" data-tip="${h.skill}: ${h.desc}"><span class="cin"><span class="cdfill" id="cdf-${id}"></span><span class="ccoin">${h.cost}</span><span class="cportrait">${portrait(h,'')}</span><span class="cribbon">${h.name}</span><small id="cd-${id}">พร้อม</small></span></button>`
     }).join('');
-    document.getElementById('pauseBtn').textContent='⏸ หยุด';
+    document.getElementById('pauseBtn').textContent='หยุด';
     document.getElementById('speedBtn').textContent='1×';
     document.getElementById('fxBtn').textContent=fxLabel();
     CombatStats.resetBattleStats();
@@ -1364,7 +1483,7 @@ function deploy(id){
     if(SKILL_MODE[id]==='onDeploy')triggerSkill(u);
     if(h.type==='income'){
         b.at=Math.min(b.maxAt, b.at+85);
-        notice('Global Link +85 AT!')
+        notice('Global Link +85 AT')
     }
     if(h.type==='dash'){
         u.x+=95;
@@ -1405,7 +1524,7 @@ function spawnEnemy(type){
         u.rainTimer=0
     }
     battle.enemies.push(u);
-    if(type==='boss')notice('⚠ FINAL EXAM BOSS ปรากฏตัว!')
+    if(type==='boss')notice('Final Exam Boss ปรากฏตัว')
 }
 function bumpEnemy(u){
     u.y=326+(crand()-.5)*25
@@ -1444,7 +1563,7 @@ function baseSkill(){
     };
     fxShake(3);
     fxBurst(150, 318, v.color, 10, 3);
-    notice('⚡ Faculty Laser! '+L.damage+' Damage');
+    notice('Faculty Laser · '+L.damage+' damage');
     return true
 }
 function useUltimate(){
@@ -1457,17 +1576,17 @@ function useUltimate(){
             e.stun=3;
             burst(e.x, e.y-20, '#8fe3ff', 10)
         }
-        notice('📡 Wi-Fi Down! ศัตรูสตัน 3 วินาที')
+        notice('Wi-Fi Down · ศัตรูสตัน 3 วินาที')
     }
     else if(ultType==='rain'){
         b.rain=12;
-        notice('🌧️ Salaya Rain! ศัตรูช้าลง 40%')
+        notice('Salaya Rain · ศัตรูช้าลง 40%')
     }
     else{
         b.shuttle={
             x:80, hit:new Set()
         };
-        notice('🚌 Campus Shuttle มาแล้ว!')
+        notice('Campus Shuttle มาแล้ว')
     }
     return true
 }
@@ -1478,12 +1597,12 @@ function bossPhase(u, dt){
         u.rainTimer=Math.min(u.rainTimer||0, .5);
         u.atk*=1.3;
         u.interval*=.5;
-        notice('🔥 OVERTIME! บอสโกรธ โจมตีเร็วและแรงขึ้น')
+        notice('Overtime · บอสโกรธ โจมตีเร็วและแรงขึ้น')
     }
     else if(r<.5&&u.phase<2){
         u.phase=2;
         u.rainTimer=.5;
-        notice('⚠ EXAM PAPER RAIN! ระวังกระดาษข้อสอบ')
+        notice('Exam Paper Rain · ระวังกระดาษข้อสอบ')
     }
     if(u.phase>=2){
         u.rainTimer-=dt;
@@ -1517,7 +1636,7 @@ function chooseUlt(id){
 function togglePause(){
     if(!battle||battle.ended)return;
     battle.paused=!battle.paused;
-    document.getElementById('pauseBtn').textContent=battle.paused?'▶ ต่อ':'⏸ หยุด'
+    document.getElementById('pauseBtn').textContent=battle.paused?'ต่อ':'หยุด'
 }
 function speedToggle(){
     if(!battle)return;
@@ -1741,7 +1860,9 @@ function finish(win){
     };
     renderStatsPanel(true);
     renderResultStats();
-    document.getElementById('resultTitle').textContent=win?'🏆 VICTORY!':'💀 DEFEAT';
+    document.getElementById('result').classList.toggle('win', !!win);
+    document.getElementById('result').classList.toggle('lose', !win);
+    document.getElementById('resultTitle').textContent=win?'ชนะแล้ว':'แพ้';
     document.getElementById('resultDesc').textContent=`${fdata()[1]} · เวลา ${Math.floor(battle.t)} วินาที · กำจัด ${battle.kills} ตัว · Deploy ${battle.deployed} ครั้ง`;
     show('result')
 }
@@ -1872,12 +1993,6 @@ function drawScene(b){
         text(f.txt, f.x, f.y, 16, f.color);
         ctx.restore()
     }
-    rounded(15, 12, 285, 47, 12, '#0d234bdc');
-    text(`🏫 ${faculty}  ${Math.ceil(b.baseHp)} / 5000`, 157, 41, 18);
-    rounded(800, 12, 285, 47, 12, '#54213cdb');
-    text(`📚 EXAM  ${Math.ceil(b.enemyHp)} / 6500`, 942, 41, 18);
-    rounded(410, 12, 280, 42, 12, '#0d234bdc');
-    text(`⏱ ${Math.floor(b.t)}s · ${b.bossSpawned?'BOSS WAVE':'WAVE '+(1+Math.floor(b.t/20))}`, 550, 39, 17);
     if(b.noticeTime>0){
         rounded(310, 77, 480, 35, 12, '#183967c9');
         text(b.notice, 550, 100, 17, '#fff1aa')
@@ -1911,7 +2026,36 @@ function drawLaser(b){
         })
     }
 }
+/* Faculty base sprites. Optional 6th field of a faculty entry: {buildingName, sprite, referenceUrl, displayScale, groundOffset}.
+   Loaded when the faculty screen is shown; until it is ready (or if it fails) the original drawing is used. */
+const BASE_IMGS={};
+function baseCfg(f){
+    return f&&f[5]&&f[5].sprite?f[5]:null
+}
+function ensureBase(f){
+    const c=baseCfg(f);
+    if(!c||BASE_IMGS[f[0]])return;
+    const r=BASE_IMGS[f[0]]={img:new Image(), ok:false};
+    r.img.onload=()=>{
+        r.ok=true
+    };
+    r.img.onerror=()=>{
+        r.ok=false
+    };
+    r.img.src=c.sprite
+}
+function baseReady(f){
+    const r=baseCfg(f)&&BASE_IMGS[f[0]];
+    return r&&r.ok&&r.img.naturalWidth?r.img:null
+}
 function drawBase(x, y, ally){
+    const bf=fdata(), bimg=ally&&baseReady(bf);
+    if(bimg){
+        const bc=baseCfg(bf), k=bc.displayScale||1, w=bimg.naturalWidth*k, h=bimg.naturalHeight*k;
+        ctx.imageSmoothingEnabled=false;
+        ctx.drawImage(bimg, Math.round(x-5), Math.round(y+102+(bc.groundOffset||0)-h), w, h);
+        return
+    }
     const color=ally?fdata()[3]:'#f77986';
     rounded(x, y, 100, 102, 8, ally?'#f0f8ff':'#e6d3e3');
     rect(x+15, y-25, 70, 30, color);
@@ -2027,21 +2171,33 @@ function updateHud(){
     if(screen!=='battle'||!battle)return;
     const b=battle;
     renderStatsPanel();
+    document.getElementById('hpPlayerText').textContent=`${Math.ceil(b.baseHp)} / 5000`;
+    document.getElementById('hpPlayerFill').style.width=Math.max(0, 100*b.baseHp/5000)+'%';
+    document.getElementById('hpPlayerBar').classList.toggle('low', b.baseHp<1500);
+    document.getElementById('hpEnemyText').textContent=`${Math.ceil(b.enemyHp)} / 6500`;
+    document.getElementById('hpEnemyFill').style.width=Math.max(0, 100*b.enemyHp/6500)+'%';
+    document.getElementById('waveText').textContent=`⏱ ${Math.floor(b.t)}s · ${b.bossSpawned?'BOSS WAVE':'WAVE '+(1+Math.floor(b.t/20))}`;
     document.getElementById('atText').textContent=`AT ${Math.floor(b.at)} / ${b.maxAt}`;
     document.getElementById('atBar').style.width=(100*b.at/b.maxAt)+'%';
     document.getElementById('incomeText').textContent=`+${b.income} AT/s · Lv.${b.level}`;
-    document.getElementById('upgradeBtn').textContent=b.level>=6?'MAX AT Lv.6':`⬆ Upgrade ${b.upgrade} AT`;
+    document.getElementById('upgradeBtn').textContent=b.level>=6?'MAX AT Lv.6':`Upgrade ${b.upgrade} AT`;
     document.getElementById('upgradeBtn').disabled=b.at<b.upgrade||b.level>=6||b.paused;
-    document.getElementById('baseBtn').textContent=b.baseCd>0?`⚡ Faculty Laser ${Math.ceil(b.baseCd)}s`:`⚡ Faculty Laser READY`;
+    document.getElementById('baseBtn').textContent=b.baseCd>0?`Faculty Laser ${Math.ceil(b.baseCd)}s`:`Faculty Laser พร้อม`;
     document.getElementById('baseBtn').disabled=b.baseCd>0||b.paused;
-    document.getElementById('ultBtn').textContent=b.ult>=100?`${ULTIMATES[ultType].name} READY!`:`💥 ${ULTIMATES[ultType].name} ${Math.floor(b.ult)}%`;
+    document.getElementById('ultBtn').textContent=b.ult>=100?`${stripIcon(ULTIMATES[ultType].name)} พร้อมใช้`:`${stripIcon(ULTIMATES[ultType].name)} ${Math.floor(b.ult)}%`;
     document.getElementById('ultBtn').disabled=b.ult<100||b.paused;
     for(const id of team){
         const h=heroes.find(x=>x.id===id), cd=b.cd[id];
         const el=document.getElementById('card-'+id);
         if(!el)continue;
         el.disabled=b.paused||b.at<h.cost||cd>0||b.units.length>=35;
-        document.getElementById('cd-'+id).textContent=cd>0?cd.toFixed(1)+'s':'READY'
+        document.getElementById('cd-'+id).textContent=cd>0?cd.toFixed(1)+'s':(b.at<h.cost?'ขาด AT':'พร้อม');
+        const cdMax=h.cd*b.syn.cdMul, cdf=document.getElementById('cdf-'+id);
+        cdf.style.height=cd>0?Math.min(100, 100*cd/cdMax)+'%':'0%';
+        cdf.classList.toggle('on', cd>0);
+        el.classList.toggle('ready', cd<=0&&b.at>=h.cost);
+        el.classList.toggle('cool', cd>0);
+        el.classList.toggle('lack', cd<=0&&b.at<h.cost)
     }
     document.getElementById('message').textContent=b.noticeTime>0?b.notice:'เลือกเวลาส่งตัวให้คุ้มค่า AT และรับมือศัตรูแต่ละประเภท'
 }

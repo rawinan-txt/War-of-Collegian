@@ -1,0 +1,62 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Design system v2</title>
+<link rel="stylesheet" href="ui-v2.css"><script src="data.js"></script>
+<style>
+  body { padding: 28px 32px 36px; width: 1760px; }
+  h1 { margin: 0 0 4px; font-size: 30px; } h2 { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--gold-400); }
+  .lead { color: var(--chalk-2); margin: 0 0 20px; max-width: 900px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } .grid3 { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 20px; }
+  .box { padding: 18px; } .box + .box { margin-top: 20px; }
+  .sw { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; } .sw div { height: 64px; border: 2px solid var(--ink); padding: 6px; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; justify-content: flex-end; }
+  .sw small { font: 500 12px var(--pixel); opacity: .85; }
+  .ramp { display: flex; margin-top: 8px; } .ramp i { flex: 1; height: 18px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0; } .lab { width: 92px; font-size: 12px; color: var(--chalk-3); }
+  .t1 { font: 700 32px/1.1 var(--font); } .t2 { font: 600 20px/1.2 var(--font); } .t3 { font: 400 14px/1.5 var(--font); color: var(--chalk-2); } .t4 { font: 700 28px var(--pixel); color: var(--gold-400); }
+  .cards { display: grid; grid-template-columns: repeat(5, 120px); gap: 12px; }
+  .note { font-size: 12px; color: var(--chalk-2); margin-top: 8px; line-height: 1.6; }
+  ul.rules { margin: 0; padding-left: 18px; color: var(--chalk-2); line-height: 1.8; } ul.rules b { color: var(--chalk); font-weight: 600; }
+  .toast { display: inline-flex; gap: 10px; align-items: center; padding: 10px 14px; background: var(--navy-800); border: 2px solid var(--ink); box-shadow: inset 0 0 0 2px var(--navy-500); }
+  .demo-modal { padding: 16px; width: 360px; } .demo-modal h3 { margin: 0 0 6px; }
+  .m1 { --m: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M13 2L4 14h7l-1 8 9-12h-7z'/></svg>"); }
+</style></head><body>
+<h1>War of Collegian — Design System v2 “Salaya Night”</h1>
+<p class="lead">Navy คือพื้น ทองคือ “กดได้ / สำคัญ” ม่วงคือ “พิเศษ / หายาก / ศัตรู” ความเป็นเกมอยู่ที่ตัวคอมโพเนนต์ (กรอบพิกเซล ปุ่มนูน เมตรแบ่งช่อง กรอบตามดาว) ไม่ใช่ฉากไล่สีหรือ glow ทั้งหน้า ทุกค่าเป็น token เพื่อให้เพิ่มตัวละครได้ถึง 100 ตัวโดยการ์ดไม่ต้องออกแบบใหม่</p>
+<div class="grid2">
+  <div>
+    <div class="box panel cut"><h2>สี (6 ฐาน + ramp)</h2>
+      <div class="sw"><div style="background:var(--ink)">Ink<small>#070B1C</small></div><div style="background:var(--navy-900)">Midnight<small>#0B1230</small></div><div style="background:var(--navy-700)">Navy Panel<small>#18265A</small></div><div style="background:var(--gold-400);color:var(--gold-ink)">Mahidol Gold<small>#F9C846</small></div><div style="background:var(--purple-400);color:#1d0f4a">Royal Purple<small>#9D78F5</small></div><div style="background:var(--chalk);color:var(--ink)">Chalk<small>#F4F2FF</small></div></div>
+      <div class="ramp"><i style="background:var(--navy-900)"></i><i style="background:var(--navy-800)"></i><i style="background:var(--navy-700)"></i><i style="background:var(--navy-600)"></i><i style="background:var(--navy-500)"></i><i style="background:var(--gold-700)"></i><i style="background:var(--gold-500)"></i><i style="background:var(--gold-400)"></i><i style="background:var(--gold-300)"></i><i style="background:var(--purple-700)"></i><i style="background:var(--purple-500)"></i><i style="background:var(--purple-400)"></i><i style="background:var(--purple-300)"></i></div>
+      <p class="note">ทอง = ปุ่มหลัก ต้นทุน AT สถานะที่เลือก · ม่วง = Ultimate, Synergy, ฐานศัตรู, กรอบ ★5 · เขียว/แดง = HP เท่านั้น · สีคณะ = แถบ 4px ด้านบนของการ์ด (จุดเด่นของเกม)</p><p class="note"><b>ตรวจ contrast แล้ว (เกณฑ์ UI/UX Pro Max 4.5:1):</b> ข้อความหลัก 10.6–16.6 · ข้อความรอง 6.4–10.1 · ข้อความจาง (Chalk-3) ≥ 5.2 บนทุกพื้นแผง · ข้อความแดงใช้ #FF8A9A (≥ 6.4) · ตัวขาวบนปุ่มแดง 5.4 · ตัวหนังสือเล็กสุด 12px</p></div>
+    <div class="box panel cut"><h2>ตัวอักษร</h2>
+      <div class="row"><span class="lab">Display</span><span class="t1">จัดทีม · Battle</span></div>
+      <div class="row"><span class="lab">Heading</span><span class="t2">ทีมของคุณ</span></div>
+      <div class="row"><span class="lab">Body</span><span class="t3">รักษาเพื่อนที่บาดเจ็บหนักที่สุด</span></div>
+      <div class="row"><span class="lab">ตัวเลขเกม</span><span class="t4">AT 818 / 1000</span></div>
+      <p class="note"><b>Kanit</b> สำหรับไทย+อังกฤษทั้ง UI (น้ำหนัก 400/500/600/700) · <b>Pixelify Sans</b> เฉพาะตัวเลข AT HP ต้นทุน และเวลา เพื่อให้รู้สึกพิกเซลโดยไม่ทำให้ข้อความไทยอ่านยาก · ไม่ใช้ตัวพิมพ์ใหญ่เว้นระยะ · ฟอนต์ควรโฮสต์เองในโปรเจกต์ (OFL) เพื่อให้เปิดจากไฟล์ได้</p></div>
+  </div>
+  <div>
+    <div class="box panel cut"><h2>ปุ่ม (นูน กดแล้วยุบ 3px)</h2>
+      <div class="row"><span class="lab">ทอง (หลัก)</span><button class="btn gold">เริ่ม Battle</button><button class="btn gold pressed">กดอยู่</button><button class="btn gold disabled">ใช้ไม่ได้</button></div>
+      <div class="row"><span class="lab">ม่วง (พิเศษ)</span><button class="btn purple"><span class="ic m1"></span>Ultimate พร้อม</button><button class="btn purple disabled">Ultimate 40%</button></div>
+      <div class="row"><span class="lab">รอง</span><button class="btn">← เปลี่ยนคณะ</button><button class="btn sm">หยุด</button><button class="btn sm danger">ออก</button></div>
+      <p class="note">กฎ: หน้าหนึ่งมีปุ่มทองหลัก 1 ปุ่ม · ปุ่มม่วงใช้เฉพาะ Ultimate · มีสถานะ hover (สว่างขึ้น) / pressed (ยุบ 3px, 90ms) / disabled (ซีด) / focus (ขอบทอง 2px)</p></div>
+    <div class="box panel cut"><h2>เมตร (แบ่งช่อง 1 ช่อง = ค่าคงที่)</h2>
+      <div class="row"><span class="lab">HP ฐาน</span><div class="meter" style="width:360px" id="m1"></div></div>
+      <div class="row"><span class="lab">AT</span><div class="meter gold" style="width:360px" id="m2"></div></div>
+      <div class="row"><span class="lab">HP ต่ำ</span><div class="meter red" style="width:360px" id="m3"></div></div>
+      <div class="row"><span class="lab">ศัตรู/พิเศษ</span><div class="meter purple" style="width:360px" id="m4"></div></div></div>
+  </div>
+</div>
+<div class="box panel cut" style="margin-top:20px"><h2>การ์ดตัวละคร: กรอบ = ความหายาก (ดาว) · แถบบน = คณะ · รองรับ 100 ตัวด้วยการ์ดขนาดเดียว</h2>
+  <div class="cards" id="rar"></div>
+  <p class="note">★1 เทาน้ำเงิน · ★2 ฟ้า · ★3 ม่วง · ★4 ทอง · ★5 ทองซ้อนม่วง (กรอบคู่) · สถานะ: ปกติ / เลือกแล้ว (พื้นสว่างขึ้น + ป้ายติ๊กทอง) / เต็มทีม (จางลง) · ข้อความสกิลไม่อยู่บนการ์ด ดูที่แถบรายละเอียดด้านล่างของคอลเลกชัน เพื่อให้การ์ดเล็กและอ่านง่ายแม้มี 100 ใบ</p></div>
+<div class="grid3" style="margin-top:20px">
+  <div class="box panel cut"><h2>พื้นผิว (3 ระดับ)</h2><div class="panel cut" style="padding:14px;margin-bottom:10px">แผง (Panel)</div><div class="panel well cut" style="padding:14px;margin-bottom:10px">ช่องลึก (Well) ใช้กับช่องค้นหา ช่องทีมว่าง</div><div class="toast">ใช้งานได้: <b>Faculty Laser พร้อม</b></div></div>
+  <div class="box panel cut"><h2>Modal / ผลลัพธ์</h2><div class="panel cut demo-modal" style="border-color:var(--gold-400)"><h3 style="color:var(--gold-400);font-size:24px">ชนะแล้ว</h3><div class="sub">คณะ ICT · เวลา 4:12 · กำจัด 38 ตัว</div><div class="row" style="margin-top:12px"><button class="btn gold sm">เล่นอีกครั้ง</button><button class="btn sm">จัดทีมใหม่</button></div></div></div>
+  <div class="box panel cut"><h2>จังหวะการเคลื่อนไหว</h2><ul class="rules"><li><b>กดปุ่ม</b> ยุบ 3px ใน 90ms เด้งกลับ</li><li><b>เลือกการ์ด</b> กรอบทองกะพริบ 1 ครั้ง ป้ายติ๊กเด้งเข้า</li><li><b>เปลี่ยนหน้า</b> ม่านสีกรมท่าเลื่อนปิด-เปิด 240ms ขอบทองเป็นเส้นเดียว (ช่วงเดียวที่ “โชว์”)</li><li><b>Cooldown</b> แผ่นมืดไหลลงเป็นขั้น 10 ขั้น + ตัวเลขวินาที</li><li><b>ชนะ</b> แผงเด้งขึ้น 320ms</li><li>เคารพ <b>reduced motion</b>: ตัดทุกอย่างเหลือการเปลี่ยนสีทันที</li></ul></div>
+</div>
+<script>
+  const seg = (id, n, on) => { let h = ''; for (let i = 0; i < n; i++) h += `<i class="${i < on ? 'on' : ''}"></i>`; document.getElementById(id).innerHTML = h; };
+  seg('m1', 20, 20); seg('m2', 25, 15); seg('m3', 20, 3); seg('m4', 20, 11);
+  const pick = ['bug', 'mecha', 'lab', 'dental', 'nurse'].map(id => HEROES.find(h => h.id === id));
+  document.getElementById('rar').innerHTML = pick.map((h, i) => card(h, { sel: i === 2 })).join('') ;
+</script></body></html>

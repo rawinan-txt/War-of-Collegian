@@ -1,0 +1,78 @@
+/* War of Collegian - UI v2 design system (MOCKUP ONLY: not loaded by the game).
+   "Salaya Night": deep Mahidol navy surfaces, gold = act, purple = special/rarity. Richness lives in components
+   (pixel-cut frames, rarity foil, bevelled buttons, segmented meters), never in washes or glows. */
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Pixelify+Sans:wght@500;700&display=swap");
+
+:root {
+  /* palette (6 named bases + ramps) */
+  --ink: #070b1c;            /* outlines, deepest wells */
+  --navy-900: #0b1230;       /* page */
+  --navy-800: #111b42;       /* wells, insets */
+  --navy-700: #18265a;       /* panels */
+  --navy-600: #223375;       /* raised */
+  --navy-500: #324794;       /* panel edge light */
+  --gold-300: #ffe08a; --gold-400: #f9c846; --gold-500: #e9a925; --gold-700: #8a5a10; --gold-ink: #2b1c04;
+  --purple-300: #c3a9ff; --purple-400: #9d78f5; --purple-500: #7a52dc; --purple-700: #4a2f98;
+  --chalk: #f4f2ff; --chalk-2: #b9bfdc; --chalk-3: #a3acd6;
+  --pos: #55d6a0; --neg: #f0566a; --neg-text: #ff8a9a;
+  /* rarity frames: stars carry meaning */
+  --r1: #7186b0; --r2: #4f9ae8; --r3: #9d78f5; --r4: #f9c846; --r5: #f9c846;
+  /* type: Kanit (Thai + Latin UI), Pixelify Sans (numbers and short game labels) */
+  --font: "Kanit", "Noto Sans Thai", system-ui, sans-serif;
+  --pixel: "Pixelify Sans", "Kanit", monospace;
+  /* 4px grid + pixel cut */
+  --cut: 4px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy-900); color: var(--chalk); font: 400 14px/1.45 var(--font); }
+.num { font-family: var(--pixel); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+
+/* pixel-cut corner mask (4px stair step) */
+.cut { clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, calc(100% - var(--cut)) var(--cut), 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, var(--cut) calc(100% - var(--cut)), 0 calc(100% - var(--cut)), 0 var(--cut), var(--cut) var(--cut)); }
+
+/* PANEL: ink edge, light inner rim, dark bottom lip */
+.panel { position: relative; background: var(--navy-700); border: 2px solid var(--ink); box-shadow: inset 0 0 0 2px var(--navy-500), inset 0 -4px 0 var(--navy-800); }
+.panel.well { background: var(--navy-800); box-shadow: inset 0 0 0 2px #0e1736, inset 0 4px 0 #0a1130; }
+.title { font-weight: 600; font-size: 15px; color: var(--chalk); display: flex; align-items: center; gap: 8px; }
+.sub { color: var(--chalk-2); font-size: 12px; }
+
+/* BUTTON: bevel like a physical key; press sinks 3px */
+.btn { font: 600 15px/1 var(--font); color: var(--chalk); background: var(--navy-600); border: 2px solid var(--ink); padding: 12px 18px; cursor: pointer; position: relative; top: 0;
+  box-shadow: inset 0 2px 0 #4a5fb0, inset 0 -4px 0 #17235a, 0 4px 0 var(--ink); transition: top 90ms var(--ease), box-shadow 90ms var(--ease), filter 120ms; }
+.btn:hover { filter: brightness(1.12); }
+.btn:active, .btn.pressed { top: 3px; box-shadow: inset 0 2px 0 #4a5fb0, inset 0 -2px 0 #17235a, 0 1px 0 var(--ink); }
+.btn.gold { color: var(--gold-ink); background: var(--gold-400); box-shadow: inset 0 2px 0 var(--gold-300), inset 0 -4px 0 var(--gold-500), 0 4px 0 var(--ink); text-shadow: 0 1px 0 #ffe9a8; }
+.btn.gold:active, .btn.gold.pressed { box-shadow: inset 0 2px 0 var(--gold-300), inset 0 -2px 0 var(--gold-500), 0 1px 0 var(--ink); }
+.btn.purple { color: #fff; background: var(--purple-500); box-shadow: inset 0 2px 0 var(--purple-300), inset 0 -4px 0 var(--purple-700), 0 4px 0 var(--ink); text-shadow: 0 1px 0 #3a2380; }
+.btn.danger { color: #fff; background: #c2354b; box-shadow: inset 0 2px 0 #ff8a9a, inset 0 -4px 0 #7d1b2e, 0 4px 0 var(--ink); }
+.btn.disabled { filter: grayscale(.8) brightness(.7); cursor: not-allowed; }
+.btn.big { font-size: 20px; padding: 16px 24px; }
+.btn.sm { font-size: 13px; padding: 8px 12px; }
+.btn .ic { display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; background: currentColor; -webkit-mask: var(--m) center/contain no-repeat; mask: var(--m) center/contain no-repeat; }
+
+/* METERS: segmented, 1 segment = fixed amount */
+.meter { height: 16px; background: var(--ink); padding: 2px; display: flex; gap: 2px; }
+.meter i { flex: 1; background: #1a2550; }
+.meter i.on { background: var(--c, var(--pos)); box-shadow: inset 0 2px 0 #ffffff55; }
+.meter.gold { --c: var(--gold-400); } .meter.purple { --c: var(--purple-400); } .meter.red { --c: var(--neg); }
+
+/* CHARACTER CARD: frame colour = rarity (stars). Faculty = 4px tab on top. */
+.card { --fc: #4f9ae8; --rc: var(--r1); position: relative; background: var(--navy-700); border: 2px solid var(--rc); padding: 8px 8px 6px; cursor: pointer; text-align: center;
+  box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--navy-800); transition: transform 120ms var(--ease), border-color 120ms; }
+.card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--fc); }
+.card:hover { transform: translateY(-2px); }
+.card.r2 { --rc: var(--r2); } .card.r3 { --rc: var(--r3); } .card.r4 { --rc: var(--r4); } .card.r5 { --rc: var(--r5); }
+.card.r5 { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 4px var(--purple-400), inset 0 -6px 0 var(--navy-800); }
+.card.sel { background: var(--navy-600); }
+.card.sel::after { content: ""; position: absolute; right: 4px; top: 8px; width: 18px; height: 18px; background: var(--gold-400); border: 2px solid var(--ink); -webkit-mask: none; box-shadow: inset 0 -3px 0 var(--gold-500); }
+.card.sel .tick { position: absolute; right: 4px; top: 8px; width: 18px; height: 18px; display: grid; place-items: center; z-index: 2; font: 700 12px var(--pixel); color: var(--gold-ink); }
+.card.dim { opacity: .55; }
+.por { margin: 6px auto 4px; width: 64px; height: 64px; background-repeat: no-repeat; background-position: 0 0; image-rendering: pixelated; background-color: color-mix(in srgb, var(--fc) 18%, var(--navy-900)); border: 2px solid var(--ink); }
+.nm { font-weight: 600; font-size: 13px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stars { color: var(--gold-400); font-size: 12px; letter-spacing: 1px; line-height: 1; margin: 2px 0; text-shadow: 0 1px 0 #000a; }
+.stars b { color: #ffffff30; font-weight: 400; }
+.cost { font: 700 13px var(--pixel); color: var(--gold-400); }
+.chip { display: inline-block; padding: 2px 8px; border: 2px solid var(--ink); background: var(--navy-800); color: var(--chalk-2); font-size: 12px; font-weight: 500; }
+.chip.on { background: var(--gold-400); color: var(--gold-ink); }
+.chip.fc { border-left: 4px solid var(--fc, var(--navy-500)); }

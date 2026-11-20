@@ -1,0 +1,252 @@
+[
+ {
+  "n": "[1920x1080] team: no page scroll",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] team: Ultimate selection is fully visible and NOT covered by Start Battle",
+  "pass": true,
+  "x": "ult.bottom 638 < start.top 980"
+ },
+ {
+  "n": "[1920x1080] team: 6 slots visible",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] search 'angel' leaves 1 card and keeps the input value",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] clear filters restores all 12",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] 5-star filter -> 2 cards",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] sort by cost ascending",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] empty state offers a way out",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] pressing Tab reaches a card and shows a visible focus ring",
+  "pass": true,
+  "x": "solid 3px"
+ },
+ {
+  "n": "[1920x1080] Enter on a focused card toggles it (team stays <= 6)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] Mitr + Kanit load from the project",
+  "pass": true,
+  "x": "{\"mitr\":true,\"kanit\":true,\"loaded\":[\"Mitr 500\",\"Mitr 500\",\"Mitr 600\",\"Mitr 600\",\"Kanit 400\",\"Kanit 400\"]}"
+ },
+ {
+  "n": "[1920x1080] battle: no page scroll, canvas is the largest element",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] battle: 6 deploy cards, controls, AT, laser, pause, speed all inside the viewport",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] battle: touch/click targets >= 36px high",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1920x1080] battle: stats drawer opens beside the canvas without covering the dock",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] team: no page scroll",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] team: Ultimate selection is fully visible and NOT covered by Start Battle",
+  "pass": true,
+  "x": "ult.bottom 496 < start.top 680"
+ },
+ {
+  "n": "[1366x768] team: 6 slots visible",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] search 'angel' leaves 1 card and keeps the input value",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] clear filters restores all 12",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] 5-star filter -> 2 cards",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] sort by cost ascending",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] empty state offers a way out",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] pressing Tab reaches a card and shows a visible focus ring",
+  "pass": true,
+  "x": "solid 3px"
+ },
+ {
+  "n": "[1366x768] Enter on a focused card toggles it (team stays <= 6)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] Mitr + Kanit load from the project",
+  "pass": true,
+  "x": "{\"mitr\":true,\"kanit\":true,\"loaded\":[\"Mitr 500\",\"Mitr 500\",\"Mitr 600\",\"Mitr 600\",\"Kanit 400\",\"Kanit 400\"]}"
+ },
+ {
+  "n": "[1366x768] battle: no page scroll, canvas is the largest element",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] battle: 6 deploy cards, controls, AT, laser, pause, speed all inside the viewport",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] battle: touch/click targets >= 36px high",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1366x768] battle: stats drawer opens beside the canvas without covering the dock",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] team: no page scroll",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] team: Ultimate selection is fully visible and NOT covered by Start Battle",
+  "pass": true,
+  "x": "ult.bottom 496 < start.top 632"
+ },
+ {
+  "n": "[1280x720] team: 6 slots visible",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] search 'angel' leaves 1 card and keeps the input value",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] clear filters restores all 12",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] 5-star filter -> 2 cards",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] sort by cost ascending",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] empty state offers a way out",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] pressing Tab reaches a card and shows a visible focus ring",
+  "pass": true,
+  "x": "solid 3px"
+ },
+ {
+  "n": "[1280x720] Enter on a focused card toggles it (team stays <= 6)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] Mitr + Kanit load from the project",
+  "pass": true,
+  "x": "{\"mitr\":true,\"kanit\":true,\"loaded\":[\"Mitr 500\",\"Mitr 500\",\"Mitr 600\",\"Mitr 600\",\"Kanit 400\",\"Kanit 400\"]}"
+ },
+ {
+  "n": "[1280x720] battle: no page scroll, canvas is the largest element",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] battle: 6 deploy cards, controls, AT, laser, pause, speed all inside the viewport",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] battle: touch/click targets >= 36px high",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "[1280x720] battle: stats drawer opens beside the canvas without covering the dock",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "button sinks 4px while pressed and returns on release",
+  "pass": true,
+  "x": "0px -> 4px"
+ },
+ {
+  "n": "screen change plays the curtain wipe",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "reduced motion: curtain hidden and animations collapsed",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "no external network requests (offline play)",
+  "pass": true,
+  "x": ""
+ },
+ {
+  "n": "no runtime errors",
+  "pass": true,
+  "x": ""
+ }
+]
