@@ -476,6 +476,8 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 <p id="teamCount" class="status"></p></div>
 <div><h3>Synergy</h3>
 <div id="teamSyn" class="status"></div></div>
+<div><h3>ด่าน</h3>
+<div id="stagePick" class="grid"></div></div>
 <div><h3>Ultimate (เลือก 1 อย่าง)</h3>
 <div id="ultPick" class="grid"></div>
 <p class="ultdesc" id="ultDesc"></p></div>
@@ -850,7 +852,7 @@ function noteFallback(rec, name, n){
 }
 const DEFAULT_MUZZLE=[18, -14];
 function anchorOf(id, kind, def){
-    const c=typeof CHARACTER_ANIMS!=='undefined'&&CHARACTER_ANIMS[id], a=c&&c.anchors&&c.anchors[kind];
+    const c=(typeof CHARACTER_ANIMS!=='undefined'&&CHARACTER_ANIMS[id])||(typeof ENEMY_ANIMS!=='undefined'&&ENEMY_ANIMS[id]), a=c&&c.anchors&&c.anchors[kind];
     return a||def
 }
 function muzzleOf(u){
@@ -905,9 +907,21 @@ function drawSpriteFrame(id, name, t, x, y, ally){
     }
 }
 function drawBars(u){/* a boss sprite is drawn 1.65x larger, so its bar sits higher and wider (visual only) */
-    const boss=u.type==='boss', x=u.x, y=u.y-(boss?62:0), w=boss?95:45;
+    const ec=!u.ally&&typeof ENEMY_ANIMS!=='undefined'&&ENEMY_ANIMS[u.id], boss=u.type==='boss', x=u.x, y=ec&&ec.barY!==undefined?u.y+ec.barY+70:u.y-(boss?62:0), w=boss?95:45;
     rect(x-w/2, y-70, w, 6, '#28314b');
     rect(x-w/2, y-70, w*Math.max(0, u.hp/u.maxHp), 6, u.ally?'#50ed9c':'#ff697e');
+    if(u.buff>0){
+        rect(x-w/2+2, y-82, 1, 1, '#52d49a');
+        rect(x-w/2+1, y-81, 3, 1, '#52d49a');
+        rect(x-w/2, y-80, 5, 1, '#52d49a');
+        rect(x-w/2+2, y-79, 1, 3, '#52d49a')
+    }
+    if(u.weak>0){
+        rect(x+w/2-3, y-82, 1, 3, '#b88bff');
+        rect(x+w/2-5, y-79, 5, 1, '#b88bff');
+        rect(x+w/2-4, y-78, 3, 1, '#b88bff');
+        rect(x+w/2-3, y-77, 1, 1, '#b88bff')
+    }
     if(u.stun>0){
         ctx.font='20px system-ui';
         ctx.textAlign='center';
@@ -1147,9 +1161,14 @@ function startAttack(u, target, val){
     u.atkT=.5;
     u.cast=.27;
     u.fx=.38;
-    u.pend.push({
+    const pa={
         t:IMPACT_DELAY, kind:'attack', target, val, a:snapAttacker(u)
-    })
+    };
+    if(u.kit==='advisor'&&u.atkCount%ENEMY_KITS.advisor.everyHits===0){
+        pa.a.weak=true;
+        u.skillT=SKILL_DUR
+    }
+    u.pend.push(pa)
 }
 function resolvePend(u, p){
     if(p.kind==='attack'){
@@ -1203,6 +1222,12 @@ function updateProjectiles(dt){
 function applyAttack(a, target, val){
     const b=battle, foes=a.ally?b.enemies:b.units;
     damage(target, val, a.src);
+    if(!a.ally)enemyImpact(a, target);
+    if(a.weak&&target.alive&&!(target.weak>0)&&!(target.weakImm>0)){
+        target.weak=ENEMY_KITS.advisor.weakTime;
+        target.weakImm=ENEMY_KITS.advisor.weakImmune;
+        burst(target.x, target.y-20, '#b88bff', 9)
+    }
     if(a.type==='aoe'){
         for(const other of foes)if(other!==target&&other.alive&&Math.abs(other.x-target.x)<90)damage(other, val*.48, a.src);
         burst(target.x, target.y, '#d88aff', 12)
@@ -1434,6 +1459,7 @@ function renderTeam(){
     document.getElementById('teamCount').textContent=`เลือกแล้ว ${team.length}/6 ตัว · สามารถผสมคณะได้อิสระ`;
     document.getElementById('startBtn').disabled=team.length!==6;
     document.getElementById('ultPick').innerHTML=Object.entries(ULTIMATES).map(([id, u])=>`<div class="tile ${ultType===id?'sel':''}" role="button" tabindex="0" aria-pressed="${ultType===id}" onclick="chooseUlt('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseUlt('${id}')}"><strong>${stripIcon(u.name)}</strong></div>`).join('');
+    document.getElementById('stagePick').innerHTML=Object.entries(STAGES).map(([n, s])=>`<div class="tile ${stage==n?'sel':''}" role="button" tabindex="0" aria-pressed="${stage==n}" onclick="setStage(${n})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setStage(${n})}"><strong>${s.name}</strong></div>`).join('');
     document.getElementById('ultDesc').textContent=ULTIMATES[ultType]?stripIcon(ULTIMATES[ultType].name)+': '+ULTIMATES[ultType].desc:'';
     const sl=team.length?calcSynergies(team):[];
     document.getElementById('teamSyn').innerHTML=sl.length?'<b>Synergy ที่ติดอยู่</b><br>'+sl.map(s=>`${stripIcon(s.name)} — ${s.desc}`).join('<br>'):'ไม่มี Synergy'
@@ -1445,15 +1471,15 @@ function toggleHero(id){
     renderTeam()
 }
 function startBattle(seed){
-    ensureSprites(spriteIdsFor(team).concat(ENEMY_SPRITE_IDS));
+    ensureSprites(spriteIdsFor(team).concat(STAGES[stage].enemies));
     const R=newRngs(seed);
     battle={
         rng:R, seed:R.seed, t:0, at:180, maxAt:1000, income:10, level:1, upgrade:130, baseHp:5000, enemyHp:6500, units:[], enemies:[], particles:[], floaters:[], trails:[], cd:{
-        }, baseCd:0, enemyTimer:4, bossSpawned:false, bossDead:false, paused:false, speed:1, ended:false, kills:0, deployed:0, notice:'ส่งตัวละครเพื่อป้องกันฐาน', noticeTime:4, syn:synergyFx(team), ult:0, rain:0, shuttle:null, warnings:[], laser:null, corpses:[], projectiles:[], projFree:[], shake:0, fxHead:0, fxFree:[]
+        }, baseCd:0, enemyTimer:4, bossSpawned:false, bossDead:false, paused:false, speed:1, ended:false, kills:0, deployed:0, notice:'ส่งตัวละครเพื่อป้องกันฐาน', noticeTime:4, syn:synergyFx(team), ult:0, rain:0, shuttle:null, warnings:[], laser:null, corpses:[], projectiles:[], projFree:[], shake:0, fxHead:0, fxFree:[], stage:stage
     };
     document.getElementById('battleInfo').textContent=battle.syn.list.length?'Synergy: '+battle.syn.list.map(s=>stripIcon(s.name)).join(' · '):'ไม่มี Synergy';
     team.forEach(id=>battle.cd[id]=0);
-    document.getElementById('battleTitle').textContent=`Stage 1 · Midterm Rush`;
+    document.getElementById('battleTitle').textContent=STAGES[stage].name;
     document.getElementById('hpPlayerName').textContent=`ฐาน ${fdata()[0]}`;
     document.getElementById('hpPlayerBox').style.borderLeftColor=fdata()[3];
     document.getElementById('battleCards').innerHTML=team.map(id=>{
@@ -1511,9 +1537,103 @@ const enemyTemplates=()=>({
         id:'quiz', hp:450, atk:75, range:125, spd:32, interval:1.8, emoji:'📝', type:'ranged'
     }, boss:{
         id:'final', hp:6400, atk:150, range:58, spd:20, interval:1.8, emoji:'👹', type:'boss'
+    }, professor:{
+        id:'professor', hp:440, atk:62, range:150, spd:30, interval:2.3, emoji:'👨‍🏫', type:'ranged'
+    }, ta:{
+        id:'ta', hp:270, atk:31, range:95, spd:62, interval:1.5, emoji:'📚', type:'basic', kit:'ta'
+    }, advisor:{
+        id:'advisor', hp:1300, atk:50, range:140, spd:22, interval:2.6, emoji:'📋', type:'elite', kit:'advisor'
+    }, exammaster:{
+        id:'exammaster', hp:5800, atk:97, range:150, spd:21, interval:2.2, emoji:'🧙', type:'boss', kit:'exammaster'
     }
 });
-const ENEMY_SPRITE_IDS=Object.values(enemyTemplates()).map(t=>t.id);
+/* Stages are data: the enemy roster (sprites are loaded for it only), the spawn pick, the spawn gap and the boss.
+   Stage 1 is the original schedule, bit for bit; Stage 2 brings the teaching staff. */
+const STAGES={
+    1:{
+        name:'Stage 1 · Midterm Rush', enemies:['assignment', 'deadline', 'group', 'quiz', 'final'], bossType:'boss', bossAt:85,
+        pick:(t, r)=>t>32&&r<.25?'tank':t>22&&r<.4?'ranged':r<.25?'fast':'basic',
+        gap:t=>Math.max(1.8, 4.6-t*.02)
+    }, 2:{
+        name:'Stage 2 · Faculty Staff', enemies:['assignment', 'deadline', 'professor', 'ta', 'advisor', 'exammaster'], bossType:'exammaster', bossAt:90,
+        pick:(t, r)=>t>52&&r<.12?'advisor':t>28&&r<.3?'professor':t>12&&r<.46?'ta':r<.2?'fast':'basic',
+        gap:t=>Math.max(2.5, 5.5-t*.02)
+    }
+};
+/* sprite ids of the default stage (kept for compatibility); a battle loads the roster of its own stage */
+const ENEMY_SPRITE_IDS=STAGES[1].enemies;
+let stage=1;
+function setStage(n){
+    if(!STAGES[n])return;
+    stage=+n;
+    renderTeam()
+}
+/* Enemy abilities. Deterministic on purpose: no random draws, so they can never separate combat from visuals. */
+const ENEMY_KITS={
+    ta:{first:3, interval:9, radius:150, buffTime:4, castHold:.4},
+    advisor:{everyHits:3, weakTime:3, weakImmune:6},
+    exammaster:{first:7, zones:[1, 2, 3], gap:[10, 8, 7], warn:1.5, radius:70, dmg:115}
+};
+function enemyKit(u, dt){
+    const b=battle;
+    if(u.kit==='ta'){
+        const K=ENEMY_KITS.ta;
+        u.kitT=(u.kitT===undefined?K.first:u.kitT)-dt;
+        if(u.kitT<=0){
+            let n=0;
+            for(const e of b.enemies)if(e.alive&&e!==u&&Math.abs(e.x-u.x)<K.radius){
+                e.buff=K.buffTime;
+                n++
+            }
+            if(n){
+                u.kitT=K.interval;
+                u.skillT=SKILL_DUR;
+                u.castHold=K.castHold;
+                burst(u.x, u.y-20, '#52d49a', 12)
+            }
+            else u.kitT=1.5
+        }
+    }
+}
+function examMasterPhase(u, dt){
+    const b=battle, K=ENEMY_KITS.exammaster, r=u.hp/u.maxHp;
+    if(r<.25&&u.phase<3){
+        u.phase=3;
+        u.atk*=1.2;
+        u.areaTimer=Math.min(u.areaTimer, 2);
+        notice('Exam Master · Final Bell ระวังพื้นที่โจมตีหลายจุด')
+    }
+    else if(r<.6&&u.phase<2){
+        u.phase=2;
+        u.areaTimer=Math.min(u.areaTimer, 2.5);
+        notice('Exam Master · Proctor Mode พื้นที่โจมตีมากขึ้น')
+    }
+    u.areaTimer-=dt;
+    if(u.areaTimer<=0){
+        const zones=K.zones[u.phase-1], front=b.units.filter(a=>a.alive).sort((p, q)=>q.x-p.x), xs=[];
+        for(let i=0; i<zones; i++){
+            let x=front.length?front[Math.min(i*2, front.length-1)].x:300+i*160;
+            for(const used of xs)if(Math.abs(used-x)<K.radius)x=used+K.radius*(x>=used?1:-1);
+            xs.push(Math.max(120, Math.min(900, x)))
+        }
+        for(const x of xs)b.warnings.push({
+            x, t:K.warn, r:K.radius, dmg:K.dmg, color:'#a35bff', icon:'⚠'
+        });
+        u.skillT=SKILL_DUR;
+        u.castHold=.7;
+        u.areaTimer=K.gap[u.phase-1];
+        burst(u.x, u.y-30, '#a35bff', 14)
+    }
+}
+function enemyImpact(a, t){
+    const c=typeof ENEMY_ANIMS!=='undefined'&&ENEMY_ANIMS[a.id];
+    if(c&&c.fx)fxBurst(t.x, t.y-18, c.fx.color, 7, 3)
+}
+/* a boss death plays longer than the 0.7s a normal corpse stays */
+function deathLife(id){
+    const c=typeof ENEMY_ANIMS!=='undefined'&&ENEMY_ANIMS[id], d=c&&c.anims&&c.anims.death;
+    return d&&d.frameCount/d.frameRate>.7?d.frameCount/d.frameRate+.05:0
+}
 function spawnEnemy(type){
     const templates=enemyTemplates();
     const h=templates[type];
@@ -1523,8 +1643,16 @@ function spawnEnemy(type){
         u.phase=1;
         u.rainTimer=0
     }
+    if(h.kit){
+        u.kit=h.kit;
+        if(h.kit==='exammaster'){
+            u.phase=1;
+            u.areaTimer=ENEMY_KITS.exammaster.first
+        }
+    }
     battle.enemies.push(u);
-    if(type==='boss')notice('Final Exam Boss ปรากฏตัว')
+    if(type==='boss')notice('Final Exam Boss ปรากฏตัว');
+    if(h.kit==='exammaster')notice('Exam Master ปรากฏตัว · ระวังวงเตือนบนพื้น')
 }
 function bumpEnemy(u){
     u.y=326+(crand()-.5)*25
@@ -1591,6 +1719,7 @@ function useUltimate(){
     return true
 }
 function bossPhase(u, dt){
+    if(u.kit==='exammaster')return examMasterPhase(u, dt);
     const r=u.hp/u.maxHp;
     if(r<.2&&u.phase<3){
         u.phase=3;
@@ -1610,6 +1739,7 @@ function bossPhase(u, dt){
             for(let i=0; i<3; i++)battle.warnings.push({
                 x:150+i*180+crand()*100, t:1
             });
+            u.skillT=SKILL_DUR;
             u.rainTimer=6
         }
     }
@@ -1623,8 +1753,8 @@ function updateWarnings(dt){
     for(const w of b.warnings){
         w.t-=dt;
         if(w.t<=0){
-            for(const a of b.units)if(a.alive&&Math.abs(a.x-w.x)<60)damage(a, 160, 'boss');
-            burst(w.x, 330, '#ff6b6b', 14)
+            for(const a of b.units)if(a.alive&&Math.abs(a.x-w.x)<(w.r||60))damage(a, w.dmg||160, 'boss');
+            burst(w.x, 330, w.color||'#ff6b6b', 14)
         }
     }
     b.warnings=b.warnings.filter(w=>w.t>0)
@@ -1667,9 +1797,13 @@ function damage(u, amt, sourceId=null){
     });
     if(u.hp<=0){
         u.alive=false;
-        if(spriteReady(u.id))battle.corpses.push({
-            id:u.id, x:u.x, y:u.y, ally:u.ally, t:0
-        });
+        if(spriteReady(u.id)){
+            const cp={
+                id:u.id, x:u.x, y:u.y, ally:u.ally, t:0
+            }, dl=deathLife(u.id);
+            if(dl)cp.life=dl;
+            battle.corpses.push(cp)
+        }
         burst(u.x, u.y, u.ally?'#8ee6ff':'#ff8d8d', 15);
         if(!u.ally){
             battle.kills++;
@@ -1715,13 +1849,14 @@ function update(dt){
     for(const id of team)b.cd[id]=Math.max(0, b.cd[id]-dt);
     b.enemyTimer-=dt;
     if(b.enemyTimer<=0){
-        const r=crand();
-        spawnEnemy(b.t>32&&r<.25?'tank':b.t>22&&r<.4?'ranged':r<.25?'fast':'basic');
-        b.enemyTimer=Math.max(1.8, 4.6-b.t*.02)
+        const r=crand(), S=STAGES[b.stage||1];
+        spawnEnemy(S.pick(b.t, r));
+        b.enemyTimer=S.gap(b.t)
     }
-    if(b.t>=85&&!b.bossSpawned){
+    const BS=STAGES[b.stage||1];
+    if(b.t>=BS.bossAt&&!b.bossSpawned){
         b.bossSpawned=true;
-        spawnEnemy('boss')
+        spawnEnemy(BS.bossType)
     }
     for(const u of [...b.units, ...b.enemies]){
         if(!u.alive)continue;
@@ -1739,6 +1874,9 @@ function update(dt){
         u.cast=Math.max(0, u.cast-dt);
         u.fx=Math.max(0, u.fx-dt);
         u.slow=Math.max(0, u.slow-dt);
+        if(u.buff>0)u.buff-=dt;
+        if(u.weak>0)u.weak-=dt;
+        if(u.weakImm>0)u.weakImm-=dt;
         if(u.poison>0){
             u.poison-=dt;
             damage(u, 13*dt, u.poisonSource||null)
@@ -1756,6 +1894,13 @@ function update(dt){
             const due=u.pend.filter(p=>p.t<=0);
             u.pend=u.pend.filter(p=>p.t>0);
             for(const p of due)resolvePend(u, p)
+        }
+        if(!u.ally&&u.kit){
+            enemyKit(u, dt);
+            if(u.castHold>0){
+                u.castHold-=dt;
+                continue
+            }
         }
         const foes=u.ally?b.enemies:b.units;
         const direction=u.ally?1:-1;
@@ -1798,7 +1943,7 @@ function update(dt){
                 u.pulseT=8
             }
         }
-        const slow=(u.slow>0?.55:1)*(!u.ally&&b.rain>0?.6:1);
+        const slow=(u.slow>0?.55:1)*(!u.ally&&b.rain>0?.6:1)*(u.buff>0?1.25:1);
         if(target&&dist<=u.range){
             if(u.cd<=0){
                 let val=u.atk;
@@ -1812,8 +1957,9 @@ function update(dt){
                 if(u.type==='pierce')val+=40;
                 if(u.type==='tank'&&u.ally)val*=.85;
                 if(u.ally)val*=b.syn.dmgFor(u.id);
+                if(u.weak>0)val*=.75;
                 startAttack(u, target, val);
-                u.cd=u.interval*(u.slow>0?1.35:1)*(!u.ally&&b.rain>0?1/.6:1)*(u.type==='ranged'&&u.ally?1-u.stack*.035:1)
+                u.cd=u.interval*(u.slow>0?1.35:1)*(!u.ally&&b.rain>0?1/.6:1)*(u.type==='ranged'&&u.ally?1-u.stack*.035:1)*(u.buff>0?1/1.2:1)
             }
         }
         else if(target&&dist>u.range){
@@ -1838,7 +1984,7 @@ function update(dt){
     b.units=b.units.filter(u=>u.alive);
     b.enemies=b.enemies.filter(u=>u.alive);
     for(const c of b.corpses)c.t+=dt;
-    b.corpses=b.corpses.filter(c=>c.t<.7);
+    b.corpses=b.corpses.filter(c=>c.t<(c.life||.7));
     updateFx(dt);
     for(const f of b.floaters){
         f.y-=28*dt;
@@ -1937,11 +2083,7 @@ function drawScene(b){
     drawBase(975, 240, false);
     for(const c of b.corpses)drawSpriteFrame(c.id, 'death', c.t, c.x, c.y, c.ally);
     for(const u of [...b.enemies, ...b.units].sort((a, c)=>a.y-c.y))drawUnit(u);
-    for(const p of b.projectiles){
-        const px=Math.round(p.x), py=Math.round(p.y);
-        rect(px-3, py-3, 6, 6, p.color);
-        rect(px-(p.a.ally?9:-5), py-1, 4, 2, p.color)
-    }
+    for(const p of b.projectiles)drawProjectile(p, b);
     drawLaser(b);
     if(b.shuttle){
         ctx.font='72px system-ui';
@@ -1957,14 +2099,21 @@ function drawScene(b){
         const p=1-Math.max(0, w.t);
         ctx.save();
         ctx.globalAlpha=.35+.35*Math.sin(b.t*18);
-        ctx.fillStyle='#ff3b3b';
+        ctx.fillStyle=w.color||'#ff3b3b';
         ctx.beginPath();
-        ctx.ellipse(w.x, 335, 60*(.6+.4*p), 22, 0, 0, Math.PI*2);
+        ctx.ellipse(w.x, 335, (w.r||60)*(.6+.4*p), 22, 0, 0, Math.PI*2);
         ctx.fill();
+        if(w.r){
+            ctx.strokeStyle=w.color||'#ff3b3b';
+            ctx.lineWidth=3;
+            ctx.beginPath();
+            ctx.ellipse(w.x, 335, w.r, 24, 0, 0, Math.PI*2);
+            ctx.stroke()
+        }
         ctx.restore();
         ctx.font='22px system-ui';
         ctx.textAlign='center';
-        ctx.fillText('📝', w.x, 300-60*Math.max(0, w.t))
+        ctx.fillText(w.icon||'📝', w.x, 300-60*Math.max(0, w.t))
     }
     for(const t of b.trails){
         ctx.save();
@@ -2000,6 +2149,60 @@ function drawScene(b){
     if(b.paused){
         rounded(350, 150, 400, 120, 20, '#0b1837df');
         text('⏸ PAUSED', 550, 222, 38)
+    }
+}
+/* enemy projectiles are drawn by style (ENEMY_ANIMS[id].fx.proj); enemies shoot to the left, so tips point left. Deterministic: no random draws. */
+function drawProjectile(p, b){
+    const c=!p.a.ally&&typeof ENEMY_ANIMS!=='undefined'&&ENEMY_ANIMS[p.a.id], kind=c&&c.fx&&c.fx.proj, px=Math.round(p.x), py=Math.round(p.y);
+    if(!kind){
+        rect(px-3, py-3, 6, 6, p.color);
+        rect(px-(p.a.ally?9:-5), py-1, 4, 2, p.color);
+        return
+    }
+    const flip=Math.floor(b.t*16)%2;
+    if(kind==='pen'){
+        rect(px-6, py-1, 10, 3, '#b3122c');
+        rect(px-6, py-1, 10, 1, '#ff6b7a');
+        rect(px-9, py-1, 3, 3, '#1b1a33');
+        rect(px+4, py-1, 2, 3, '#c9ccdc')
+    }
+    else if(kind==='pencil'){
+        rect(px-6, py-1, 12, 3, '#ffcf3a');
+        rect(px-6, py-1, 12, 1, '#fff0a0');
+        rect(px+6, py-1, 3, 3, '#ff7aa8');
+        rect(px-9, py-1, 3, 3, '#e8c28a');
+        rect(px-11, py, 2, 1, '#2b2b3a')
+    }
+    else if(kind==='paper'){
+        if(flip){
+            rect(px-4, py-3, 8, 6, '#f6f2e8');
+            rect(px-3, py-1, 4, 1, '#e0334a')
+        }
+        else{
+            rect(px-3, py-4, 6, 8, '#f6f2e8');
+            rect(px-2, py-2, 3, 1, '#e0334a')
+        }
+    }
+    else if(kind==='orb'){
+        rect(px-4, py-3, 8, 6, '#7a3fe0');
+        rect(px-3, py-4, 6, 8, '#7a3fe0');
+        rect(px-2, py-2, 4, 4, '#d2b0ff');
+        rect(px+5, py-1, 4, 2, '#8d4cf0');
+        rect(px+10, py, 2, 1, '#b88bff')
+    }
+    else if(kind==='energy'){
+        rect(px-6, py-5, 12, 10, '#3a1a7a');
+        rect(px-5, py-6, 10, 12, '#3a1a7a');
+        rect(px-3, py-3, 6, 6, '#ff6fd0');
+        rect(px-1, py-1, 2, 2, '#ffffff');
+        rect(px+7, py-2, 6, 4, '#7a3fe0');
+        rect(px+14, py-1, 4, 2, '#a35bff')
+    }
+    else if(kind==='bang'){
+        rect(px-5, py-2, 10, 7, '#ffd23a');
+        rect(px-3, py-5, 6, 3, '#ffd23a');
+        rect(px-1, py-3, 2, 5, '#b3122c');
+        rect(px-1, py+3, 2, 1, '#b3122c')
     }
 }
 const LASER_BMP={
