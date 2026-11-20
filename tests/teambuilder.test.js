@@ -1,10 +1,11 @@
 // Team Builder collection: search / filter / sort, empty state, state persistence. UI only; hero data is never modified.
+// Filter contract (friend's redesign): { q, fac, role: DPS|Tank|Healer|Support, minStar: 1..5, sort: default|star|cost|fac, sortDir: asc|desc }.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loadGame } = require('./harness');
 
 const J = (g, code) => JSON.parse(g.run(`JSON.stringify(${code})`));
-const ids = (g, state) => J(g, `filterHeroes(heroes, Object.assign({q:'',fac:'',role:'',stars:{},sort:'default'}, ${JSON.stringify(state)})).map(h=>h.id)`);
+const ids = (g, state) => J(g, `filterHeroes(heroes, Object.assign({q:'',fac:'',role:'',minStar:1,sort:'default',sortDir:'asc'}, ${JSON.stringify(state)})).map(h=>h.id)`);
 const html = (g, id) => g.run(`document.getElementById('${id}').innerHTML`);
 
 test('no filters: every hero in the original data order, nothing mutated', () => {
@@ -12,7 +13,7 @@ test('no filters: every hero in the original data order, nothing mutated', () =>
   const all = J(g, 'heroes.map(h=>h.id)');
   assert.deepEqual(ids(g, {}), all);
   assert.equal(all.length, 12);
-  g.run("filterHeroes(heroes,{q:'',fac:'',role:'',stars:{},sort:'cost'})");
+  g.run("filterHeroes(heroes,{q:'',fac:'',role:'',minStar:1,sort:'cost',sortDir:'desc'})");
   assert.deepEqual(J(g, 'heroes.map(h=>h.id)'), all, 'sorting works on a copy');
 });
 
@@ -26,25 +27,30 @@ test('search matches name, skill, description and faculty code (case-insensitive
   assert.deepEqual(ids(g, { q: 'zzz' }), []);
 });
 
-test('faculty, role and star filters combine; star filter is multi-select', () => {
+test('faculty, role and minimum-star filters combine; every hero has exactly one of the four roles', () => {
   const g = loadGame(1);
   assert.deepEqual(ids(g, { fac: 'SC' }), ['lab']);
-  assert.deepEqual(ids(g, { role: 'heal' }), ['night']);
-  assert.deepEqual(ids(g, { stars: { 5: true } }), ['public', 'nurse']);
-  assert.deepEqual(ids(g, { stars: { 1: true, 5: true } }).sort(), ['bug', 'nurse', 'public']);
-  assert.deepEqual(ids(g, { stars: { 5: true }, fac: 'NS' }), ['nurse']);
-  assert.deepEqual(ids(g, { stars: { 5: false } }).length, 12, 'an unticked star filters nothing');
+  assert.ok(ids(g, { role: 'Healer' }).includes('night'));
+  assert.ok(ids(g, { role: 'Tank' }).includes('mecha'));
+  const byRole = ['DPS', 'Tank', 'Healer', 'Support'].map((r) => ids(g, { role: r }));
+  assert.equal(byRole.flat().length, 12, 'the four roles partition the roster');
+  assert.equal(new Set(byRole.flat()).size, 12);
+  assert.deepEqual(ids(g, { minStar: 5 }), ['public', 'nurse']);
+  assert.deepEqual(ids(g, { minStar: 4 }).sort(), ['dental', 'global', 'music', 'nurse', 'public', 'runner']);
+  assert.deepEqual(ids(g, { minStar: 5, fac: 'NS' }), ['nurse']);
+  assert.equal(ids(g, { minStar: 1 }).length, 12, 'one star and up filters nothing');
+  assert.deepEqual(ids(g, { minStar: 5, role: 'DPS' }), ids(g, { minStar: 5 }).filter((id) => ids(g, { role: 'DPS' }).includes(id)));
 });
 
-test('sort: star (high first), cost (low first), faculty (A to Z); ties are stable and deterministic', () => {
+test('sort: star, cost, faculty in either direction (ascending / descending); ties are stable and deterministic', () => {
   const g = loadGame(1);
-  const star = J(g, "filterHeroes(heroes,{q:'',fac:'',role:'',stars:{},sort:'star'}).map(h=>h.star)");
-  assert.deepEqual(star, [...star].sort((a, b) => b - a));
-  const cost = J(g, "filterHeroes(heroes,{q:'',fac:'',role:'',stars:{},sort:'cost'}).map(h=>h.cost)");
-  assert.deepEqual(cost, [...cost].sort((a, b) => a - b));
-  const fac = J(g, "filterHeroes(heroes,{q:'',fac:'',role:'',stars:{},sort:'fac'}).map(h=>h.f)");
+  const col = (sort, dir, f) => J(g, `filterHeroes(heroes,{q:'',fac:'',role:'',minStar:1,sort:'${sort}',sortDir:'${dir}'}).map(h=>h.${f})`);
+  const star = col('star', 'asc', 'star'), costD = col('cost', 'desc', 'cost'), fac = col('fac', 'asc', 'f');
+  assert.deepEqual(star, [...star].sort((a, b) => a - b));
+  assert.deepEqual(col('star', 'desc', 'star'), [...star].reverse());
+  assert.deepEqual(costD, [...costD].sort((a, b) => b - a));
   assert.deepEqual(fac, [...fac].sort());
-  assert.deepEqual(ids(g, { sort: 'star' }), ids(g, { sort: 'star' }));
+  assert.deepEqual(ids(g, { sort: 'star', sortDir: 'desc' }), ids(g, { sort: 'star', sortDir: 'desc' }));
 });
 
 test('renderTeam shows the filtered list, the count note and the empty state', () => {
@@ -61,15 +67,20 @@ test('renderTeam shows the filtered list, the count note and the empty state', (
   assert.equal(g.run("document.getElementById('startBtn').disabled"), false, 'a filter never blocks Start (the 6-hero team is unchanged)');
 });
 
-test('filters persist while the team changes and reset with tbClear; fac/role chips toggle off on a second click', () => {
+test('filters persist while the team changes; chips toggle off on a second click; sort toggles direction; tbClear resets everything', () => {
   const g = loadGame(1);
   g.run("tbSet('fac','SC');toggleHero('chem');toggleHero('lab')");
   assert.equal(g.run('TB.fac'), 'SC', 'filter state survives team edits');
   g.run("tbSet('fac','SC')");
   assert.equal(g.run('TB.fac'), '', 'same chip again clears it');
-  g.run("tbSet('role','tank');tbStar(5);tbSet('sort','cost');tbSet('q','x')");
+  g.run("tbSet('sort','cost')");
+  assert.equal(g.run("TB.sort+':'+TB.sortDir"), 'cost:desc', 'a new sort starts descending');
+  g.run("tbSet('sort','cost')");
+  assert.equal(g.run("TB.sort+':'+TB.sortDir"), 'cost:asc', 'the same sort again flips the direction');
+  g.run("tbSet('role','Tank');tbSetStar(5);tbSet('q','x')");
+  assert.equal(g.run('TB.minStar'), 5);
   g.run('tbClear()');
-  assert.equal(g.run("JSON.stringify([TB.q,TB.fac,TB.role,TB.sort,Object.keys(TB.stars).filter(k=>TB.stars[k])])"), '["","","","default",[]]');
+  assert.equal(g.run("JSON.stringify([TB.q,TB.fac,TB.role,TB.minStar,TB.sort,TB.sortDir])"), '["","","",1,"default","asc"]');
 });
 
 test('selection rules are unchanged: max 6, mixed faculties allowed, full team dims the rest', () => {

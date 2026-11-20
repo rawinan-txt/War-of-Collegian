@@ -18,7 +18,7 @@ function stubEl() {
   let ctx = null;
   return {
     classList: { toggle() {}, add() {}, remove() {}, contains: () => false },
-    style: {},
+    style: { setProperty() {} },
     textContent: '',
     innerHTML: '',
     disabled: false,
@@ -58,7 +58,8 @@ function loadGame(seed, opts = {}) {
   if (!m) throw new Error('no inline script found');
   const els = {};
   const sandbox = {
-    document: { getElementById: (id) => (els[id] ||= stubEl()) },
+    // the page registers pointer/click listeners at load (team builder drag and drop); the headless stub accepts and ignores them
+    document: { getElementById: (id) => (els[id] ||= stubEl()), addEventListener() {}, querySelectorAll: () => [], elementFromPoint: () => null },
     requestAnimationFrame: () => 0,
     performance: { now: () => 0 },
     Image: makeImage(opts.failSheets, opts.holdImages),
