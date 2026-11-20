@@ -26,10 +26,19 @@ New enemy stats live in `enemyTemplates()` (index.html). They were tuned with `t
 - **Exam Master** — every 10 s (phase 1), 8 s (below 60 % HP), 7 s (below 25 % HP) it casts a **warning**: 1, 2 or 3 purple rings (radius 70) appear on the floor at the front-most heroes and **land 1.5 s later for 115 damage**. Rings are kept apart, nobody is hit outside a ring, and two overlapping rings still cannot kill the weakest hero (360 HP). The boss stops for 0.7 s while casting. Below 25 % it also hits 20 % harder.
 
 ## Stages
-`STAGES` in `index.html` is data: roster (sprites are loaded for it only), spawn pick, spawn gap, boss type and boss time.
-- **Stage 1 · Midterm Rush** — the original schedule, bit for bit (checked against the old formula and by identical combat traces). Final Exam at 85 s.
-- **Stage 2 · Faculty Staff** — Assignment, Deadline, Professor, TA, Advisor, Exam Master at 90 s.
-The stage is chosen in the team builder (two tiles above the Ultimate picker). Every existing combat test still plays Stage 1.
+`STAGES` in `index.html` is data: name, description, roster (sprites are loaded for it only), spawn pick, spawn gap, boss type and time, an optional second boss (`bossType2`, `bossAt2`) and an optional enemy `scale` (`{hp, atk}`, applied to every enemy and boss of that stage). The stage is chosen on its own screen after the team builder (faculty → team → stage → battle).
+
+| Stage | Name | Roster | Boss | Scale | Scripted-policy win rate |
+|---|---|---|---|---|---:|
+| 1 | Midterm Rush | Assignment, Deadline, Group, Midterm | Final Exam @85 s | none (original, bit for bit) | 71 % |
+| 2 | Faculty Staff | Assignment, Deadline, Professor, TA, Advisor | Exam Master @90 s | none | 54 % |
+| 3 | Group Project Hell | Assignment, Deadline, Group, Midterm, TA | Final Exam @95 s | hp x1.08, atk x1.03 | 75 % |
+| 4 | Thesis Defense | Deadline, Group, Midterm, Professor, TA, Advisor | Exam Master @100 s | hp x1.08, atk x1.02 | 36 % |
+| 5 | Exam Week | all seven regular enemies | **Final Exam @90 s, then Exam Master @150 s** | hp x1.05 | 28 % |
+
+Stage 5 has two bosses on their own timers; the stage counts as "boss dead" (so the base takes full damage) only when no boss is alive and none is still to come. Single-boss stages behave exactly as before.
+Win rates are from `tools/sim-balance.js` (8 teams x 8 seeds, the scripted "spam the fewest" policy); targets were about 50-80 % for standard stages and 30-60 % for boss stages. Stage 3 is the easiest for that policy but the hardest for Auto Play (22 %, Final Exam with a scaled roster); Auto gets 77 % on stage 4 and 44 % on stage 5. Tank-heavy teams lose in every stage, as noted in the backlog.
+`tests/stages.test.js` checks stage data, spawn picks, scaling, the two bosses, loading, and that every stage can be played by hand and by Auto and ends in the right result.
 
 ## Animation
 Every enemy has `idle` (4 f @ 6), `walk` (6 @ 12), `attack` (6 @ 12, impact on frame 3), `hurt` (3 @ 12), `death` (6 @ 10). `final`, `ta`, `advisor`, `exammaster` also have `skill` (10 @ 14, impact on frame 6). Bosses die in 8 frames (0.8 s) and their corpse stays long enough to show it.

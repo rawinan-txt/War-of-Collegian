@@ -1679,6 +1679,27 @@ const STAGES={
         name:'Stage 2 · Faculty Staff', desc:'อาจารย์โหด ผู้ช่วยสอนที่คอยบัฟ และอาจารย์ที่ปรึกษาที่ลดพลังโจมตี ปิดท้ายด้วยบอส Exam Master', enemies:['assignment', 'deadline', 'professor', 'ta', 'advisor', 'exammaster'], bossType:'exammaster', bossAt:90,
         pick:(t, r)=>t>52&&r<.12?'advisor':t>28&&r<.3?'professor':t>12&&r<.46?'ta':r<.2?'fast':'basic',
         gap:t=>Math.max(2.5, 5.5-t*.02)
+    }, 3:{
+        name:'Stage 3 · Group Project Hell', desc:'กลุ่มงานตัวหนาและข้อสอบระยะไกลบุกพร้อมผู้ช่วยสอนที่คอยบัฟ ปิดท้ายด้วย Final Exam ที่แข็งแกร่งขึ้น', enemies:['assignment', 'deadline', 'group', 'quiz', 'ta', 'final'], bossType:'boss', bossAt:95,
+        scale:{
+            hp:1.08, atk:1.03
+        },
+        pick:(t, r)=>t>40&&r<.2?'tank':t>20&&r<.38?'ranged':t>10&&r<.5?'ta':r<.3?'fast':'basic',
+        gap:t=>Math.max(2.2, 4.4-t*.02)
+    }, 4:{
+        name:'Stage 4 · Thesis Defense', desc:'อาจารย์ ผู้ช่วยสอน และอาจารย์ที่ปรึกษาผสมกับกลุ่มงานตัวหนา ก่อนเจอ Exam Master ตัวจริง', enemies:['deadline', 'group', 'quiz', 'professor', 'ta', 'advisor', 'exammaster'], bossType:'exammaster', bossAt:100,
+        scale:{
+            hp:1.08, atk:1.02
+        },
+        pick:(t, r)=>t>60&&r<.12?'advisor':t>35&&r<.28?'tank':t>24&&r<.46?'professor':t>14&&r<.6?'ta':r<.25?'ranged':'fast',
+        gap:t=>Math.max(2.6, 5.4-t*.02)
+    }, 5:{
+        name:'Stage 5 · Exam Week', desc:'สัปดาห์สอบ ศัตรูทุกชนิดบุกถี่ที่สุด และบอสสองตัวมาเรียงกัน Final Exam แล้วตามด้วย Exam Master', enemies:['assignment', 'deadline', 'group', 'quiz', 'professor', 'ta', 'advisor', 'final', 'exammaster'], bossType:'boss', bossAt:90, bossType2:'exammaster', bossAt2:150,
+        scale:{
+            hp:1.05, atk:1
+        },
+        pick:(t, r)=>t>60&&r<.1?'advisor':t>45&&r<.25?'tank':t>30&&r<.4?'professor':t>16&&r<.55?'ta':t>10&&r<.7?'ranged':r<.3?'fast':'basic',
+        gap:t=>Math.max(2.5, 5.2-t*.02)
     }
 };
 /* sprite ids of the default stage (kept for compatibility); a battle loads the roster of its own stage */
@@ -1697,7 +1718,7 @@ function renderStages(){
     if(!el)return;
     el.innerHTML=Object.entries(STAGES).map(([n, s])=>{
         const boss=enemyTemplates()[s.bossType].id;
-        return `<div class="stage-card ${stage==n?'sel':''}" role="button" tabindex="0" aria-pressed="${stage==n}" onclick="setStage(${n})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setStage(${n})}"><h3>${s.name}</h3><p>${s.desc}</p><div class="stage-roster">${s.enemies.map(id=>`<figure class="${id===boss?'boss':''}"><img src="assets/enemies/${id}/static.png" alt="" loading="lazy" decoding="async" draggable="false"><figcaption>${ENEMY_NAMES[id]}</figcaption></figure>`).join('')}</div><p class="stage-meta">บอส: <b>${ENEMY_NAMES[boss]}</b> · ปรากฏที่ ${s.bossAt} วินาที</p></div>`
+        return `<div class="stage-card ${stage==n?'sel':''}" role="button" tabindex="0" aria-pressed="${stage==n}" onclick="setStage(${n})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setStage(${n})}"><h3>${s.name}</h3><p>${s.desc}</p><div class="stage-roster">${s.enemies.map(id=>`<figure class="${id===boss?'boss':''}" title="${ENEMY_NAMES[id]}"><img src="assets/enemies/${id}/static.png" alt="${ENEMY_NAMES[id]}" loading="lazy" decoding="async" draggable="false"><figcaption>${ENEMY_NAMES[id]}</figcaption></figure>`).join('')}</div><p class="stage-meta">บอส: <b>${ENEMY_NAMES[boss]}</b> · ปรากฏที่ ${s.bossAt} วินาที</p></div>`
     }).join('');
     document.getElementById('stageTeam').innerHTML=team.map(id=>{
         const x=heroes.find(h=>h.id===id);
@@ -1785,6 +1806,11 @@ function spawnEnemy(type){
             u.phase=1;
             u.areaTimer=ENEMY_KITS.exammaster.first
         }
+    }
+    const sc=STAGES[battle.stage||1].scale;
+    if(sc){
+        u.hp=u.maxHp=Math.round(h.hp*sc.hp);
+        u.atk=Math.round(h.atk*sc.atk)
     }
     battle.enemies.push(u);
     if(type==='boss')notice('Final Exam Boss ปรากฏตัว');
@@ -2093,7 +2119,8 @@ function damage(u, amt, sourceId=null){
             battle.kills++;
             if(feedsUlt)battle.ult=Math.min(100, battle.ult+3);
             if(u.type==='boss'){
-                battle.bossDead=true;
+                const S=STAGES[battle.stage||1];
+                if(!battle.enemies.some(e=>e!==u&&e.alive&&e.type==='boss')&&!(S.bossType2&&!battle.boss2Spawned))battle.bossDead=true;
                 fxShake(3)
             }
         }
@@ -2144,6 +2171,10 @@ function update(dt){
     if(b.t>=BS.bossAt&&!b.bossSpawned){
         b.bossSpawned=true;
         spawnEnemy(BS.bossType)
+    }
+    if(BS.bossType2&&b.t>=BS.bossAt2&&!b.boss2Spawned){
+        b.boss2Spawned=true;
+        spawnEnemy(BS.bossType2)
     }
     if(AUTO.on)autoTick(dt);
     for(const u of [...b.units, ...b.enemies]){

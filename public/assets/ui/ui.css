@@ -418,8 +418,8 @@ html:has(#boot) { overflow: hidden; }
 
 /* STAGE SELECT: its own screen after the team builder */
 .stage-screen { max-width: 1120px; margin: 0 auto; padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); }
-.stage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
-.stage-card { cursor: pointer; padding: var(--s-4); border-radius: var(--r-lg); border: 3px solid var(--ink); background: linear-gradient(180deg, var(--navy-600), var(--navy-700)); box-shadow: inset 0 2px 0 #ffffff26, 0 4px 0 #050a22; transition: transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease); }
+.stage-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+.stage-card { cursor: pointer; padding: var(--s-3); border-radius: var(--r-lg); border: 3px solid var(--ink); background: linear-gradient(180deg, var(--navy-600), var(--navy-700)); box-shadow: inset 0 2px 0 #ffffff26, 0 4px 0 #050a22; transition: transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease); }
 .stage-card:hover { filter: brightness(1.1); transform: translateY(-2px); }
 .stage-card h3 { margin: 0 0 var(--s-1); font: 600 var(--fs-lg) var(--display); color: var(--chalk); }
 .stage-card p { margin: 0 0 var(--s-2); color: var(--chalk-2); font-size: var(--fs-sm); line-height: 1.5; }
@@ -427,11 +427,11 @@ html:has(#boot) { overflow: hidden; }
 .stage-card .stage-meta b { color: var(--gold-400); font-family: var(--display); font-weight: 500; }
 .stage-card.sel { border-color: var(--gold-400); background: linear-gradient(180deg, #3a58b8, var(--navy-700)); box-shadow: 0 0 0 3px #ffd23a55, inset 0 2px 0 #ffffff40, 0 4px 0 #050a22; }
 .stage-card.sel h3 { color: var(--gold-300); }
-.stage-roster { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: flex-end; }
-.stage-roster figure { margin: 0; width: 84px; text-align: center; }
-.stage-roster img { display: block; width: 72px; height: 72px; margin: 0 auto; image-rendering: pixelated; background: linear-gradient(#9ad0f5 70%, #c3c8cf 70%); border-radius: var(--r-sm); border: 2px solid var(--ink); }
+.stage-roster { display: flex; flex-wrap: wrap; gap: var(--s-1); align-items: flex-end; }
+.stage-roster figure { margin: 0; width: 52px; text-align: center; }
+.stage-roster img { display: block; width: 48px; height: 48px; margin: 0 auto; image-rendering: pixelated; background: linear-gradient(#9ad0f5 70%, #c3c8cf 70%); border-radius: var(--r-sm); border: 2px solid var(--ink); }
 .stage-roster figure.boss img { border-color: var(--gold-400); box-shadow: 0 0 0 2px #ffd23a66; }
-.stage-roster figcaption { margin-top: 2px; font-size: 11px; line-height: 1.2; color: var(--chalk-2); }
+.stage-roster figcaption { display: none; }
 .stage-team { padding: var(--s-2) var(--s-3); }
 .stage-team h3 { margin: 0 0 var(--s-1); font-size: var(--fs-md); color: var(--gold-400); }
 .stage-team-row { display: flex; gap: var(--s-2); flex-wrap: wrap; }
@@ -439,5 +439,10 @@ html:has(#boot) { overflow: hidden; }
 .stage-team-row .spr-box { width: 64px; height: 64px; margin: 0 auto; }
 .stage-actions { display: flex; justify-content: flex-end; }
 .stage-actions button { min-width: 240px; font-size: var(--fs-lg); padding: 14px 28px; }
+@media (max-width: 1100px) { .stage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 800px) { .stage-grid { grid-template-columns: 1fr; } .stage-actions button { width: 100%; } }
 @media (max-height: 800px) { .stage-screen { padding: var(--s-3); gap: var(--s-2); } .stage-team { display: none; } }
+
+body:has(#stageSelect:not(.hidden)) .app > header, body:has(#stageSelect:not(.hidden)) .footer { display: none; }
+.stage-card h3 { font-size: var(--fs-md); }
+.stage-card p { font-size: var(--fs-xs); }

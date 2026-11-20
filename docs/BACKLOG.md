@@ -26,3 +26,8 @@ Evidence: `docs/ENEMY_SYSTEM.md` (Balance) and `docs/enemy-remodel/balance-summa
 7. **Auto does not use the Ultimate.** Adding it would be a small extension (same rules as a human); left out of the first milestone.
 8. **Auto is weaker than a cheap-unit spammer in Stage 1** and much stronger than the scripted baseline in Stage 2 (94 %): Stage 2 may deserve a retune against a smarter player. Not changed (no balance edits in the Auto milestone).
 9. **Auto options (laser / AT upgrade) are not saved between sessions.**
+
+## Stages 3-5
+10. **Stage 3 is much harder for Auto than for the scripted policy** (22 % vs 75 %): the Final Exam boss with a scaled roster punishes Auto's "save for better units" rule. Not retuned.
+11. **No stage unlock or progress tracking**: all five stages can be picked from the start; there is no best-clear record.
+12. **Stage 5 needs a stronger team to clear**; tank-heavy teams never clear any stage.

@@ -68,6 +68,6 @@ test('every stage tile is keyboard operable (button role, focusable, Enter / Spa
   const g = loadGame(5, { lazy: true });
   g.run("show('stageSelect')");
   const out = g.run("document.getElementById('stagePick').innerHTML");
-  assert.equal((out.match(/role="button" tabindex="0"/g) || []).length, 2);
-  assert.equal((out.match(/event\.key==='Enter'\|\|event\.key===' '/g) || []).length, 2);
+  assert.equal((out.match(/role="button" tabindex="0"/g) || []).length, 5);
+  assert.equal((out.match(/event\.key==='Enter'\|\|event\.key===' '/g) || []).length, 5);
 });
