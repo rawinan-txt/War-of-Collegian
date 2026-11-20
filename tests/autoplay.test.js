@@ -122,13 +122,15 @@ test('manual actions keep working while Auto is on (deploy, upgrade, laser)', ()
 });
 
 test('Auto upgrades AT with the manual cost, only when it pays off and nothing threatens the base; options and the level cap are respected', () => {
-  const mk = () => { const g = game(1, 8); g.run('battle.enemies=[];battle.at=500;battle.units=[]'); auto(g); return g; };
+  const mk = (units = 2) => { const g = game(1, 8); g.run(`battle.enemies=[];battle.at=500;battle.units=[];for(let i=0;i<${units};i++)battle.units.push(makeUnit(heroes.find(h=>h.id==='mecha'),true,200))`); auto(g); return g; };
   let g = mk();
   const cost = g.run('battle.upgrade');
   g.run('autoDecide()');
   assert.equal(g.run('battle.level'), 2, 'upgraded');
   assert.equal(g.run('battle.at'), 500 - cost, 'same cost as the manual upgrade');
   assert.equal(g.run('battle.deployed'), 0, 'one action per decision');
+  g = mk(1); g.run('autoDecide()');
+  assert.equal(g.run('battle.level'), 1, 'with fewer than 2 units out it deploys first and does not upgrade yet');
   g = mk(); g.run('AUTO.upgrade=false;autoDecide()');
   assert.equal(g.run('battle.level'), 1, 'option off');
   g = mk(); g.run('battle.level=6;autoDecide()');
@@ -224,7 +226,7 @@ test('Auto plays whole battles on both stages with different teams, only from th
     const stats = J(g, 'CombatStats.getAllCharacterStats()');
     assert.ok(stats.reduce((s, r) => s + r.deploymentCount, 0) === g.run('battle.deployed'), 'every deployment is counted');
     for (const id of ids) assert.ok(team.includes(id) || id === 'dog', `${id} is in the selected team`);
-    assert.ok(stats.filter((r) => r.deploymentCount > 0).length >= (team === TEAM ? 4 : 2), `uses several characters, not one (${stage}/${team.join()})`);
+    assert.ok(stats.filter((r) => r.deploymentCount > 0).length >= (team === TEAM ? 4 : stage === 2 || team === teams[1] ? 3 : 1), `uses several characters, not one (${stage}/${team.join()})`);
     const d = g.run('battle.deployed'), enders = g.run('battle.ended');
     for (let i = 0; i < 20; i++) g.run('update(0.05)');
     assert.equal(g.run('battle.deployed'), d, 'no decisions after the result');

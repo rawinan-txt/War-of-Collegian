@@ -1871,10 +1871,15 @@ function autoPick(S){
     })).sort((p, q)=>q.s-p.s||p.i-q.i);
     const ok=scored.filter(c=>b.at>=c.h.cost);
     if(!ok.length)return null;
-    /* save AT for a clearly better unit that is within reach: up to ~25 s of income while the field is quiet, 8 s with enemies approaching, 3 s when the base is threatened, never in danger, when AT is nearly full or with an empty field */
+    /* save AT for a clearly better unit that is within reach (up to ~25 s of income), but never while enemies are close to the base (threat or approaching within 420 px), when AT is nearly full or with fewer than 2 units out */
     const top=scored[0];
-    const wait=S.danger?0:S.threat?3:S.gap<420?8:25;
-    if(wait&&b.at<b.maxAt-40&&top.h.cost>b.at&&(top.h.cost-b.at)/b.income<=wait&&top.s>ok[0].s+10&&S.mine.length>=1)return null;
+    if(!S.threat&&!(S.gap<420)&&b.at<b.maxAt-40&&top.h.cost>b.at&&(top.h.cost-b.at)/b.income<=25&&top.s>ok[0].s+10&&S.mine.length>=2)return null;
+    /* variety guard: after four deployments of the same hero in a row, wait (up to 8 s) for a different ready hero instead of repeating it */
+    const recent=b.autoRecent||[];
+    if(!S.danger&&recent.length>=4&&recent.slice(-4).every(id=>id===ok[0].h.id)){
+        const alt=scored.find(c=>c.h.id!==ok[0].h.id&&c.h.cost>b.at&&(c.h.cost-b.at)/b.income<=8);
+        if(alt)return null
+    }
     return ok[0].h
 }
 function autoWantsUpgrade(S){
@@ -1911,6 +1916,10 @@ function autoDecide(){
     if(pick){
         const n=b.units.length;
         deploy(pick.id);
+        if(b.units.length>n){
+            (b.autoRecent=b.autoRecent||[]).push(pick.id);
+            if(b.autoRecent.length>6)b.autoRecent.shift()
+        }
         if(b.units.length>n&&b.floaters.length<90){
             const u=b.units[b.units.length-1];
             b.floaters.push({
