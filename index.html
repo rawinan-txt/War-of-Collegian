@@ -1754,7 +1754,8 @@ function updateWarnings(dt){
         w.t-=dt;
         if(w.t<=0){
             for(const a of b.units)if(a.alive&&Math.abs(a.x-w.x)<(w.r||60))damage(a, w.dmg||160, 'boss');
-            burst(w.x, 330, w.color||'#ff6b6b', 14)
+            burst(w.x, 330, w.color||'#ff6b6b', 14);
+            if(w.r)fxShake(2)
         }
     }
     b.warnings=b.warnings.filter(w=>w.t>0)
@@ -1808,7 +1809,10 @@ function damage(u, amt, sourceId=null){
         if(!u.ally){
             battle.kills++;
             if(feedsUlt)battle.ult=Math.min(100, battle.ult+3);
-            if(u.type==='boss')battle.bossDead=true
+            if(u.type==='boss'){
+                battle.bossDead=true;
+                fxShake(3)
+            }
         }
     }
     return actual

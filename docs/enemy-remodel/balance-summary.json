@@ -1,0 +1,251 @@
+{
+ "method": "tools/sim-balance.js: 8 fixed teams x 12 seeds per stage, policy = deploy ready hero with fewest units alive, income upgrade early, laser at 2+ enemies, ultimate when ready",
+ "stage1": {
+  "mixed": {
+   "runs": 12,
+   "winRate": 75,
+   "avgTime": 169.5,
+   "avgBaseHp": 3750,
+   "avgKills": 57,
+   "avgDmg": 36437.3,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "support": {
+   "runs": 12,
+   "winRate": 100,
+   "avgTime": 134.3,
+   "avgBaseHp": 5000,
+   "avgKills": 43.7,
+   "avgDmg": 29749,
+   "avgDef": 0,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "tanky": {
+   "runs": 12,
+   "winRate": 75,
+   "avgTime": 169.5,
+   "avgBaseHp": 3750,
+   "avgKills": 57,
+   "avgDmg": 36437.3,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "lowstar": {
+   "runs": 12,
+   "winRate": 75,
+   "avgTime": 169.5,
+   "avgBaseHp": 3750,
+   "avgKills": 57,
+   "avgDmg": 36437.3,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "rangedHeavy": {
+   "runs": 12,
+   "winRate": 100,
+   "avgTime": 134.3,
+   "avgBaseHp": 5000,
+   "avgKills": 43.7,
+   "avgDmg": 29749,
+   "avgDef": 0,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "tankHeavy": {
+   "runs": 12,
+   "winRate": 0,
+   "avgTime": 165.7,
+   "avgBaseHp": 0,
+   "avgKills": 39.1,
+   "avgDmg": 3908.8,
+   "avgDef": 2346.7,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 0
+  },
+  "supportHeavy": {
+   "runs": 12,
+   "winRate": 67,
+   "avgTime": 177.3,
+   "avgBaseHp": 3333.3,
+   "avgKills": 59.3,
+   "avgDmg": 36678.3,
+   "avgDef": 0,
+   "avgHeal": 3357.8,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 83
+  },
+  "balanced": {
+   "runs": 12,
+   "winRate": 75,
+   "avgTime": 169.5,
+   "avgBaseHp": 3750,
+   "avgKills": 57,
+   "avgDmg": 36437.3,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "ALL": {
+   "runs": 96,
+   "winRate": 71,
+   "avgTime": 161.2,
+   "avgBaseHp": 3541.7,
+   "avgKills": 51.7,
+   "avgDmg": 30729.3,
+   "avgDef": 373.3,
+   "avgHeal": 419.7,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 85
+  }
+ },
+ "stage2": {
+  "mixed": {
+   "runs": 12,
+   "winRate": 67,
+   "avgTime": 172.9,
+   "avgBaseHp": 4948.8,
+   "avgKills": 46.9,
+   "avgDmg": 21006.7,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "support": {
+   "runs": 12,
+   "winRate": 33,
+   "avgTime": 251.7,
+   "avgBaseHp": 4516.8,
+   "avgKills": 75.4,
+   "avgDmg": 27855.8,
+   "avgDef": 0,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "tanky": {
+   "runs": 12,
+   "winRate": 67,
+   "avgTime": 172.9,
+   "avgBaseHp": 4948.8,
+   "avgKills": 46.9,
+   "avgDmg": 21006.7,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "lowstar": {
+   "runs": 12,
+   "winRate": 67,
+   "avgTime": 172.9,
+   "avgBaseHp": 4948.8,
+   "avgKills": 46.9,
+   "avgDmg": 21006.7,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "rangedHeavy": {
+   "runs": 12,
+   "winRate": 33,
+   "avgTime": 251.7,
+   "avgBaseHp": 4516.8,
+   "avgKills": 75.4,
+   "avgDmg": 27855.8,
+   "avgDef": 0,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "tankHeavy": {
+   "runs": 12,
+   "winRate": 0,
+   "avgTime": 269.9,
+   "avgBaseHp": 94,
+   "avgKills": 68.3,
+   "avgDmg": 7792.9,
+   "avgDef": 3720,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 0
+  },
+  "supportHeavy": {
+   "runs": 12,
+   "winRate": 100,
+   "avgTime": 128.9,
+   "avgBaseHp": 5000,
+   "avgKills": 31.7,
+   "avgDmg": 17713.8,
+   "avgDef": 0,
+   "avgHeal": 1153.2,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "balanced": {
+   "runs": 12,
+   "winRate": 67,
+   "avgTime": 172.9,
+   "avgBaseHp": 4948.8,
+   "avgKills": 46.9,
+   "avgDmg": 21006.7,
+   "avgDef": 160,
+   "avgHeal": 0,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 100
+  },
+  "ALL": {
+   "runs": 96,
+   "winRate": 54,
+   "avgTime": 199.2,
+   "avgBaseHp": 4240.4,
+   "avgKills": 54.8,
+   "avgDmg": 20655.6,
+   "avgDef": 545,
+   "avgHeal": 144.1,
+   "avgLevel": 1,
+   "bossReached": 100,
+   "bossKilled": 88
+  }
+ },
+ "solo": {
+  "stage1": {
+   "bug": "8/8 wins (pre-existing)",
+   "mecha": "0/8"
+  },
+  "stage2": {
+   "bug": "3/8",
+   "mecha": "0/8"
+  }
+ }
+}

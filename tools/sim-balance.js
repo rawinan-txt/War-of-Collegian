@@ -17,8 +17,8 @@ const TEAMS = {
   balanced: ['bug', 'mecha', 'night', 'lab', 'dental', 'public'],
 };
 
-function play(stageNo, teamName, seed, step = 0.05) {
-  const team = TEAMS[teamName];
+function play(stageNo, teamName, seed, step = 0.05, policy = "fewest") {
+  const team = TEAMS[teamName] || teamName;
   const g = loadGame(seed, { lazy: true, enemies: true });
   g.run(`team=${JSON.stringify(team)};screen='battle';stage=${stageNo};startBattle(${seed})`);
   g.run('globalThis.__sp={};{const o=spawnEnemy;spawnEnemy=function(t){__sp[t]=(__sp[t]||0)+1;return o(t)}}');
@@ -31,7 +31,7 @@ function play(stageNo, teamName, seed, step = 0.05) {
         if(b.ult>=100)useUltimate();
         if(b.level<4&&b.at>=b.upgrade+60)upgradeIncome();
         const ready=team.filter(id=>{const h=heroes.find(x=>x.id===id);return b.cd[id]<=0&&b.at>=h.cost});
-        ready.sort((p,q)=>b.units.filter(u=>u.id===p&&u.alive).length-b.units.filter(u=>u.id===q&&u.alive).length);
+        ${policy==="cheap"?"ready.sort((p,q)=>heroes.find(x=>x.id===p).cost-heroes.find(x=>x.id===q).cost);":"ready.sort((p,q)=>b.units.filter(u=>u.id===p&&u.alive).length-b.units.filter(u=>u.id===q&&u.alive).length);"}
         if(ready.length&&b.units.length<30)deploy(ready[0]);
       })()`);
     }
