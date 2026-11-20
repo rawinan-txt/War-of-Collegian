@@ -271,10 +271,12 @@ function drawTA() {
   b.rect(29, 33, 1, 8, '#ff6fa6'); b.rect(34, 33, 1, 8, '#ff6fa6'); b.rect(30, 40, 4, 5, P.paperHi); b.rect(31, 41, 2, 2, '#58b8ff');
   // hair: dark mass + big bun on top
   ell(b, 32 + hx, 18, 12, 9, '#2b2038'); b.rect(21 + hx, 20, 3, 9, '#2b2038'); b.rect(41 + hx, 20, 3, 8, '#2b2038');
-  ell(b, 26 + hx, 12, 5, 4, '#2b2038'); b.rect(24 + hx, 9, 2, 1, '#5a4670'); b.rect(23 + hx, 11, 2, 1, '#5a4670'); b.rect(31 + hx, 12, 2, 2, '#ff6fa6');
   head(b, hx, 0);
   ell(b, 32 + hx, 17, 12, 7, '#2b2038'); b.rect(21 + hx, 19, 3, 9, '#2b2038'); b.rect(41 + hx, 19, 3, 8, '#2b2038'); b.rect(25 + hx, 18, 16, 2, '#2b2038');
   b.rect(27 + hx, 13, 9, 1, '#5a4670'); b.rect(25 + hx, 14, 7, 1, '#5a4670');
+  // the bun: a round ball on top of the head with a pink hair tie and shine
+  ell(b, 32 + hx, 8, 6, 5, '#2b2038'); b.rect(29 + hx, 4, 5, 1, '#6a5488'); b.rect(28 + hx, 5, 2, 1, '#6a5488'); b.rect(34 + hx, 6, 2, 2, '#6a5488'); b.rect(30 + hx, 7, 2, 1, '#6a5488');
+  b.rect(27 + hx, 12, 11, 2, '#ff6fa6'); b.rect(27 + hx, 12, 11, 1, '#ffb0cc'); b.rect(29 + hx, 13, 1, 1, '#c93f7c');
   brows(b, hx, 0, 21);
   // round glasses with tired narrowed eyes
   for (const x of [28, 38]) { b.ring(x + hx, 27, 3, '#2b2038'); b.rect(x + hx - 1, 26, 3, 2, LENS); b.rect(x + hx, 26, 2, 2, OUT_DARK); b.set(x + hx - 2, 25, P.paperHi); }
@@ -347,12 +349,19 @@ function drawExamMaster() {
   b.shape(42, 33, [[0, 12], [0, 16], [0, 18], [0, 18], [6, 12]], '#241a48'); b.rect(44, 36, 12, 2, '#3c2d70');
   b.disc(6, 39, 3, '#a35bff'); b.disc(6, 39, 2, '#e4d2ff'); b.disc(58, 39, 3, '#a35bff'); b.disc(58, 39, 2, '#e4d2ff');
   // head in shadow: dark hair, pale-violet face, glowing lenses instead of eyes
-  ell(b, 32, 25, 11, 10, '#5b4a82'); b.rect(24, 31, 17, 1, '#43356a');
-  ell(b, 32, 19, 12, 8, '#1c1530'); b.rect(20, 20, 3, 9, '#1c1530'); b.rect(41, 20, 3, 9, '#1c1530'); b.rect(26, 15, 6, 1, '#4a3a78'); b.rect(24, 16, 5, 1, '#4a3a78');
-  for (const x of [24, 34]) { b.rect(x, 24, 9, 7, '#7a3fe0'); b.rect(x + 1, 25, 7, 5, '#f4ecff'); b.rect(x + 1, 25, 3, 1, P.paperHi); b.rect(x + 3, 27, 3, 2, '#b99aff'); }
-  b.rect(33, 25, 1, 1, '#7a3fe0');
-  for (let k = 0; k < 7; k++) { b.rect(24 + k, 21 + Math.floor(k * 0.4), 2, 2, OUT_DARK); b.rect(41 - k, 21 + Math.floor(k * 0.4), 2, 2, OUT_DARK); }
-  b.rect(28, 33, 9, 1, '#14091f'); b.set(27, 34, '#14091f'); b.set(37, 34, '#14091f');
+  const FACE = '#b9a9e4', FACE_SH = '#8f7cc2', FACE_DK = '#5f4c96';
+  ell(b, 32, 26, 11, 10, FACE); b.rect(24, 33, 17, 1, FACE_SH); b.rect(25, 34, 15, 1, FACE_SH); b.rect(27, 35, 11, 1, FACE_DK); // jaw shade
+  ell(b, 32, 18, 12, 6, '#1c1530'); b.rect(20, 19, 3, 10, '#1c1530'); b.rect(41, 19, 3, 10, '#1c1530'); b.rect(24, 21, 17, 2, '#1c1530');
+  b.rect(26, 14, 6, 1, '#4a3a78'); b.rect(24, 15, 5, 1, '#4a3a78'); b.rect(36, 16, 4, 1, '#4a3a78');
+  // glowing lenses (smaller than before so the cheeks show), slanted angry lids
+  for (const x of [25, 35]) { b.rect(x, 24, 8, 6, '#7a3fe0'); b.rect(x + 1, 25, 6, 4, '#f4ecff'); b.rect(x + 1, 25, 3, 1, P.paperHi); b.rect(x + 3, 26, 3, 2, '#b99aff'); }
+  b.rect(33, 25, 2, 1, '#7a3fe0');
+  for (const [x, y] of [[29, 25], [30, 25], [31, 25], [30, 26], [31, 26], [31, 27]]) { b.set(x, y, '#2a1858'); b.set(67 - x, y, '#2a1858'); }
+  b.rect(26, 22, 6, 1, OUT_DARK); b.rect(35, 22, 6, 1, OUT_DARK); // heavy brows resting on the lens rims
+  // face: nose shadow, nasolabial lines, grim mouth with bared teeth
+  b.rect(32, 30, 3, 2, FACE_SH); b.rect(25, 31, 1, 3, FACE_SH); b.rect(40, 31, 1, 3, FACE_SH);
+  b.rect(28, 32, 9, 3, '#2a1034'); for (let k = 0; k < 4; k++) { b.rect(29 + k * 2, 32, 1, 1, P.tooth); b.rect(30 + k * 2, 34, 1, 1, P.tooth); }
+  b.set(27, 33, '#2a1034'); b.set(37, 33, '#2a1034');
   // mortarboard with gold tassel
   b.shape(20, 13, [[3, 21], [1, 25], [0, 27]], '#120d26'); b.rect(26, 13, 12, 1, '#4a3a78'); b.rect(31, 12, 2, 1, '#f0b93a'); b.rect(44, 14, 1, 6, '#f0b93a'); b.rect(43, 20, 3, 3, GOLD);
   b.outline(OUT_DARK); b.outline(OUT_WHITE);

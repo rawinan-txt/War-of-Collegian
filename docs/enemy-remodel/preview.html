@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>War of Collegian - Enemy Preview</title>
+<style>
+:root{--bg:#0e1a48;--panel:#142764;--ink:#081032;--chalk:#f1f4ff;--muted:#bcc4ea;--gold:#ffd23a;--sky:#9ad0f5;--road:#c3c8cf}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--chalk);font:15px/1.5 system-ui,"Segoe UI",sans-serif;padding:24px}
+h1{margin:0 0 4px;font-size:26px}h2{margin:32px 0 12px;font-size:20px;color:var(--gold)}p.lead{margin:0;color:var(--muted);max-width:80ch}
+img,.spr{image-rendering:pixelated}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.bar button{font:inherit;color:var(--chalk);background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:6px 12px;cursor:pointer}
+.bar button[aria-pressed=true]{outline:3px solid var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px}
+.card{background:var(--panel);border:2px solid var(--ink);border-radius:14px;padding:14px}.card.concept{border-color:var(--gold)}
+.card h3{margin:0;font-size:18px}.card header p{margin:2px 0 10px;color:var(--muted)}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;color:var(--ink)}.tag.game{background:#52d49a}.tag.concept{background:var(--gold)}
+.views{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}figure{margin:0}figcaption{font-size:12px;color:var(--muted);margin-top:4px;max-width:340px}
+.s6{width:384px;height:384px;display:block}.s2{width:128px;height:128px;display:block}.flip{transform:scaleX(-1)}
+.bg-sky .s6,.bg-sky .field,.bg-sky .strip{background:linear-gradient(var(--sky) 70%,var(--road) 70%)}
+.bg-dark .s6,.bg-dark .field,.bg-dark .strip{background:#1c2250}
+.bg-check .s6,.bg-check .field,.bg-check .strip{background:repeating-conic-gradient(#d9d9d9 0 25%,#fff 0 50%) 0 0/16px 16px}
+.field{display:flex;align-items:flex-end;justify-content:center;gap:0;width:288px;height:150px;padding-bottom:2px}
+.spr{display:block;width:128px;height:128px;flex:none}.hero{background:url(../../assets/characters/ict/bug_hunter/idle.png) 0 0/400% 100% no-repeat}
+.meta{margin:10px 0 0;font-size:12.5px;color:var(--muted)}
+.strip{display:flex;align-items:flex-end;gap:0;padding:12px 8px 6px;border-radius:14px;overflow-x:auto}.strip figure{flex:none;text-align:center;width:150px}.strip figcaption{max-width:none;color:#13204f}
+.bg-dark .strip figcaption{color:var(--muted)}
+table{border-collapse:collapse;width:100%;max-width:980px;font-size:13.5px}th,td{text-align:left;padding:6px 10px;border-bottom:1px solid #2a3c86}th{color:var(--muted);font-weight:600}
+.note{color:var(--muted);font-size:13px;max-width:90ch}
+@media (max-width:520px){.s6{width:100%;height:auto;aspect-ratio:1}.field{width:100%}}
+</style></head>
+<body class="bg-sky">
+<h1>War of Collegian - Enemy preview (static, review build)</h1>
+<p class="lead">All nine enemies next to Bug Hunter. The five "in game" enemies are the current roster; the four "concept only" teaching-staff characters are <b>not</b> in gameplay. Sprites are 64x64 chibi pixel art with a dark inner and a white outer outline. No animation yet.</p>
+<div class="bar" role="group" aria-label="Background"><button data-bg="bg-sky" aria-pressed="true">Battlefield</button><button data-bg="bg-dark" aria-pressed="false">Dark</button><button data-bg="bg-check" aria-pressed="false">Transparency</button></div>
+
+<h2>Side by side with Bug Hunter (2x, as drawn in battle)</h2>
+<div class="strip"><figure><span class="spr hero"></span><figcaption>Bug Hunter</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/assignment/idle.png" alt=""><figcaption>Assignment Monster</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/deadline/idle.png" alt=""><figcaption>Deadline Monster</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/group/idle.png" alt=""><figcaption>Group Project Gang</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/quiz/idle.png" alt=""><figcaption>Midterm Exam</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/final/idle.png" alt=""><figcaption>Final Exam</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/professor/idle.png" alt=""><figcaption>Strict Professor</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/ta/idle.png" alt=""><figcaption>Ruthless TA</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/advisor/idle.png" alt=""><figcaption>Thesis Advisor</figcaption></figure><figure><img class="s2 flip" src="../../assets/enemies/exammaster/idle.png" alt=""><figcaption>Exam Master</figcaption></figure></div>
+<p class="note">Enemies are mirrored in the game so they face the heroes. The Final Exam boss is drawn 3.3x in the battle (2 x the 1.65 boss scale); Exam Master has no in-game scale yet.</p>
+
+<h2>Each enemy (6x and 2x)</h2>
+<div class="grid"><article class="card game">
+  <header><h3>Assignment Monster</h3><p><span class="tag game">in game</span> basic</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/assignment/idle.png" alt="Assignment Monster 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/assignment/idle.png" alt="Assignment Monster 2x"></div><figcaption>2x in battle: Bug Hunter vs Assignment Monster (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 24 colours, hard-edged, art 55 x 44</p>
+</article><article class="card game">
+  <header><h3>Deadline Monster</h3><p><span class="tag game">in game</span> fast</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/deadline/idle.png" alt="Deadline Monster 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/deadline/idle.png" alt="Deadline Monster 2x"></div><figcaption>2x in battle: Bug Hunter vs Deadline Monster (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 20 colours, hard-edged, art 61 x 43</p>
+</article><article class="card game">
+  <header><h3>Group Project Gang</h3><p><span class="tag game">in game</span> tank</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/group/idle.png" alt="Group Project Gang 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/group/idle.png" alt="Group Project Gang 2x"></div><figcaption>2x in battle: Bug Hunter vs Group Project Gang (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 18 colours, hard-edged, art 55 x 43</p>
+</article><article class="card game">
+  <header><h3>Midterm Exam</h3><p><span class="tag game">in game</span> ranged</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/quiz/idle.png" alt="Midterm Exam 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/quiz/idle.png" alt="Midterm Exam 2x"></div><figcaption>2x in battle: Bug Hunter vs Midterm Exam (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 23 colours, hard-edged, art 54 x 44</p>
+</article><article class="card game">
+  <header><h3>Final Exam</h3><p><span class="tag game">in game</span> boss &middot; drawn 3.3x in battle</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/final/idle.png" alt="Final Exam 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/final/idle.png" alt="Final Exam 2x"></div><figcaption>2x in battle: Bug Hunter vs Final Exam (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 21 colours, hard-edged, art 58 x 43</p>
+</article><article class="card concept">
+  <header><h3>Strict Professor</h3><p><span class="tag concept">concept only</span> concept (basic type)</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/professor/idle.png" alt="Strict Professor 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/professor/idle.png" alt="Strict Professor 2x"></div><figcaption>2x in battle: Bug Hunter vs Strict Professor (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 29 colours, hard-edged, art 58 x 49</p>
+</article><article class="card concept">
+  <header><h3>Ruthless TA</h3><p><span class="tag concept">concept only</span> concept (fast type)</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/ta/idle.png" alt="Ruthless TA 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/ta/idle.png" alt="Ruthless TA 2x"></div><figcaption>2x in battle: Bug Hunter vs Ruthless TA (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 27 colours, hard-edged, art 57 x 56</p>
+</article><article class="card concept">
+  <header><h3>Thesis Advisor</h3><p><span class="tag concept">concept only</span> concept (tank / support type)</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/advisor/idle.png" alt="Thesis Advisor 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/advisor/idle.png" alt="Thesis Advisor 2x"></div><figcaption>2x in battle: Bug Hunter vs Thesis Advisor (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 23 colours, hard-edged, art 54 x 48</p>
+</article><article class="card concept">
+  <header><h3>Exam Master</h3><p><span class="tag concept">concept only</span> concept (boss type)</p></header>
+  <div class="views">
+    <figure><img class="s6" src="../../assets/enemies/exammaster/idle.png" alt="Exam Master 6x"><figcaption>6x (as authored, faces right)</figcaption></figure>
+    <figure><div class="field"><span class="spr hero"></span><img class="s2 flip" src="../../assets/enemies/exammaster/idle.png" alt="Exam Master 2x"></div><figcaption>2x in battle: Bug Hunter vs Exam Master (mirrored toward the heroes)</figcaption></figure>
+  </div>
+  <p class="meta">64x64px, 30 colours, hard-edged, art 63 x 47</p>
+</article></div>
+
+<h2>Pixel-art consistency (measured from the PNG files)</h2>
+<table><thead><tr><th>Sprite</th><th>Status</th><th>Frame</th><th>Art size (px)</th><th>Colours</th><th>Edges</th><th>Outer outline white</th></tr></thead><tbody>
+<tr><td>Bug Hunter (reference hero)</td><td>reference</td><td>64x64</td><td>30 x 45</td><td>20</td><td>hard-edged</td><td>100%</td></tr>
+<tr><td>Assignment Monster</td><td>in game</td><td>64x64</td><td>55 x 44</td><td>24</td><td>hard-edged</td><td>76%</td></tr>
+<tr><td>Deadline Monster</td><td>in game</td><td>64x64</td><td>61 x 43</td><td>20</td><td>hard-edged</td><td>90%</td></tr>
+<tr><td>Group Project Gang</td><td>in game</td><td>64x64</td><td>55 x 43</td><td>18</td><td>hard-edged</td><td>96%</td></tr>
+<tr><td>Midterm Exam</td><td>in game</td><td>64x64</td><td>54 x 44</td><td>23</td><td>hard-edged</td><td>89%</td></tr>
+<tr><td>Final Exam</td><td>in game</td><td>64x64</td><td>58 x 43</td><td>21</td><td>hard-edged</td><td>95%</td></tr>
+<tr><td>Strict Professor</td><td>concept</td><td>64x64</td><td>58 x 49</td><td>29</td><td>hard-edged</td><td>97%</td></tr>
+<tr><td>Ruthless TA</td><td>concept</td><td>64x64</td><td>57 x 56</td><td>27</td><td>hard-edged</td><td>90%</td></tr>
+<tr><td>Thesis Advisor</td><td>concept</td><td>64x64</td><td>54 x 48</td><td>23</td><td>hard-edged</td><td>59%</td></tr>
+<tr><td>Exam Master</td><td>concept</td><td>64x64</td><td>63 x 47</td><td>30</td><td>hard-edged</td><td>38%</td></tr>
+</tbody></table>
+<p class="note">"Outer outline white" is the share of silhouette-edge pixels that are pure white (the heroes' light outer outline). Small detached bits such as sparks and loose pages are drawn without it, so it is below 100% on purpose. Every sprite is hard-edged (alpha is only 0 or 255), so nearest-neighbour scaling stays crisp.</p>
+<script>
+document.querySelectorAll('.bar button').forEach(function(b){b.addEventListener('click',function(){
+  document.body.className=b.dataset.bg;document.querySelectorAll('.bar button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});});});
+</script>
+</body></html>
