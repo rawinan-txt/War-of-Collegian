@@ -21,10 +21,11 @@ function play(stageNo, teamName, seed, step = 0.05, policy = "fewest") {
   const team = TEAMS[teamName] || teamName;
   const g = loadGame(seed, { lazy: true, enemies: true });
   g.run(`team=${JSON.stringify(team)};screen='battle';stage=${stageNo};startBattle(${seed})`);
+  if (policy === "auto") g.run("AUTO.on=true");
   g.run('globalThis.__sp={};{const o=spawnEnemy;spawnEnemy=function(t){__sp[t]=(__sp[t]||0)+1;return o(t)}}');
   let t = 0, nextDecision = 0, maxUnits = 0;
   for (let i = 0; i < 6200 && !g.run('battle.ended'); i++) {
-    if (t >= nextDecision) {
+    if (policy !== "auto" && t >= nextDecision) {
       nextDecision = t + 0.25;
       g.run(`(function(){const b=battle;
         if(b.baseCd<=0&&b.enemies.filter(e=>e.alive).length>=2)baseSkill();

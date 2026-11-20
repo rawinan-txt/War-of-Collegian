@@ -412,3 +412,10 @@ html:has(#boot) { overflow: hidden; }
 #stagePick.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 #stagePick .tile.sel { background: linear-gradient(180deg, #ffe066, #ffb800); box-shadow: inset 0 2px 0 #ffffff8c, 0 3px 0 #b87400; }
 #stagePick .tile.sel strong { color: var(--gold-ink); }
+
+/* Auto Play: a clear ON state (green key) and two compact option chips that only show while Auto is on */
+.b-controls #autoBtn.green { --b1: #17803f; --b2: var(--green-500); --b3: var(--green-700); --bt: #ffffff; }
+.auto-opts { display: flex; gap: var(--s-1); align-items: center; }
+.auto-opts.hidden { display: none; }
+.b-controls button.mini { padding: 4px 10px; min-height: 36px; font-size: var(--fs-xs); }
+.b-controls button.mini:not(.on) { filter: grayscale(.85) brightness(.7); }

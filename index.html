@@ -498,6 +498,8 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 <div class="b-base enemy"><div class="lbl"><span>ฐานข้อสอบ</span><span id="hpEnemyText">6500 / 6500</span></div>
 <div class="hpbar" id="hpEnemyBar"><div id="hpEnemyFill"></div></div></div>
 <div class="b-controls">
+<button class="secondary" onclick="toggleAuto()" id="autoBtn" title="Auto Play: ระบบช่วยส่งตัวละคร อัปเกรด AT และยิงเลเซอร์ ตามกฎเดียวกับผู้เล่น">Auto: ปิด</button>
+<span id="autoOpts" class="auto-opts hidden"><button class="secondary mini on" onclick="setAutoOpt('laser')" id="autoLaserBtn" title="Auto ยิงเลเซอร์ฐาน">เลเซอร์</button><button class="secondary mini on" onclick="setAutoOpt('upgrade')" id="autoUpgBtn" title="Auto อัปเกรด AT">อัป AT</button></span>
 <button class="secondary" onclick="togglePause()" id="pauseBtn">หยุด</button>
 <button class="secondary" onclick="speedToggle()" id="speedBtn">1×</button>
 <button class="secondary" onclick="toggleFx()" id="fxBtn">เอฟเฟกต์: เต็ม</button>
@@ -1487,6 +1489,8 @@ function startBattle(seed){
     }).join('');
     document.getElementById('pauseBtn').textContent='หยุด';
     document.getElementById('speedBtn').textContent='1×';
+    AUTO.on=false;
+    renderAuto();
     document.getElementById('fxBtn').textContent=fxLabel();
     CombatStats.resetBattleStats();
     buildStatsList();
@@ -1694,6 +1698,144 @@ function baseSkill(){
     notice('Faculty Laser · '+L.damage+' damage');
     return true
 }
+/* AUTO PLAY: a player-input automation layer, not a buff. It only calls the same actions a human uses (deploy, upgradeIncome,
+   baseSkill), so every rule (AT, cost, cooldown, unit cap, laser cooldown) is enforced by those functions. Deterministic rules on
+   observable state, evaluated every AUTO.interval seconds of SIMULATION time (so pause and 2x speed behave); no random draws.
+   The ultimate stays manual. */
+const AUTO={
+    on:false, laser:true, upgrade:true, interval:.25
+};
+const AUTO_BASE_X=135, AUTO_FRONT=new Set(['tank', 'shield', 'pierce', 'dash']), AUTO_DPS=new Set(['ranged', 'aoe', 'poison', 'slow', 'pierce', 'summon']), AUTO_HEAL=new Set(['heal', 'massheal']);
+function autoTick(dt){
+    const b=battle;
+    b.autoT=(b.autoT||0)+dt;
+    for(let n=0; n<2&&b.autoT>=AUTO.interval; n++){
+        b.autoT-=AUTO.interval;
+        autoDecide()
+    }
+    if(b.autoT>AUTO.interval)b.autoT=AUTO.interval
+}
+function autoState(){
+    const b=battle, foes=b.enemies.filter(e=>e.alive), mine=b.units.filter(a=>a.alive);
+    let nearest=Infinity, clustered=0;
+    for(const e of foes){
+        nearest=Math.min(nearest, e.x);
+        clustered=Math.max(clustered, foes.filter(o=>Math.abs(o.x-e.x)<110).length)
+    }
+    const gap=foes.length?nearest-AUTO_BASE_X:Infinity;
+    return{
+        foes, mine, gap, clustered, threat:gap<260, danger:gap<160, boss:foes.some(e=>e.type==='boss'), bigFoe:foes.some(e=>e.hp>1000),
+        ranged:foes.filter(e=>e.range>RANGED_MIN).length, injured:mine.filter(a=>a.hp<a.maxHp*.65).length,
+        hurtFront:mine.some(a=>AUTO_FRONT.has(a.type)&&a.hp<a.maxHp*.5), front:mine.filter(a=>AUTO_FRONT.has(a.type)).length,
+        healers:mine.filter(a=>AUTO_HEAL.has(a.type)).length
+    }
+}
+function autoScore(h, S){
+    const t=h.type, have=S.mine.filter(a=>(a.owner||a.id)===h.id).length;
+    let s=h.star*6;
+    if(AUTO_FRONT.has(t))s+=S.front<Math.max(1, Math.ceil(S.foes.length/3)+(S.boss?1:0))?38:6;
+    if(AUTO_DPS.has(t)){
+        s+=24;
+        if(t==='aoe'&&S.clustered>=3)s+=16;
+        if(t==='poison'&&(S.boss||S.bigFoe))s+=12;
+        if(t==='slow'&&S.foes.length>=3)s+=10;
+        if(t==='pierce'&&S.clustered>=2)s+=8;
+        if(S.boss&&(t==='aoe'||t==='pierce'||t==='poison'))s+=8
+    }
+    if(AUTO_HEAL.has(t)){
+        s+=S.injured>=2||S.hurtFront?44:(S.healers<1&&S.mine.length>=4?18:-30);
+        if(S.healers>=2)s-=20
+    }
+    if(t==='income')s+=battle.t<80?14:2;
+    if(S.threat){
+        if(AUTO_FRONT.has(t))s+=20;
+        s+=(500-h.cost)/12
+    }
+    return s-Math.min(36, have*9)
+}
+function autoPick(S){
+    const b=battle;
+    if(b.units.length>=35)return null;
+    const ready=team.map(id=>heroes.find(x=>x.id===id)).filter(x=>x&&b.cd[x.id]<=0);
+    const scored=ready.map((x, i)=>({
+        h:x, s:autoScore(x, S), i
+    })).sort((p, q)=>q.s-p.s||p.i-q.i);
+    const ok=scored.filter(c=>b.at>=c.h.cost);
+    if(!ok.length)return null;
+    /* save AT for a clearly better unit that is within reach: up to ~25 s of income while the field is quiet, 8 s with enemies approaching, 3 s when the base is threatened, never in danger, when AT is nearly full or with an empty field */
+    const top=scored[0];
+    const wait=S.danger?0:S.threat?3:S.gap<420?8:25;
+    if(wait&&b.at<b.maxAt-40&&top.h.cost>b.at&&(top.h.cost-b.at)/b.income<=wait&&top.s>ok[0].s+10&&S.mine.length>=1)return null;
+    return ok[0].h
+}
+function autoWantsUpgrade(S){
+    const b=battle;
+    if(!AUTO.upgrade||b.level>=6||b.at<b.upgrade||S.threat||S.mine.length<2)return false;
+    const remain=Math.max(0, STAGES[b.stage||1].bossAt+75-b.t);
+    if(b.upgrade/(b.income*.42)>remain*.7)return false;
+    const approaching=S.foes.length&&S.gap<620;
+    return b.at-b.upgrade>=(approaching?120:0)
+}
+function autoWantsLaser(S){
+    const b=battle;
+    if(!AUTO.laser||b.baseCd>0||!S.foes.length)return false;
+    const dmg=FACULTY_LASER.damage;
+    let value=0, kills=0;
+    for(const e of S.foes){
+        const left=e.hp+(e.shield||0);
+        value+=Math.min(dmg, left);
+        if(left<=dmg)kills++
+    }
+    return S.danger&&value>=300||S.threat&&value>=dmg*2||value>=dmg*3||kills>=2
+}
+function autoDecide(){
+    const b=battle;
+    if(!b||b.ended||b.paused)return;
+    const S=autoState();
+    if(autoWantsLaser(S))baseSkill();
+    if(autoWantsUpgrade(S)){
+        const lv=b.level;
+        upgradeIncome();
+        if(b.level>lv)return
+    }
+    const pick=autoPick(S);
+    if(pick){
+        const n=b.units.length;
+        deploy(pick.id);
+        if(b.units.length>n&&b.floaters.length<90){
+            const u=b.units[b.units.length-1];
+            b.floaters.push({
+                x:u.x, y:u.y-58, txt:'AUTO', life:.7, color:'#ffe066'
+            })
+        }
+    }
+}
+function renderAuto(){
+    const bt=document.getElementById('autoBtn');
+    if(!bt)return;
+    bt.textContent=AUTO.on?'Auto: เปิด':'Auto: ปิด';
+    bt.classList.toggle('green', AUTO.on);
+    bt.classList.toggle('secondary', !AUTO.on);
+    bt.ariaPressed=String(AUTO.on);
+    document.getElementById('autoOpts').classList.toggle('hidden', !AUTO.on);
+    document.getElementById('autoLaserBtn').classList.toggle('on', AUTO.laser);
+    document.getElementById('autoUpgBtn').classList.toggle('on', AUTO.upgrade);
+    document.getElementById('autoLaserBtn').ariaPressed=String(AUTO.laser);
+    document.getElementById('autoUpgBtn').ariaPressed=String(AUTO.upgrade)
+}
+function toggleAuto(){
+    AUTO.on=!AUTO.on;
+    if(battle){
+        battle.autoT=0;
+        if(!battle.ended)notice(AUTO.on?'Auto เปิด · ใช้กฎเดียวกับผู้เล่น':'Auto ปิด · เล่นเอง')
+    }
+    renderAuto()
+}
+function setAutoOpt(k){
+    if(k!=='laser'&&k!=='upgrade')return;
+    AUTO[k]=!AUTO[k];
+    renderAuto()
+}
 function useUltimate(){
     const b=battle;
     if(!b||b.ended||b.paused||b.ult<100)return false;
@@ -1862,6 +2004,7 @@ function update(dt){
         b.bossSpawned=true;
         spawnEnemy(BS.bossType)
     }
+    if(AUTO.on)autoTick(dt);
     for(const u of [...b.units, ...b.enemies]){
         if(!u.alive)continue;
         u.moved=Math.abs(u.x-u.px)>.01;
