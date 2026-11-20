@@ -585,17 +585,25 @@ body:has(#faculty:not(.hidden)) .app > .footer { display: none; }
 <p id="teamCount" class="status"></p></div>
 <div><h3>Synergy</h3>
 <div id="teamSyn" class="status"></div></div>
-<div><h3>ด่าน</h3>
-<div id="stagePick" class="grid"></div></div>
 <div><h3>Ultimate (เลือก 1 อย่าง)</h3>
 <div id="ultPick" class="grid"></div>
 <p class="ultdesc" id="ultDesc"></p></div>
 </div>
 <div class="tb-actions">
-<button onclick="startBattle()" id="startBtn">เริ่ม Battle</button>
+<button onclick="show('stageSelect')" id="startBtn">เลือกด่าน →</button>
 </div>
 </aside>
 </div>
+</section>
+<section id="stageSelect" class="panel hidden stage-screen" aria-label="เลือกด่าน">
+<div class="tb-head">
+<h2>เลือกด่าน</h2>
+<p class="muted">ขั้นที่ 3 · เลือกด่านที่จะต่อสู้ ทีมของคุณจะเข้าด่านนี้</p>
+<button class="secondary" onclick="show('team')">← กลับไปจัดทีม</button>
+</div>
+<div id="stagePick" class="stage-grid"></div>
+<div class="stage-team panel"><h3>ทีมของคุณ</h3><div id="stageTeam" class="stage-team-row"></div></div>
+<div class="stage-actions"><button onclick="startBattle()" id="startBtn2">เริ่ม Battle</button></div>
 </section>
 <section id="battle" class="hidden">
 <div class="b-top">
@@ -1452,9 +1460,10 @@ function curtain(){
 function show(s){
     screen=s;
     curtain();
-    ['home', 'faculty', 'team', 'battle', 'result'].forEach(id=>document.getElementById(id).classList.toggle('hidden', id!==s));
+    ['home', 'faculty', 'team', 'stageSelect', 'battle', 'result'].forEach(id=>document.getElementById(id).classList.toggle('hidden', id!==s));
     if(s==='faculty')renderFaculty();
-    if(s==='team')renderTeam()
+    if(s==='team')renderTeam();
+    if(s==='stageSelect')renderStages()
 }
 function fdata(){
     return faculties.find(f=>f[0]===faculty)
@@ -1570,7 +1579,6 @@ function renderTeam(){
     document.getElementById('teamCount').textContent=`เลือกแล้ว ${team.length}/6 ตัว · สามารถผสมคณะได้อิสระ`;
     document.getElementById('startBtn').disabled=team.length!==6;
     document.getElementById('ultPick').innerHTML=Object.entries(ULTIMATES).map(([id, u])=>`<div class="tile ${ultType===id?'sel':''}" role="button" tabindex="0" aria-pressed="${ultType===id}" onclick="chooseUlt('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseUlt('${id}')}"><strong>${stripIcon(u.name)}</strong></div>`).join('');
-    document.getElementById('stagePick').innerHTML=Object.entries(STAGES).map(([n, s])=>`<div class="tile ${stage==n?'sel':''}" role="button" tabindex="0" aria-pressed="${stage==n}" onclick="setStage(${n})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setStage(${n})}"><strong>${s.name}</strong></div>`).join('');
     document.getElementById('ultDesc').textContent=ULTIMATES[ultType]?stripIcon(ULTIMATES[ultType].name)+': '+ULTIMATES[ultType].desc:'';
     const sl=team.length?calcSynergies(team):[];
     document.getElementById('teamSyn').innerHTML=sl.length?'<b>Synergy ที่ติดอยู่</b><br>'+sl.map(s=>`${stripIcon(s.name)} — ${s.desc}`).join('<br>'):'ไม่มี Synergy'
@@ -1664,11 +1672,11 @@ const enemyTemplates=()=>({
    Stage 1 is the original schedule, bit for bit; Stage 2 brings the teaching staff. */
 const STAGES={
     1:{
-        name:'Stage 1 · Midterm Rush', enemies:['assignment', 'deadline', 'group', 'quiz', 'final'], bossType:'boss', bossAt:85,
+        name:'Stage 1 · Midterm Rush', desc:'งานเดี่ยว งานกลุ่ม และข้อสอบกลางภาคบุกมาเป็นระลอก ปิดท้ายด้วยบอส Final Exam', enemies:['assignment', 'deadline', 'group', 'quiz', 'final'], bossType:'boss', bossAt:85,
         pick:(t, r)=>t>32&&r<.25?'tank':t>22&&r<.4?'ranged':r<.25?'fast':'basic',
         gap:t=>Math.max(1.8, 4.6-t*.02)
     }, 2:{
-        name:'Stage 2 · Faculty Staff', enemies:['assignment', 'deadline', 'professor', 'ta', 'advisor', 'exammaster'], bossType:'exammaster', bossAt:90,
+        name:'Stage 2 · Faculty Staff', desc:'อาจารย์โหด ผู้ช่วยสอนที่คอยบัฟ และอาจารย์ที่ปรึกษาที่ลดพลังโจมตี ปิดท้ายด้วยบอส Exam Master', enemies:['assignment', 'deadline', 'professor', 'ta', 'advisor', 'exammaster'], bossType:'exammaster', bossAt:90,
         pick:(t, r)=>t>52&&r<.12?'advisor':t>28&&r<.3?'professor':t>12&&r<.46?'ta':r<.2?'fast':'basic',
         gap:t=>Math.max(2.5, 5.5-t*.02)
     }
@@ -1676,10 +1684,25 @@ const STAGES={
 /* sprite ids of the default stage (kept for compatibility); a battle loads the roster of its own stage */
 const ENEMY_SPRITE_IDS=STAGES[1].enemies;
 let stage=1;
+const ENEMY_NAMES={
+    assignment:'Assignment Monster', deadline:'Deadline Monster', group:'Group Project Gang', quiz:'Midterm Exam', final:'Final Exam', professor:'Strict Professor', ta:'Ruthless TA', advisor:'Thesis Advisor', exammaster:'Exam Master'
+};
 function setStage(n){
     if(!STAGES[n])return;
     stage=+n;
-    renderTeam()
+    renderStages()
+}
+function renderStages(){
+    const el=document.getElementById('stagePick');
+    if(!el)return;
+    el.innerHTML=Object.entries(STAGES).map(([n, s])=>{
+        const boss=enemyTemplates()[s.bossType].id;
+        return `<div class="stage-card ${stage==n?'sel':''}" role="button" tabindex="0" aria-pressed="${stage==n}" onclick="setStage(${n})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setStage(${n})}"><h3>${s.name}</h3><p>${s.desc}</p><div class="stage-roster">${s.enemies.map(id=>`<figure class="${id===boss?'boss':''}"><img src="assets/enemies/${id}/static.png" alt="" loading="lazy" decoding="async" draggable="false"><figcaption>${ENEMY_NAMES[id]}</figcaption></figure>`).join('')}</div><p class="stage-meta">บอส: <b>${ENEMY_NAMES[boss]}</b> · ปรากฏที่ ${s.bossAt} วินาที</p></div>`
+    }).join('');
+    document.getElementById('stageTeam').innerHTML=team.map(id=>{
+        const x=heroes.find(h=>h.id===id);
+        return x?`<figure class="r${x.star}" style="--fc:${facColor(x.f)}">${portrait(x, '')}<figcaption>${x.name}</figcaption></figure>`:''
+    }).join('')
 }
 /* Enemy abilities. Deterministic on purpose: no random draws, so they can never separate combat from visuals. */
 const ENEMY_KITS={
