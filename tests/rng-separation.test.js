@@ -15,8 +15,16 @@ const short = (s, duration) => ({ ...s, duration });
 // ---------------------------------------------------------------- source level
 test('Math.random is only used to pick a battle seed; every other draw is explicitly combat (crand) or visual (vrand)', () => {
   assert.equal((html.match(/Math\.random/g) || []).length, 1, 'one Math.random: the seed when none is given');
-  assert.match(html, /function newRngs\(seed\)\{const s=\(seed!==undefined\?seed:NEXT_SEED!==null\?NEXT_SEED:Math\.floor\(Math\.random\(\)\*4294967296\)\)/);
-  const fn = (name) => { const i = html.indexOf(`function ${name}(`); return html.slice(i, html.indexOf('\n', i)); };
+  // the seed expression, whatever the formatting: explicit seed, else NEXT_SEED, else the one Math.random
+  const nr = html.slice(html.indexOf('function newRngs('), html.indexOf('return', html.indexOf('function newRngs(')));
+  assert.ok(/seed\s*!==\s*undefined\s*\?\s*seed\s*:\s*NEXT_SEED\s*!==\s*null\s*\?\s*NEXT_SEED\s*:\s*Math\.floor\(\s*Math\.random\(\)\s*\*\s*4294967296\s*\)/.test(nr), 'newRngs picks explicit seed, then NEXT_SEED, then Math.random');
+  // whole function body by brace matching (works for minified and formatted source)
+  const fn = (name) => {
+    const i = html.indexOf(`function ${name}(`);
+    let j = html.indexOf('{', i), depth = 0;
+    for (; j < html.length; j++) { if (html[j] === '{') depth++; else if (html[j] === '}' && --depth === 0) break; }
+    return html.slice(i, j + 1);
+  };
   const code = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
   // visual code draws only from the visual stream
   assert.ok(/vrand\(\)/.test(fn('fxBurst')) && !/crand\(\)/.test(fn('fxBurst')));
@@ -164,7 +172,9 @@ test('regression: the current code reproduces the recorded "after" baseline exac
     const s = scenario(id);
     const now = runTrace(s);
     assert.equal(now.digest, rec.digest, `${id}: combat changed (digest)`);
-    for (const k of ['outcome', 'stats', 'spawns', 'projectiles', 'bossRain', 'inputs', 'checkpoints']) assert.deepEqual(now[k], rec[k], `${id}: ${k}`);
+    // facultyId is a label that was renamed on purpose in commit 8d4024e (MUSIC->MS, SC2->SS, MUIC->IC); it never affects combat
+    const noLabel = (st) => ({ ...st, rows: st.rows.map(({ facultyId, ...r }) => r) });
+    for (const k of ['outcome', 'stats', 'spawns', 'projectiles', 'bossRain', 'inputs', 'checkpoints']) assert.deepEqual(k === 'stats' ? noLabel(now[k]) : now[k], k === 'stats' ? noLabel(rec[k]) : rec[k], `${id}: ${k}`);
     assert.deepEqual(now.rng.combat, rec.rng.combat, `${id}: combat RNG state`);
   }
 });

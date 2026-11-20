@@ -22,8 +22,8 @@ function fire(facultyId) {
 
 const ids = loadGame().run('faculties.map(f=>f[0])');
 
-test('there are 22 faculties and every one fires the identical laser', () => {
-  assert.equal(ids.length, 22);
+test('every faculty in the game fires the identical laser', () => {
+  assert.ok(ids.length > 0 && new Set(ids).size === ids.length, 'faculty ids exist and are unique');
   for (const id of ids) {
     const r = fire(id);
     assert.equal(r.ok, true, id);

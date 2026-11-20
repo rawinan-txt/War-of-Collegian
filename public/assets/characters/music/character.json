@@ -2,7 +2,7 @@
   "$schema": "../character.schema.json",
   "id": "music",
   "name": "Sound Wave",
-  "faculty": "MUSIC",
+  "faculty": "MS",
   "art": "builtin",
   "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
   "anchors": {

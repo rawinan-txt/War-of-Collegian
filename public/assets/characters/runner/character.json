@@ -2,7 +2,7 @@
   "$schema": "../character.schema.json",
   "id": "runner",
   "name": "Ace Runner",
-  "faculty": "SC2",
+  "faculty": "SS",
   "art": "builtin",
   "notes": "Placeholder art (generated sheets); only the skill effect and its anchor come from this file until the sprites are migrated.",
   "anchors": {

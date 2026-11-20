@@ -7,27 +7,24 @@ const path = require('node:path');
 const ROOT = path.join(__dirname, '..', '..');
 const HTML = path.join(ROOT, 'index.html');
 
-function readConstants(html = fs.readFileSync(HTML, 'utf8')) {
-  const num = (name) => {
-    const m = html.match(new RegExp(`\\b${name}=([0-9]*\\.?[0-9]+)`));
-    if (!m) throw new Error(`cannot find constant ${name} in index.html`);
-    return parseFloat(m[1]);
-  };
-  const pt = (name) => {
-    const m = html.match(new RegExp(`${name}=\\[(-?\\d+),(-?\\d+)\\]`));
-    if (!m) throw new Error(`cannot find ${name} in index.html`);
-    return [parseInt(m[1], 10), parseInt(m[2], 10)];
-  };
-  const corpse = html.match(/corpses=b\.corpses\.filter\(c=>c\.t<([0-9]*\.?[0-9]+)\)/);
-  if (!corpse) throw new Error('cannot find the corpse lifetime in index.html');
+// Values come from the running game (headless harness), so the code can be reformatted freely without breaking this.
+// The corpse lifetime is measured: a corpse is stepped with the real update() until the game removes it.
+function readConstants() {
+  const g = require(path.join(ROOT, 'tests', 'harness')).loadGame(1, { lazy: true });
+  const J = (code) => JSON.parse(g.run(`JSON.stringify(${code})`));
+  g.run("team=['bug'];screen='battle';startBattle(1)");
+  g.run("battle.corpses=[{id:'bug',x:0,y:0,t:0,ally:true}]");
+  let steps = 0;
+  while (J('battle.corpses.length') > 0 && steps < 1000) { g.run('update(0.01)'); steps++; }
+  if (steps >= 1000) throw new Error('the game never removed a corpse');
   return {
-    attackDuration: num('ATK_DUR'),
-    impactDelay: num('IMPACT_DELAY'),
-    skillDuration: num('SKILL_DUR'),
-    skillImpact: num('SKILL_IMPACT'),
-    hurtDuration: num('HURT_DUR'),
-    corpseLife: parseFloat(corpse[1]),
-    muzzle: pt('DEFAULT_MUZZLE'),
+    attackDuration: J('ATK_DUR'),
+    impactDelay: J('IMPACT_DELAY'),
+    skillDuration: J('SKILL_DUR'),
+    skillImpact: J('SKILL_IMPACT'),
+    hurtDuration: J('HURT_DUR'),
+    corpseLife: Math.round(steps * 10) / 1000,
+    muzzle: J('DEFAULT_MUZZLE'),
   };
 }
 

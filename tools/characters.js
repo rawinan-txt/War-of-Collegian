@@ -361,7 +361,8 @@ function check(root, { only = null, smoke = true, game = true } = {}) {
   if (!only) {
     const g = generate(root);
     if (!g.problems.length) {
-      const read = (f) => (fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.join(root, f), 'utf8') : null);
+      // line endings are a checkout setting (Windows autocrlf), not content: compare with LF
+      const read = (f) => (fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.join(root, f), 'utf8').split(String.fromCharCode(13, 10)).join(String.fromCharCode(10)) : null);
       if (read('sprites.json') !== g.sprites) E('generated', 'sprites.json is out of date; run: node tools/characters.js build');
       if (read('manifest.js') !== g.manifest) E('generated', 'manifest.js is out of date; run: node tools/characters.js build');
       if (read('fx.js') !== g.fxJs) E('generated', 'fx.js is out of date; run: node tools/characters.js build');

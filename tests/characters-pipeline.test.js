@@ -75,7 +75,9 @@ test('the pipeline generates sprites.json and manifest.js identical to the shipp
   fs.writeFileSync(path.join(root, 'sprites.json'), JSON.stringify({ version: 1, characters: {} }, null, 2) + '\n');
   const r = pipe.build(root);
   assert.ok(r.ok, JSON.stringify(r.problems));
-  for (const f of ['sprites.json', 'manifest.js']) assert.equal(fs.readFileSync(path.join(root, f), 'utf8'), fs.readFileSync(path.join(SHIPPED, f), 'utf8'), f);
+  // compared with LF line endings: a Windows checkout may store the shipped files as CRLF, which is not a content difference
+  const lf = (p) => fs.readFileSync(p, 'utf8').split(String.fromCharCode(13, 10)).join(String.fromCharCode(10));
+  for (const f of ['sprites.json', 'manifest.js']) assert.equal(lf(path.join(root, f)), lf(path.join(SHIPPED, f)), f);
   const fxOf = (dir) => { const c = {}; new Function('globalThis', fs.readFileSync(path.join(dir, 'fx.js'), 'utf8'))(c); return c.CHARACTER_FX; };
   assert.deepEqual(fxOf(root).bug, fxOf(SHIPPED).bug, 'effect data of the character');
 });

@@ -158,13 +158,13 @@ test('all 12 heroes and the dog have sprite sheets in the agreed folders', () =>
 });
 
 test('config matches the game roster: every hero id has a sprite config and the same skillMode', () => {
-  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  const ids = [...src.matchAll(/\{id:'(\w+)',name:'[^']+',f:'/g)].map((m) => m[1]);
+  const g = require('./harness').loadGame(1, { lazy: true });
+  const ids = JSON.parse(g.run('JSON.stringify(heroes.map(h=>h.id))'));
   assert.deepEqual(ids.sort(), [...HERO_IDS].sort());
   for (const id of ids) {
-    const m = src.match(new RegExp(`${id}:'(onDeploy|onPulse|onStack|every3)'`));
-    assert.ok(m, `SKILL_MODE for ${id}`);
-    assert.equal(cfg[id].skillMode, m[1], id);
+    const mode = g.run(`SKILL_MODE[${JSON.stringify(id)}]`);
+    assert.ok(['onDeploy', 'onPulse', 'onStack', 'every3'].includes(mode), `SKILL_MODE for ${id}`);
+    assert.equal(cfg[id].skillMode, mode, id);
   }
 });
 
