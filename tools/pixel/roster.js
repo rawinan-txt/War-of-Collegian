@@ -193,7 +193,7 @@ const dental = base({
 
 // ---------- Sound Wave (Music): bass guitar ----------
 const music = base({
-  id: 'music', name: 'sound_wave', title: 'Sound Wave', faculty: 'MUSIC', folder: 'music/sound_wave', skillMode: 'every3', attackStyle: 'strum',
+  id: 'music', name: 'sound_wave', title: 'Sound Wave', faculty: 'MS', folder: 'music/sound_wave', skillMode: 'every3', attackStyle: 'strum',
   look: { ...STUDENT, hair: '#6b3fb0', hairHi: '#a47ae0', hairShade: '#4f2d8a', hairStyle: 'long', hairLen: 34, iris: '#a050e0', irisHi: '#e0b0ff', bottom: '#3a2a5a', bottomType: 'trousers', shoes: '#2d2a45', accent: '#ff7ad9' },
   acc: {
     body(buf, p, { tx, ty }) {
@@ -225,7 +225,7 @@ const music = base({
 
 // ---------- Ace Runner (Sports Science): headband, sprint ----------
 const runner = base({
-  id: 'runner', name: 'ace_runner', title: 'Ace Runner', faculty: 'SC2', folder: 'sports/ace_runner', skillMode: 'onDeploy', attackStyle: 'thrust',
+  id: 'runner', name: 'ace_runner', title: 'Ace Runner', faculty: 'SS', folder: 'sports/ace_runner', skillMode: 'onDeploy', attackStyle: 'thrust',
   look: { ...STUDENT, hair: '#7a4a2e', hairHi: '#b8805a', hairShade: '#5a3420', hairStyle: 'spiky', iris: '#a0402a', irisHi: '#f0a070', bottom: '#23233a', bottomType: 'trousers', shoes: '#ffffff', accent: '#2f7bff', lanyard: '#2f7bff' },
   acc: {
     body(buf, p, { tx, ty }) { buf.rect(CX - 6 + tx, 41 + ty, 12, 1, '#2f7bff'); },
@@ -251,7 +251,7 @@ const runner = base({
 
 // ---------- Global Exchange (MUIC): blazer, globe ----------
 const global = base({
-  id: 'global', name: 'global_exchange', title: 'Global Exchange', faculty: 'MUIC', folder: 'muic/global_exchange', skillMode: 'onDeploy', attackStyle: 'cast',
+  id: 'global', name: 'global_exchange', title: 'Global Exchange', faculty: 'IC', folder: 'muic/global_exchange', skillMode: 'onDeploy', attackStyle: 'cast',
   look: { ...STUDENT, hair: '#f1cf7a', hairHi: '#fff0b8', hairShade: '#d4aa50', hairStyle: 'long', hairLen: 36, hairFlare: 1, iris: '#3a8fff', irisHi: '#9fd0ff', bottom: '#2f3a5a', bottomType: 'skirt', shoes: '#2d2a45', accent: '#69aaff' },
   acc: {
     body(buf, p, { tx, ty }) { buf.rect(CX - 7 + tx, 40 + ty, 4, 7, '#2f5aa8'); buf.rect(CX + 3 + tx, 40 + ty, 4, 7, '#2f5aa8'); buf.rect(CX - 7 + tx, 40 + ty, 2, 7, '#69aaff'); buf.set(CX + 4 + tx, 43 + ty, '#ffd45a'); },

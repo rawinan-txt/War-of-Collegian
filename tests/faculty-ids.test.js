@@ -78,3 +78,49 @@ test('the recorded combat baseline is still checked (rng-separation regression),
   assert.ok(/for \(const k of \['outcome', 'stats', 'spawns', 'projectiles', 'bossRain', 'inputs', 'checkpoints'\]\)/.test(src), 'outcome, spawns, projectiles and boss rain are still compared exactly');
   assert.ok(/assert\.equal\(now\.digest, rec\.digest/.test(src), 'the whole-battle digest is still compared exactly');
 });
+
+// ---------------------------------------------------------------- legacy sprite configuration (roster.js -> animations.json / animations.js)
+const ROOT = path.join(__dirname, '..');
+const { CHARACTERS } = require('../tools/pixel/characters');
+const { COUNTS, FPS, REPEAT } = require('../tools/pixel/anims');
+const animsJson = () => JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'characters', 'animations.json'), 'utf8')).characters;
+const animsJs = () => { const o = {}; new Function('globalThis', fs.readFileSync(path.join(ROOT, 'assets', 'characters', 'animations.js'), 'utf8'))(o); return o.CHARACTER_ANIMS; };
+
+test('roster.js faculty ids match the faculty the game gives each hero', () => {
+  const heroes = heroTable(game());
+  for (const hero of heroes) {
+    const def = CHARACTERS[hero.id];
+    assert.ok(def, `${hero.id} is in roster.js`);
+    assert.equal(def.faculty, hero.f, `${hero.id}: roster.js faculty ${def.faculty} must equal the game's ${hero.f}`);
+  }
+});
+
+test('animations.json and animations.js agree with roster.js and with each other (all 12 heroes + the dog)', () => {
+  const json = animsJson(), js = animsJs();
+  assert.deepEqual(Object.keys(json).sort(), [...Object.keys(CHARACTERS)].sort(), 'same characters as the source roster');
+  assert.equal(Object.keys(json).length, 13);
+  assert.deepEqual(js, json, 'animations.js is exactly the generated twin of animations.json');
+  for (const [id, def] of Object.entries(CHARACTERS)) assert.equal(json[id].faculty, def.faculty, `${id}: faculty in the generated files = roster.js`);
+});
+
+test('the three heroes whose faculty ids were renamed carry the new ids everywhere', () => {
+  const json = animsJson(), js = animsJs();
+  for (const [id, f] of [['global', 'IC'], ['music', 'MS'], ['runner', 'SS']]) {
+    assert.equal(CHARACTERS[id].faculty, f, `${id} roster.js`);
+    assert.equal(json[id].faculty, f, `${id} animations.json`);
+    assert.equal(js[id].faculty, f, `${id} animations.js`);
+  }
+});
+
+test('generated sprite configuration still carries the exact combat timing: skill mode, impact frames, frame counts and rates', () => {
+  const g = game(), json = animsJson(), js = animsJs();
+  for (const id of Object.keys(json)) {
+    assert.deepEqual(js[id].impact, CHARACTERS[id].impact, `${id}: impact frames`);
+    if (id !== 'dog') assert.equal(js[id].skillMode, g.run(`SKILL_MODE[${JSON.stringify(id)}]`), `${id}: skill mode equals the game's`);
+    for (const a of Object.keys(COUNTS)) {
+      const d = js[id].anims[a];
+      assert.deepEqual([d.frameCount, d.frameRate, d.repeat], [COUNTS[a], FPS[a], REPEAT[a]], `${id}.${a}: frame count, rate and repeat`);
+      assert.ok(fs.existsSync(path.join(ROOT, d.sheet)), `${id}.${a}: sheet file exists`);
+    }
+  }
+});

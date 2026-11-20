@@ -424,7 +424,7 @@
     },
     "music": {
       "name": "Sound Wave",
-      "faculty": "MUSIC",
+      "faculty": "MS",
       "folder": "music/sound_wave",
       "skillMode": "every3",
       "impact": {
@@ -484,7 +484,7 @@
     },
     "runner": {
       "name": "Ace Runner",
-      "faculty": "SC2",
+      "faculty": "SS",
       "folder": "sports/ace_runner",
       "skillMode": "onDeploy",
       "impact": {
@@ -544,7 +544,7 @@
     },
     "global": {
       "name": "Global Exchange",
-      "faculty": "MUIC",
+      "faculty": "IC",
       "folder": "muic/global_exchange",
       "skillMode": "onDeploy",
       "impact": {
