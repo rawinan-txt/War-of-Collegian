@@ -534,7 +534,35 @@ body:has(#faculty:not(.hidden)) .app > .footer { display: none; }
 #faculty .info-hint { background:rgba(7,27,79,.66); }
 #faculty .faculty-option { background:linear-gradient(180deg,rgba(44,83,170,.81),rgba(28,54,126,.79)); }
 #faculty .faculty-option.selected { background:rgba(54,95,186,.86); }
-</style><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/kanit-thai-400-normal.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/mitr-thai-600-normal.woff2"><link rel="preload" as="image" href="public/assets/ui/logo.webp"><link rel="stylesheet" href="public/assets/ui/ui.css"></head><body>
+</style><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/kanit-thai-400-normal.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="public/assets/fonts/mitr-thai-600-normal.woff2"><link rel="preload" as="image" href="public/assets/ui/logo.webp"><link rel="stylesheet" href="public/assets/ui/ui.css"><style>
+.syn-heading{display:flex;align-items:center;gap:9px}.syn-help{width:21px;height:21px;border-radius:50%;padding:0;background:#75849f;color:white;font-size:13px;border:1px solid #b1bfd6;line-height:19px}.syn-help:hover{background:#a4b0c5}.syn-dialog{max-width:min(490px,92vw);width:100%;border:1px solid #7197d5;border-radius:18px;padding:24px;background:#142857;color:#f5f8ff;box-shadow:0 20px 80px #000b}.syn-dialog::backdrop{background:#02091bc9;backdrop-filter:blur(5px)}.syn-dialog-head{display:flex;align-items:center;justify-content:space-between}.syn-dialog-head h2{margin:0;color:#ffd35d}.syn-close{padding:2px 11px;background:#314c7e;color:white;font-size:24px}.syn-entry{padding:12px;margin:12px 0;background:#0c1a3d;border:1px solid #36588b;border-radius:12px}.syn-entry strong{color:#ffdb7b}.syn-entry p{margin:6px 0 0;font-size:13px;line-height:1.6}.syn-dialog>p{font-size:13px;color:#c6d9f6}.ccard{position:relative}.role-badge{position:absolute;right:7px;bottom:7px;z-index:4;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;font-size:17px;font-weight:900;border:2px solid #ffffffa6;color:white;box-shadow:0 2px 5px #0008}.role-dps{background:#dc334b}.role-tank{background:#259de7}.role-healer{background:#17b96d}.role-support{background:#914de2}.role-mini{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;color:white;font-weight:900}.tslot{position:relative}.tslot .role-badge{width:17px;height:17px;font-size:11px;right:3px;bottom:3px}.star-filter output{font-size:12px;color:#ffda67}.star-filter input[type=range]{width:100%;accent-color:#ffce40;cursor:pointer;margin:10px 0 3px}.star-scale{display:flex;justify-content:space-between;font-size:11px;color:#aec7ee}
+
+/* Team builder: unselected heroes are vivid, selected heroes recede. */
+#teamGrid .ccard{filter:brightness(1.13) saturate(1.12);transition:filter .22s ease,transform .2s ease,box-shadow .2s ease,opacity .2s ease}
+#teamGrid .ccard.sel{filter:brightness(.66) saturate(.72);opacity:.88}
+#teamGrid .ccard.sel:hover{filter:brightness(.85) saturate(.9)}
+#teamGrid .ccard:not(.sel):hover{filter:brightness(1.23) saturate(1.2);transform:translateY(-3px)}
+#teamGrid .ccard.dragging,#teamSlots .tslot.dragging{opacity:.4}
+/* Explicit state keeps the initial paint identical to subsequent selections. */
+#teamGrid .ccard[data-selected="true"]{filter:brightness(.66) saturate(.72);opacity:.88}
+#teamGrid .ccard[data-selected="false"]{filter:brightness(1.13) saturate(1.12);opacity:1}
+#teamGrid .ccard[data-selected="true"]:hover{filter:brightness(.85) saturate(.9)}
+#teamGrid .ccard[data-selected="false"]:hover{filter:brightness(1.23) saturate(1.2)}
+#teamGrid .ccard{cursor:grab}
+#teamGrid .ccard:active{cursor:grabbing}
+#teamSlots .tslot{transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;min-width:0}
+#teamSlots.drop-ready .tslot{outline:1px dashed #82c9ff;outline-offset:-3px}
+#teamSlots .tslot.drag-over{background:#3175b7!important;border-color:#ffe16a!important;box-shadow:0 0 0 3px #ffd65c99,inset 0 0 20px #64c6ff66;transform:scale(1.045)}
+#teamSlots .tslot.empty{cursor:default}
+#teamSlots .drop-hint{font-size:10px;color:#b2d3ff;text-align:center;line-height:1.3}
+/* Slider thumb stays mounted during dragging; only commit filtering on release. */
+.star-filter input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:9px;border-radius:999px;outline:none;cursor:pointer;touch-action:pan-y;background:linear-gradient(to right,#ffd04a 0%,#ffd04a var(--star-progress,0%),#344b73 var(--star-progress,0%),#344b73 100%);transition:background-color .2s}
+.star-filter input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#ffdb65;border:3px solid #ffeeb0;box-shadow:0 2px 9px #0008;transition:box-shadow .18s,transform .18s}
+.star-filter input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#ffdb65;border:3px solid #ffeeb0;box-shadow:0 2px 9px #0008;transition:box-shadow .18s,transform .18s}
+.star-filter input[type=range]:hover::-webkit-slider-thumb,.star-filter input[type=range]:focus-visible::-webkit-slider-thumb{transform:scale(1.15);box-shadow:0 0 0 5px #ffd65c33,0 2px 9px #0008}
+.star-filter input[type=range]:focus-visible{outline:2px solid #a4d6ff;outline-offset:5px}
+@media(hover:none){#teamGrid .ccard,#teamSlots .tslot.filled{touch-action:pan-y}}
+</style></head><body>
 <div id="boot" role="status" aria-label="กำลังโหลด War of Collegian"><div class="boot-logo"><img src="public/assets/ui/logo.webp" alt="War of Collegian" width="1376" height="768" decoding="async" fetchpriority="high"></div></div><script src="public/assets/ui/boot.js"></script>
 <div class="app">
 <div id="curtain" aria-hidden="true"></div>
@@ -583,7 +611,7 @@ body:has(#faculty:not(.hidden)) .app > .footer { display: none; }
 <div><h3>ทีมของคุณ</h3>
 <div id="teamSlots" class="tb-slots"></div>
 <p id="teamCount" class="status"></p></div>
-<div><h3>Synergy</h3>
+<div><h3 class="syn-heading">Synergy <button type="button" class="syn-help" onclick="openSynergyHelp()" aria-label="ดูข้อมูล Synergy">?</button></h3>
 <div id="teamSyn" class="status"></div></div>
 <div><h3>Ultimate (เลือก 1 อย่าง)</h3>
 <div id="ultPick" class="grid"></div>
@@ -1513,30 +1541,39 @@ function portrait(h, cls){
     return '<span class="'+cls+' spr-box"><img src="'+a.sheet+'" alt="" loading="lazy" decoding="async" draggable="false" style="width:'+(a.frameCount*100)+'%"></span>'
 }
 /* Team Builder collection state (kept while the player moves between screens) */
-const TB={q:'', fac:'', role:'', stars:{}, sort:'default', focus:null};
+const ROLE_INFO={DPS:{icon:'⚔',label:'DPS'},Tank:{icon:'⬟',label:'Tank'},Healer:{icon:'✚',label:'Healer'},Support:{icon:'✦',label:'Support'}};
+const HERO_ROLES={bug:'DPS',mecha:'Tank',lab:'DPS',night:'Healer',chem:'DPS',animal:'Support',dental:'DPS',music:'Support',runner:'DPS',global:'Support',public:'Tank',nurse:'Healer'};
+function heroRole(h){return HERO_ROLES[h.id]||'DPS'}
+function roleBadge(h){const r=heroRole(h), info=ROLE_INFO[r];return `<span class="role-badge role-${r.toLowerCase()}" title="${info.label}" aria-label="บทบาท ${info.label}">${info.icon}</span>`}
+function openSynergyHelp(){
+ const list=document.getElementById('synHelpList');
+ list.innerHTML=SYNERGIES.map(s=>`<article class="syn-entry"><strong>${s.name}</strong><p>${s.desc}</p></article>`).join('');
+ document.getElementById('synergyHelp').showModal();
+}
+const TB={q:'', fac:'', role:'', minStar:1, sort:'default', sortDir:'asc', focus:null};
 function filterHeroes(list, st){
-    const q=(st.q||'').trim().toLowerCase(), anyStar=Object.keys(st.stars||{}).some(k=>st.stars[k]);
-    const out=list.filter(h=>(!q||(h.name+' '+h.skill+' '+h.desc+' '+h.f).toLowerCase().includes(q))&&(!st.fac||h.f===st.fac)&&(!st.role||h.type===st.role)&&(!anyStar||st.stars[h.star]));
-    const by=({star:(a, b)=>b.star-a.star||a.cost-b.cost, cost:(a, b)=>a.cost-b.cost||b.star-a.star, fac:(a, b)=>a.f.localeCompare(b.f)||b.star-a.star})[st.sort];
-    return by?out.slice().sort(by):out
+    const q=(st.q||'').trim().toLowerCase();
+    const out=list.filter(h=>(!q||(h.name+' '+h.skill+' '+h.desc+' '+h.f).toLowerCase().includes(q))&&(!st.fac||h.f===st.fac)&&(!st.role||heroRole(h)===st.role)&&h.star>=st.minStar);
+    const comparators={star:(a,b)=>a.star-b.star||a.cost-b.cost,cost:(a,b)=>a.cost-b.cost||a.star-b.star,fac:(a,b)=>a.f.localeCompare(b.f)||a.star-b.star,default:(a,b)=>heroes.indexOf(a)-heroes.indexOf(b)};
+    return out.slice().sort((a,b)=>comparators[st.sort](a,b)*(st.sortDir==='asc'?1:-1));
 }
-function tbSet(k, v){
-    if(k==='q'||k==='sort')TB[k]=v;
+function tbSet(k,v){
+    if(k==='sort'){
+        if(TB.sort===v)TB.sortDir=TB.sortDir==='asc'?'desc':'asc';
+        else {TB.sort=v;TB.sortDir=v==='default'?'asc':'desc';}
+    }else if(k==='q')TB.q=v;
     else TB[k]=TB[k]===v?'':v;
-    renderTeam()
+    renderTeam();
 }
-function tbStar(n){
-    TB.stars[n]=!TB.stars[n];
-    renderTeam()
+function tbPreviewStar(input){
+    const value=Number(input.value);
+    document.getElementById('starValue').textContent=value+' ★ ขึ้นไป';
+    input.style.setProperty('--star-progress',((value-1)/4*100)+'%');
 }
+function tbSetStar(v){TB.minStar=Number(v);renderTeam()}
 function tbClear(){
-    TB.q='';
-    TB.fac='';
-    TB.role='';
-    TB.stars={};
-    TB.sort='default';
-    document.getElementById('tbSearch').value='';
-    renderTeam()
+    Object.assign(TB,{q:'',fac:'',role:'',minStar:1,sort:'default',sortDir:'asc'});
+    document.getElementById('tbSearch').value='';renderTeam();
 }
 function tbFocusHero(id){
     TB.focus=id;
@@ -1544,33 +1581,33 @@ function tbFocusHero(id){
     if(h)document.getElementById('tbFocus').innerHTML=focusHtml(h)
 }
 function focusHtml(h){
-    return `<div class="fp" style="--fc:${facColor(h.f)}">${portrait(h,'')}</div><div><h3>${h.name} ${starsHtml(h.star)}</h3><div class="cmeta" style="justify-content:flex-start"><span class="cfac">${h.f}</span><span>${ROLE_TH[h.type]||h.type}</span><span>${h.cost} AT</span></div><p><span class="sk">${h.skill}</span> · ${h.desc}</p></div><div class="tb-stats"><div><span>HP</span><b>${h.hp}</b></div><div><span>ATK</span><b>${h.atk}</b></div><div><span>ระยะ</span><b>${h.range}</b></div></div>`
+    return `<div class="fp" style="--fc:${facColor(h.f)}">${portrait(h,'')}</div><div><h3>${h.name} ${starsHtml(h.star)}</h3><div class="cmeta" style="justify-content:flex-start"><span class="cfac">${h.f}</span><span>${heroRole(h)}</span><span>${h.cost} AT</span></div><p><span class="sk">${h.skill}</span> · ${h.desc}</p></div><div class="tb-stats"><div><span>HP</span><b>${h.hp}</b></div><div><span>ATK</span><b>${h.atk}</b></div><div><span>ระยะ</span><b>${h.range}</b></div></div>`
 }
 function renderTbFilters(){
-    const facs=[...new Set(heroes.map(h=>h.f))], roles=[...new Set(heroes.map(h=>h.type))];
-    const chip=(on, onclick, label, extra, fc)=>`<button type="button" class="fchip ${fc?'':'plain'} ${on?'on':''}" ${fc?'style="--fc:'+fc+'"':''} aria-pressed="${on}" onclick="${onclick}">${label}${extra||''}</button>`;
-    let h='<div><h4>คณะ</h4><div class="chips">'+facs.map(f=>chip(TB.fac===f, "tbSet('fac','"+f+"')", f, '<span class="n">'+heroes.filter(x=>x.f===f).length+'</span>', facColor(f))).join('')+'</div></div>';
-    h+='<div><h4>ดาว</h4><div class="chips">'+[1, 2, 3, 4, 5].map(n=>chip(!!TB.stars[n], 'tbStar('+n+')', n+'★')).join('')+'</div></div>';
-    h+='<div><h4>บทบาท</h4><div class="chips">'+roles.map(r=>chip(TB.role===r, "tbSet('role','"+r+"')", ROLE_TH[r]||r)).join('')+'</div></div>';
-    h+='<div><h4>เรียงตาม</h4><div class="chips">'+[['default', 'ค่าเริ่มต้น'], ['star', 'ดาว'], ['cost', 'ต้นทุน AT'], ['fac', 'คณะ']].map(([k, l])=>chip(TB.sort===k, "tbSet('sort','"+k+"')", l)).join('')+'</div></div>';
-    const active=TB.q||TB.fac||TB.role||TB.sort!=='default'||Object.keys(TB.stars).some(k=>TB.stars[k]);
+    const facs=[...new Set(heroes.map(h=>h.f))];
+    const chip=(on,onclick,label,extra,fc)=>`<button type="button" class="fchip ${fc?'':'plain'} ${on?'on':''}" ${fc?'style="--fc:'+fc+'"':''} aria-pressed="${on}" onclick="${onclick}">${label}${extra||''}</button>`;
+    let h='<div><h4>คณะ</h4><div class="chips">'+facs.map(f=>chip(TB.fac===f,"tbSet('fac','"+f+"')",f,'<span class="n">'+heroes.filter(x=>x.f===f).length+'</span>',facColor(f))).join('')+'</div></div>';
+    h+=`<div class="star-filter"><h4>ดาว <output id="starValue">${TB.minStar} ★ ขึ้นไป</output></h4><input aria-label="ดาวขั้นต่ำ" type="range" min="1" max="5" step="1" value="${TB.minStar}" oninput="tbPreviewStar(this)" onchange="tbSetStar(this.value)" style="--star-progress:${(TB.minStar-1)*25}%"><div class="star-scale"><span>1 ★</span><span>5 ★</span></div></div>`;
+    h+='<div><h4>บทบาท</h4><div class="chips">'+Object.keys(ROLE_INFO).map(r=>chip(TB.role===r,"tbSet('role','"+r+"')",`<span class="role-mini role-${r.toLowerCase()}">${ROLE_INFO[r].icon}</span> ${r}`)).join('')+'</div></div>';
+    h+='<div><h4>เรียงตาม</h4><div class="chips">'+[['default','ค่าเริ่มต้น'],['star','ดาว'],['cost','ต้นทุน AT'],['fac','คณะ']].map(([k,l])=>chip(TB.sort===k,"tbSet('sort','"+k+"')",l+(TB.sort===k?(TB.sortDir==='asc'?' ↑':' ↓'):' ↕'))).join('')+'</div></div>';
+    const active=TB.q||TB.fac||TB.role||TB.sort!=='default'||TB.sortDir!=='asc'||TB.minStar!==1;
     if(active)h+='<div><button type="button" class="secondary" onclick="tbClear()">ล้างตัวกรอง</button></div>';
-    document.getElementById('tbFilters').innerHTML=h
+    document.getElementById('tbFilters').innerHTML=h;
 }
 function renderTeam(){
     ensureSprites(spriteIdsFor(team));
     const full=team.length>=6, list=filterHeroes(heroes, TB);
     renderTbFilters();
     document.getElementById('tbCount').textContent=heroes.length;
-    document.getElementById('tbCountNote').textContent=list.length===heroes.length?'เลื่อนเพื่อดูเพิ่ม · คลิกเพื่อเพิ่มเข้าทีม':`แสดง ${list.length} จาก ${heroes.length}`;
+    document.getElementById('tbCountNote').textContent=list.length===heroes.length?'ลากตัวละครไปวางในช่องทีม · คลิกเพื่อเลือก':`แสดง ${list.length} จาก ${heroes.length}`;
     document.getElementById('teamGrid').innerHTML=list.length?list.map(h=>{
         const on=team.includes(h.id);
-        return `<div class="ccard r${h.star} ${on?'sel':''} ${full?'full':''}" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-pressed="${on}" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}" onmouseenter="tbFocusHero('${h.id}')" onfocus="tbFocusHero('${h.id}')"><span class="ccoin">${h.cost}</span><div class="cin"><div class="cportrait">${portrait(h,'')}</div><div class="cribbon" title="${h.name}">${h.name}</div>${starsHtml(h.star)}<div class="cmeta"><span class="cfac">${h.f}</span><span>${ROLE_TH[h.type]||h.type}</span></div></div></div>`
+        return `<div data-selected="${on?'true':'false'}" class="ccard r${h.star} ${on?'sel':''} ${full?'full':''}" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-pressed="${on}" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}" draggable="true" data-hero="${h.id}" ondragstart="tbDragStart(event,'${h.id}')" ondragend="tbDragEnd()" onmouseenter="tbFocusHero('${h.id}')" onfocus="tbFocusHero('${h.id}')"><span class="ccoin">${h.cost}</span><div class="cin"><div class="cportrait">${portrait(h,'')}</div>${roleBadge(h)}<div class="cribbon" title="${h.name}">${h.name}</div>${starsHtml(h.star)}<div class="cmeta"><span class="cfac">${h.f}</span><span>${heroRole(h)}</span></div></div></div>`
     }).join(''):'<div class="tb-empty"><b>ไม่พบตัวละครที่ตรงกัน</b>ลองลบตัวกรองบางอย่าง หรือล้างทั้งหมด<br><br><button type="button" class="secondary" onclick="tbClear()">ล้างตัวกรอง</button></div>';
     let slots='';
     for(let i=0;i<6;i++){
         const h=heroes.find(x=>x.id===team[i]);
-        slots+=h?`<div class="tslot filled" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-label="เอา ${h.name} ออกจากทีม" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}"><span class="n">${i+1}</span>${portrait(h,'e')}<span class="nm">${h.name}</span><span class="ct">${h.cost} AT</span></div>`:`<div class="tslot"><span class="n">${i+1}</span><span>ว่าง</span></div>`
+        slots+=h?`<div class="tslot filled" data-slot="${i}" draggable="true" ondragstart="tbDragStart(event,'${h.id}')" ondragend="tbDragEnd()" ondragover="tbDragOver(event)" ondragleave="tbDragLeave(event)" ondrop="tbDrop(event,${i})" style="--fc:${facColor(h.f)}" role="button" tabindex="0" aria-label="เอา ${h.name} ออกจากทีม" onclick="toggleHero('${h.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHero('${h.id}')}"><span class="n">${i+1}</span>${portrait(h,'e')}${roleBadge(h)}<span class="nm">${h.name}</span><span class="ct">${h.cost} AT</span></div>`:`<div class="tslot empty" data-slot="${i}" ondragover="tbDragOver(event)" ondragleave="tbDragLeave(event)" ondrop="tbDrop(event,${i})"><span class="n">${i+1}</span><span class="drop-hint">+ วางตัวละคร</span></div>`
     }
     document.getElementById('teamSlots').innerHTML=slots;
     const fh=heroes.find(x=>x.id===TB.focus)||heroes.find(x=>x.id===team[0])||heroes[0];
@@ -1583,6 +1620,79 @@ function renderTeam(){
     const sl=team.length?calcSynergies(team):[];
     document.getElementById('teamSyn').innerHTML=sl.length?'<b>Synergy ที่ติดอยู่</b><br>'+sl.map(s=>`${stripIcon(s.name)} — ${s.desc}`).join('<br>'):'ไม่มี Synergy'
 }
+// Drag cards into team slots; occupied slots are replaced or swapped.
+let tbDraggedId=null;
+let tbSuppressClick=false;
+function tbDragStart(event,id){
+    tbDraggedId=id;
+    event.dataTransfer.effectAllowed='move';
+    event.dataTransfer.setData('text/plain',id);
+    event.currentTarget.classList.add('dragging');
+    document.getElementById('teamSlots').classList.add('drop-ready');
+}
+function tbDragEnd(){
+    tbDraggedId=null;
+    document.querySelectorAll('.dragging,.drag-over').forEach(el=>el.classList.remove('dragging','drag-over'));
+    document.getElementById('teamSlots').classList.remove('drop-ready');
+}
+function tbDragOver(event){event.preventDefault();event.dataTransfer.dropEffect='move';event.currentTarget.classList.add('drag-over')}
+function tbDragLeave(event){if(!event.currentTarget.contains(event.relatedTarget))event.currentTarget.classList.remove('drag-over')}
+function tbPlaceHero(id,slot){
+    if(!heroes.some(h=>h.id===id)||slot<0||slot>=6)return;
+    const previous=team.indexOf(id);
+    if(previous===slot)return;
+    const occupant=team[slot];
+    if(previous>=0){
+        if(occupant){team[slot]=id;team[previous]=occupant}
+        else {team.splice(previous,1);team.splice(Math.min(slot,team.length),0,id)}
+    }else if(occupant){team[slot]=id}
+    else if(team.length<6){team.splice(Math.min(slot,team.length),0,id)}
+    TB.focus=id;
+    renderTeam();
+}
+function tbDrop(event,slot){
+    event.preventDefault();
+    const id=event.dataTransfer.getData('text/plain')||tbDraggedId;
+    tbDragEnd();
+    tbPlaceHero(id,slot);
+}
+// Pointer fallback supports dragging on touchscreens as well as mouse.
+let tbPointer=null;
+document.addEventListener('pointerdown',event=>{
+    const card=event.target.closest('#teamGrid .ccard, #teamSlots .tslot.filled');
+    if(!card||event.button!==0)return;
+    const id=card.dataset.hero||(team[Number(card.dataset.slot)]);
+    if(!id)return;
+    tbPointer={id,x:event.clientX,y:event.clientY,active:false};
+});
+document.addEventListener('pointermove',event=>{
+    if(!tbPointer||event.pointerType==='mouse')return;
+    if(!tbPointer.active&&Math.hypot(event.clientX-tbPointer.x,event.clientY-tbPointer.y)>10){
+        tbPointer.active=true;
+        document.getElementById('teamSlots').classList.add('drop-ready');
+    }
+    if(!tbPointer.active)return;
+    event.preventDefault();
+    document.querySelectorAll('#teamSlots .drag-over').forEach(el=>el.classList.remove('drag-over'));
+    const slot=document.elementFromPoint(event.clientX,event.clientY)?.closest('#teamSlots .tslot');
+    if(slot)slot.classList.add('drag-over');
+},{passive:false});
+document.addEventListener('pointerup',event=>{
+    if(!tbPointer)return;
+    const drag=tbPointer;tbPointer=null;
+    if(!drag.active)return;
+    const slot=document.elementFromPoint(event.clientX,event.clientY)?.closest('#teamSlots .tslot');
+    tbDragEnd();
+    tbSuppressClick=true;
+    setTimeout(()=>{tbSuppressClick=false},80);
+    if(slot)tbPlaceHero(drag.id,Number(slot.dataset.slot));
+},true);
+document.addEventListener('pointercancel',()=>{tbPointer=null;tbDragEnd()});
+document.addEventListener('click',event=>{
+    if(tbSuppressClick&&event.target.closest('#teamGrid .ccard,#teamSlots .tslot')){
+        event.preventDefault();event.stopImmediatePropagation();tbSuppressClick=false;
+    }
+},true);
 function toggleHero(id){
     TB.focus=id;
     if(team.includes(id))team=team.filter(x=>x!==id);
@@ -2739,4 +2849,4 @@ try{
 catch(e){
 }
 requestAnimationFrame(frame);
-</script></body></html>
+</script><dialog id="synergyHelp" class="syn-dialog" onclick="if(event.target===this)this.close()"><div class="syn-dialog-head"><h2>คู่มือ Synergy</h2><button type="button" class="syn-close" onclick="document.getElementById('synergyHelp').close()" aria-label="ปิด">×</button></div><p>จัดตัวละครตามเงื่อนไขเพื่อรับโบนัส ทีมสามารถเปิดใช้งานหลาย Synergy พร้อมกันได้</p><div id="synHelpList"></div><button type="button" class="secondary" onclick="document.getElementById('synergyHelp').close()">ปิดหน้าต่าง</button></dialog></body></html>
