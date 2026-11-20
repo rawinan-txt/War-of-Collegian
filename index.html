@@ -536,7 +536,7 @@ body:has(#faculty:not(.hidden)) .app {max-width:1600px;}
 </div>
 </section>
 <div class="footer">Fan-made prototype · งานภาพเป็น Canvas Chibi placeholder เพื่อทดสอบระบบก่อนสร้าง sprites จริง · ไม่มี backend หรือการชำระเงิน</div>
-</div><script src="assets/characters/animations.js"></script><script src="public/assets/characters/fx.js"></script><script src="public/assets/characters/manifest.js"></script><script>
+</div><script src="assets/characters/animations.js"></script><script src="public/assets/characters/fx.js"></script><script src="public/assets/characters/manifest.js"></script><script src="assets/enemies/enemies.js"></script><script>
 const faculties=[['SI', 'แพทยศาสตร์ศิริราชพยาบาล', '🩺', '#5bd6a2', 'Pulse Strike'], ['RA', 'แพทยศาสตร์โรงพยาบาลรามาธิบดี', '🏥', '#59ccaa', 'Care Wave'], ['DT', 'ทันตแพทยศาสตร์', '🦷', '#73ddff', 'Toothfall'], ['PY', 'เภสัชศาสตร์', '💊', '#ec85bc', 'Potion Burst'], ['NS', 'พยาบาลศาสตร์', '👩\u200d⚕️', '#ffa3be', 'Nursing Pulse'], ['SC', 'วิทยาศาสตร์', '🧪', '#bb83ff', 'Chemical Burst'], ['PH', 'สาธารณสุขศาสตร์', '🛡️', '#5acbb9', 'Guardian Wave'], ['MT', 'เทคนิคการแพทย์', '🔬', '#89b4ff', 'Scan Burst'], ['PT', 'กายภาพบำบัด', '🦿', '#87c4aa', 'Motion Wave'], ['TM', 'เวชศาสตร์เขตร้อน', '🦠', '#b5d56d', 'Bio Storm'], ['EG', 'วิศวกรรมศาสตร์', '⚙️', '#ffae44', 'Missile Strike'], ['EN', 'สิ่งแวดล้อมและทรัพยากรศาสตร์', '🌱', '#8bd98b', 'Nature Surge'], ['VS', 'สัตวแพทยศาสตร์', '🐾', '#8de7ac', 'Animal Stampede'], ['ICT', 'เทคโนโลยีสารสนเทศและการสื่อสาร', '💻', '#39c5ff', 'Digital Beam'], ['LA', 'ศิลปศาสตร์', '📖', '#ffbc88', 'Word Storm'], ['SH', 'สังคมศาสตร์และมนุษยศาสตร์', '🗣️', '#dda5ff', 'Voice Wave'], ['IC', 'วิทยาลัยนานาชาติ', '🌐', '#69aaff', 'Global Burst'], ['MS', 'วิทยาลัยดุริยางคศิลป์', '🎵', '#ed7aff', 'Sonic Wave'], ['SS', 'วิทยาลัยวิทยาศาสตร์และเทคโนโลยีการกีฬา', '🏃', '#ffae68', 'Sport Rush'], ['CRS', 'วิทยาลัยศาสนศึกษา', '🕊️', '#d2c7ff', 'Harmony Wave']];
 const SELECTABLE_FACULTY_IDS=new Set(['SI', 'RA', 'DT', 'PY', 'NS', 'SC', 'PH', 'MT', 'PT', 'TM', 'EG', 'EN', 'VS', 'ICT', 'LA', 'SH', 'IC', 'MS', 'SS']);
 const heroes=[ {
@@ -776,7 +776,7 @@ const SPRITE_DEPS={
 function ensureSprites(ids){
     if(typeof CHARACTER_ANIMS==='undefined'||typeof Image==='undefined')return;
     for(const id of ids){
-        const c=CHARACTER_ANIMS[id];
+        const c=CHARACTER_ANIMS[id]||(typeof ENEMY_ANIMS!=='undefined'?ENEMY_ANIMS[id]:null);
         if(SPRITES[id]||!c)continue;
         const rec={
             id, ready:false, failed:false, anims:{
