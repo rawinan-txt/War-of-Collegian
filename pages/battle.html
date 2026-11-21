@@ -1,0 +1,56 @@
+<section class="hidden" id="battle">
+<div class="b-top">
+<div class="b-base player" id="hpPlayerBox"><div class="lbl"><span id="hpPlayerName">ฐานของเรา</span><span id="hpPlayerText">5000 / 5000</span></div>
+<div class="hpbar" id="hpPlayerBar"><div id="hpPlayerFill"></div></div></div>
+<div class="b-center"><b id="battleTitle"></b>
+<span class="wave" id="waveText">⏱ 0s · WAVE 1</span>
+<div class="stats" id="battleInfo"></div></div>
+<div class="b-base enemy"><div class="lbl"><span>ฐานข้อสอบ</span><span id="hpEnemyText">6500 / 6500</span></div>
+<div class="hpbar" id="hpEnemyBar"><div id="hpEnemyFill"></div></div></div>
+<div class="b-controls">
+<button class="secondary" id="autoBtn" onclick="toggleAuto()" title="Auto Play: ระบบช่วยส่งตัวละคร อัปเกรด AT และยิงเลเซอร์ ตามกฎเดียวกับผู้เล่น">Auto: ปิด</button>
+<span class="auto-opts hidden" id="autoOpts"><button class="secondary mini on" id="autoLaserBtn" onclick="setAutoOpt('laser')" title="Auto ยิงเลเซอร์ฐาน">เลเซอร์</button><button class="secondary mini on" id="autoUpgBtn" onclick="setAutoOpt('upgrade')" title="Auto อัปเกรด AT">อัป AT</button><button class="secondary mini on" id="autoUltBtn" onclick="setAutoOpt('ult')" title="Auto ใช้ Ultimate ที่เลือกไว้เมื่อคุ้มค่า">Ultimate</button></span>
+<button class="secondary" id="pauseBtn" onclick="togglePause()">หยุด</button>
+<button class="secondary" id="speedBtn" onclick="speedToggle()">1×</button>
+<button class="secondary" id="fxBtn" onclick="toggleFx()">เอฟเฟกต์: เต็ม</button>
+<button class="danger" onclick="show('team')">ออก</button>
+</div>
+</div>
+<div class="stagewrap closed" id="stageWrap">
+<div class="stagecol">
+<canvas height="440" id="game" width="1100"></canvas>
+</div>
+<button aria-label="เปิด/ปิดสถิติการต่อสู้" class="stats-edge" id="statsEdge" onclick="toggleStatsPanel()" title="สถิติการต่อสู้"></button>
+<aside aria-label="Combat statistics" class="stats-panel tab-dmg" id="statsPanel">
+<div class="stats-head"><b>สถิติการต่อสู้</b>
+<button aria-label="ปิด" class="stats-x" onclick="toggleStatsPanel()">✕</button>
+</div>
+<div class="stats-tabs">
+<button class="active" id="tab-dmg" onclick="setStatsTab('dmg')">DMG</button>
+<button id="tab-def" onclick="setStatsTab('def')">DEF</button>
+<button id="tab-heal" onclick="setStatsTab('heal')">HEAL</button>
+</div>
+<div id="statsList">
+</div>
+<div class="stats-foot">
+<div>BATTLE TIME: <b id="statsTime">00:00</b>
+</div>
+<div class="small" id="statsExtra">
+</div>
+</div>
+</aside>
+</div>
+<div class="b-dock">
+<div class="b-left">
+<div class="at-row"><b id="atText">AT 100 / 1000</b><span id="incomeText">+10 AT/s</span></div>
+<div class="meter"><div id="atBar" style="width:10%"></div></div>
+<div class="b-actions">
+<button id="upgradeBtn" onclick="upgradeIncome()">AT Generation</button>
+<button id="baseBtn" onclick="baseSkill()">Faculty Laser</button>
+<button disabled="" id="ultBtn" onclick="useUltimate()">Ultimate 0%</button>
+</div>
+</div>
+<div class="hud" id="battleCards"></div>
+</div>
+<div class="status" id="message">Deploy ตัวละครเพื่อหยุดศัตรู</div>
+</section>

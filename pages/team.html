@@ -1,0 +1,34 @@
+<section class="panel hidden team-screen" id="team">
+<div class="tb-head">
+<h2>จัดทีม 6 ตัวละคร</h2>
+<p class="muted">ขั้นที่ 2 · เลือกได้จากทุกคณะ · ดาวสูงหมายถึงค่าพลังโดยรวมสูงกว่า · สกิลแต่ละตัวไม่ซ้ำกัน</p>
+<button class="secondary" onclick="show('faculty')">← เปลี่ยนคณะ</button>
+</div>
+<div class="tb-layout">
+<aside aria-label="ตัวกรองตัวละคร" class="tb-rail panel">
+<div><label class="lbl" for="tbSearch">ค้นหา</label>
+<input autocomplete="off" id="tbSearch" oninput="tbSet('q',this.value)" placeholder="ชื่อตัวละคร หรือสกิล" type="search"/></div>
+<div id="tbFilters"></div>
+</aside>
+<div class="tb-center">
+<div class="tb-count"><b>ตัวละครทั้งหมด</b><span class="num" id="tbCount">12</span><span class="small" id="tbCountNote"></span></div>
+<div class="grid" id="teamGrid"></div>
+<div class="tb-focus panel" id="tbFocus"></div>
+</div>
+<aside aria-label="ทีมของคุณ" class="tb-side panel">
+<div class="tb-scroll">
+<div><h3>ทีมของคุณ</h3>
+<div class="tb-slots" id="teamSlots"></div>
+<p class="status" id="teamCount"></p></div>
+<div><h3 class="syn-heading">Synergy <button aria-label="ดูข้อมูล Synergy" class="syn-help" onclick="openSynergyHelp()" type="button">?</button></h3>
+<div class="status" id="teamSyn"></div></div>
+<div><h3>Ultimate (เลือก 1 อย่าง)</h3>
+<div class="grid" id="ultPick"></div>
+<p class="ultdesc" id="ultDesc"></p></div>
+</div>
+<div class="tb-actions">
+<button id="startBtn" onclick="show('stageSelect')">เลือกด่าน →</button>
+</div>
+</aside>
+</div>
+</section>

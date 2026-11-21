@@ -1,0 +1,28 @@
+
+.syn-heading{display:flex;align-items:center;gap:9px}.syn-help{width:21px;height:21px;border-radius:50%;padding:0;background:#75849f;color:white;font-size:13px;border:1px solid #b1bfd6;line-height:19px}.syn-help:hover{background:#a4b0c5}.syn-dialog{max-width:min(490px,92vw);width:100%;border:1px solid #7197d5;border-radius:18px;padding:24px;background:#142857;color:#f5f8ff;box-shadow:0 20px 80px #000b}.syn-dialog::backdrop{background:#02091bc9;backdrop-filter:blur(5px)}.syn-dialog-head{display:flex;align-items:center;justify-content:space-between}.syn-dialog-head h2{margin:0;color:#ffd35d}.syn-close{padding:2px 11px;background:#314c7e;color:white;font-size:24px}.syn-entry{padding:12px;margin:12px 0;background:#0c1a3d;border:1px solid #36588b;border-radius:12px}.syn-entry strong{color:#ffdb7b}.syn-entry p{margin:6px 0 0;font-size:13px;line-height:1.6}.syn-dialog>p{font-size:13px;color:#c6d9f6}.ccard{position:relative}.role-badge{position:absolute;right:7px;bottom:7px;z-index:4;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;font-size:17px;font-weight:900;border:2px solid #ffffffa6;color:white;box-shadow:0 2px 5px #0008}.role-dps{background:#dc334b}.role-tank{background:#259de7}.role-healer{background:#17b96d}.role-support{background:#914de2}.role-mini{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;color:white;font-weight:900}.tslot{position:relative}.tslot .role-badge{width:17px;height:17px;font-size:11px;right:3px;bottom:3px}.star-filter output{font-size:12px;color:#ffda67}.star-filter input[type=range]{width:100%;accent-color:#ffce40;cursor:pointer;margin:10px 0 3px}.star-scale{display:flex;justify-content:space-between;font-size:11px;color:#aec7ee}
+
+/* Team builder: unselected heroes are vivid, selected heroes recede. */
+#teamGrid .ccard{filter:brightness(1.13) saturate(1.12);transition:filter .22s ease,transform .2s ease,box-shadow .2s ease,opacity .2s ease}
+#teamGrid .ccard.sel{filter:brightness(.66) saturate(.72);opacity:.88}
+#teamGrid .ccard.sel:hover{filter:brightness(.85) saturate(.9)}
+#teamGrid .ccard:not(.sel):hover{filter:brightness(1.23) saturate(1.2);transform:translateY(-3px)}
+#teamGrid .ccard.dragging,#teamSlots .tslot.dragging{opacity:.4}
+/* Explicit state keeps the initial paint identical to subsequent selections. */
+#teamGrid .ccard[data-selected="true"]{filter:brightness(.66) saturate(.72);opacity:.88}
+#teamGrid .ccard[data-selected="false"]{filter:brightness(1.13) saturate(1.12);opacity:1}
+#teamGrid .ccard[data-selected="true"]:hover{filter:brightness(.85) saturate(.9)}
+#teamGrid .ccard[data-selected="false"]:hover{filter:brightness(1.23) saturate(1.2)}
+#teamGrid .ccard{cursor:grab}
+#teamGrid .ccard:active{cursor:grabbing}
+#teamSlots .tslot{transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;min-width:0}
+#teamSlots.drop-ready .tslot{outline:1px dashed #82c9ff;outline-offset:-3px}
+#teamSlots .tslot.drag-over{background:#3175b7!important;border-color:#ffe16a!important;box-shadow:0 0 0 3px #ffd65c99,inset 0 0 20px #64c6ff66;transform:scale(1.045)}
+#teamSlots .tslot.empty{cursor:default}
+#teamSlots .drop-hint{font-size:10px;color:#b2d3ff;text-align:center;line-height:1.3}
+/* Slider thumb stays mounted during dragging; only commit filtering on release. */
+.star-filter input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:9px;border-radius:999px;outline:none;cursor:pointer;touch-action:pan-y;background:linear-gradient(to right,#ffd04a 0%,#ffd04a var(--star-progress,0%),#344b73 var(--star-progress,0%),#344b73 100%);transition:background-color .2s}
+.star-filter input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#ffdb65;border:3px solid #ffeeb0;box-shadow:0 2px 9px #0008;transition:box-shadow .18s,transform .18s}
+.star-filter input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#ffdb65;border:3px solid #ffeeb0;box-shadow:0 2px 9px #0008;transition:box-shadow .18s,transform .18s}
+.star-filter input[type=range]:hover::-webkit-slider-thumb,.star-filter input[type=range]:focus-visible::-webkit-slider-thumb{transform:scale(1.15);box-shadow:0 0 0 5px #ffd65c33,0 2px 9px #0008}
+.star-filter input[type=range]:focus-visible{outline:2px solid #a4d6ff;outline-offset:5px}
+@media(hover:none){#teamGrid .ccard,#teamSlots .tslot.filled{touch-action:pan-y}}

@@ -1,0 +1,10 @@
+<section class="panel hidden faculty-screen" id="faculty">
+<div class="faculty-title"><span class="faculty-eyebrow">ขั้นที่ 1 · สังกัด</span><h2>เลือกคณะสังกัด</h2><p class="muted">เลือกคณะเพื่อกำหนดฐานและสีประจำทีม · ตัวละครทุกคณะยังสามารถจัดทีมร่วมกันได้</p></div>
+<div class="faculty-layout">
+<div class="faculty-column faculty-base"><h3>ฐาน</h3><div aria-label="ภาพจำลองฐานของคณะที่เลือก" class="faculty-base-art" id="facultyBaseArt"><div class="base-sun"></div><div class="base-cloud"></div><img alt="" class="base-sprite hidden" id="facultyBaseImg" onerror="this.classList.add('hidden');document.getElementById('baseBuilding').classList.remove('hidden')"/><div class="base-building" id="baseBuilding"><div class="base-roof"></div><div class="base-emblem" id="baseEmblem">💻</div><div class="base-windows"><i></i><i></i><i></i><i></i></div><div class="base-door"></div></div><div class="base-ground"></div></div><div class="base-name" id="baseName"></div><p class="small base-caption">ภาพจำลองฐานในธีมคณะที่เลือก</p></div>
+<div class="faculty-column faculty-info"><h3>ข้อมูลคณะ</h3><div class="faculty-info-content" id="facultyInfo"></div></div>
+<div class="faculty-column faculty-select"><h3>เลือกคณะ <span id="facultySelectCount"></span></h3><div aria-label="เลือกคณะสังกัด" class="faculty-options" id="facultyGrid" role="group"></div></div>
+</div>
+<p class="faculty-preview-note status" id="facultyPreview"></p>
+<div class="faculty-actions"><button class="secondary" onclick="show('home')">← กลับหน้าแรก</button><button class="faculty-confirm" onclick="confirmFaculty()">ยืนยันคณะ → จัดทีม</button></div>
+</section>
